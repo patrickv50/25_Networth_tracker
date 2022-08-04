@@ -1,104 +1,131 @@
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useMemo, useState } from 'react';
-import { StyleSheet, Text, View,Button, TextInput, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, Button, TextInput, ScrollView, FlatList } from 'react-native';
 
 export default function App() {
-  const [assets,setAssets] = useState([{name:'Car',value:10000}])
-  const [liabilities,setLiabilities] = useState([{name:'AmazonCard',value:3500}])
-  const [name,setName] = useState("")
-  const [value,setValue] = useState(0)
+  const [assets, setAssets] = useState([])
+  const [liabilities, setLiabilities] = useState([])
+  const [assetWindowOpen, setAssetWindowOpen] = useState(true)
+  const [name, setName] = useState("")
+  const [value, setValue] = useState(0)
 
-  const netWorth=useMemo(()=>{
-    let totAssets=assets.reduce((a,b)=>a+b.value,0) || 0
-    let totLiabilites=liabilities.reduce((a,b)=>a+b.value,0) || 0
-    return totAssets-totLiabilites
-  },[assets,liabilities])
+  const netWorth = useMemo(() => {
+    let totAssets = assets.reduce((a, b) => a + b.value, 0) || 0
+    let totLiabilites = liabilities.reduce((a, b) => a + b.value, 0) || 0
+    return totAssets - totLiabilites
+  }, [assets, liabilities])
 
-  const addEntity=(entity,setNew)=>{
-    setNew(state=>{
-      console.log([...state,entity])
-      return [...state,entity]
-      })
+  const addEntity = (entity, setNew) => {
+    setNew(state => {
+      console.log([...state, entity])
+      return [...state, entity]
+    })
+    setName("")
+    setValue(0)
   }
-
-  const handleChange=(x)=>{
-    setName(x)
-  }
-  useEffect(()=>{
+  useEffect(() => {
     console.log("HELLO ")
-  },[])
+  }, [])
 
   return (
-    <View  style={styles.main}>
-      <StatusBar style="dark" />
+    <View style={styles.app}>
+      <StatusBar hidden={true} style="dark" />
       <View style={styles.header}>
-        <Text style={styles.header1}>${netWorth}</Text>
-        <Text style={styles.subtitle1}>Net Worth</Text>
+        <View>
+          <Text style={styles.header1}>${netWorth}</Text>
+        </View>
+        <View>
+          <Text style={styles.subtitle1}>Net Worth</Text>
+        </View>
       </View>
-      <View style={styles.cardContainer}>
-        <Text style={styles.header2}>Assets</Text>
-        <ScrollView>
-        <View style={styles.card}>
-            <TextInput value={name} onChangeText={x=>setName(x)} placeholder="Name"/>
-            <TextInput value={value} onChangeText={x=>setValue(Number(x))} placeholder="Value"/>
-            <Button onPress={()=>addEntity({name:name,value:value},setAssets)} title='Add asset'/>
-          </View>
-        {assets.map((asset,index)=>(
-          <View key={index} style={styles.card}>
-            <Text>{asset.name}</Text>
-            <Text>${asset.value}</Text>
-          </View>
-        ))}
-          
-          </ScrollView>
+
+      <View style={styles.main}>
+        <View style={styles.mainHeader}>
+       
+          <Text style={[styles.header2, { flexGrow: 1 }]}>{assetWindowOpen ? "Assets" : "Liabilities"}</Text>
+          <Button onPress={() => setAssetWindowOpen(x => !x)} title="switch" />
+        </View>
+        <FlatList
+        showsVerticalScrollIndicator={false}
+          data={assetWindowOpen ? assets : liabilities}
+          renderItem={({ item, index }) => {
+            return (
+              <View key={index} style={styles.card}>
+                <Text>{item.name}</Text>
+                <Text>${item.value}</Text>
+              </View>
+            )
+          }}
+          ListHeaderComponent={(
+            <View style={styles.card}>
+              <TextInput style={{ fontSize: 18, padding: 5, backgroundColor: '#eee', marginVertical: 2 }} value={name} onChangeText={x => setName(x)} placeholder="Name" />
+              <TextInput style={{ fontSize: 18, padding: 5, backgroundColor: '#eee', marginVertical: 2 }} value={value ? String(value) : ''} onChangeText={x => {
+                if (!x.length) setValue(0)
+                if (Number(x)) setValue(Number(x))
+              }
+              } placeholder="Value" />
+              <Button onPress={() => addEntity({ name: name, value: value }, assetWindowOpen ? setAssets : setLiabilities)} title={assetWindowOpen ? 'Add asset' : 'Add Liability'} />
+            </View>)}
+        >
+
+        </FlatList>
+
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  app: {
+    flexGrow: 1,
+  },
+  header: {
+    padding: 10,
+    flexGrow: 0,
+    // borderColor: 'red',
+    // borderWidth: 1
+  },
   main: {
-    display:'flex',
-    padding:10,
-    marginTop:50,
-    borderWidth:0,
-    borderColor:'blue',
-    flexDirection:'column',
-    backgroundColor: '#fff',
-    alignItems: 'flex-start',
-    justifyContent: 'flex-start',
-    borderWidth:2,
-    height:'80%'
+    flexGrow: 1,
+    flex: 1,
+    padding: 10,
+    // borderColor: 'blue',
+    // borderWidth: 2,
   },
-  header:{
-    flexGrow:0,
-    marginBottom:10
+  mainHeader: {
+    flexGrow: 0,
+    flexDirection: 'row',
   },
-  cardContainer:{
-    height:200,
-    borderWidth:2,
-    borderColor:'blue',
-    flexGrow:1,
-    gap:8,
-    padding:10
+  mainContent: {
+    // borderWidth: 4,
+    // borderColor: 'green',
+    flexGrow: 1,
+
   },
-  card:{
-    minWidth:200,
-    padding:10,
-    marginBottom:8,
-    borderRadius:10,
-    borderWidth:1,
-    borderColor:'#000'
+  list: {
+    display: 'flex',
+    flexGrow: 1,
+    backgroundColor: 'pink',
   },
-  header1:{
-    fontSize:40
+  card: {
+    padding: 10,
+    marginBottom: 8,
+    borderRadius: 7,
+    borderWidth: 1,
+    borderColor: '#000'
   },
-  header2:{
-    fontSize:28
+
+
+
+  header1: {
+    fontSize: 40
   },
-  subtitle1:{
-    fontSize:15,
-    color:'#888'
+  header2: {
+    fontSize: 28
   },
- 
+  subtitle1: {
+    fontSize: 15,
+    color: '#888'
+  },
+
 });
