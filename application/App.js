@@ -1,14 +1,17 @@
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useMemo, useState } from 'react';
-import { StyleSheet, Text, View, Button, TextInput, ScrollView, FlatList } from 'react-native';
+import { StyleSheet, Text, View, Button, TextInput, ScrollView, FlatList, TouchableOpacity, Modal, ImageBackground } from 'react-native';
+import Header from './components/Header';
+import Input from './components/Input';
+import Item from './components/Item';
+import theme from './theme';
 
 export default function App() {
   const [assets, setAssets] = useState([])
   const [liabilities, setLiabilities] = useState([])
   const [assetWindowOpen, setAssetWindowOpen] = useState(true)
-  const [name, setName] = useState("")
-  const [value, setValue] = useState(0)
 
+  const [modalOpen, setModalOpen] = useState(false)
   const netWorth = useMemo(() => {
     let totAssets = assets.reduce((a, b) => a + b.value, 0) || 0
     let totLiabilites = liabilities.reduce((a, b) => a + b.value, 0) || 0
@@ -20,56 +23,48 @@ export default function App() {
       console.log([...state, entity])
       return [...state, entity]
     })
-    setName("")
-    setValue(0)
   }
   useEffect(() => {
     console.log("HELLO ")
   }, [])
 
+  const funcX = () => {
+  }
   return (
     <View style={styles.app}>
-      <StatusBar hidden={true} style="dark" />
+      <StatusBar hidden={false} style="light" />
+      {/* HEADER ===================== */}
       <View style={styles.header}>
-        <View>
-          <Text style={styles.header1}>${netWorth}</Text>
-        </View>
-        <View>
-          <Text style={styles.subtitle1}>Net Worth</Text>
-        </View>
-      </View>
+        <Header netWorth={netWorth.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} styles={styles} />
 
+      </View>
+      {/* MAIN ======================= */}
       <View style={styles.main}>
         <View style={styles.mainHeader}>
-       
-          <Text style={[styles.header2, { flexGrow: 1 }]}>{assetWindowOpen ? "Assets" : "Liabilities"}</Text>
-          <Button onPress={() => setAssetWindowOpen(x => !x)} title="switch" />
+          <TouchableOpacity style={styles.buttonSwitch} onPress={() => setAssetWindowOpen(x => !x)}>
+            <Text style={styles.buttonSwitchText}>{assetWindowOpen ? "Asset" : "Liability"}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.buttonSwitch} onPress={() => setModalOpen(x => !x)}>
+            <Text style={styles.buttonSwitchText}>+</Text>
+          </TouchableOpacity>
         </View>
+        <Modal transparent={true} animationType='slide' visible={modalOpen}>
+          <Input setAssets={setAssets} setLiabilities={setLiabilities} addEntity={addEntity} assetWindowOpen={assetWindowOpen} setModalOpen={setModalOpen} />
+        </Modal>
+
         <FlatList
-        showsVerticalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
           data={assetWindowOpen ? assets : liabilities}
           renderItem={({ item, index }) => {
             return (
-              <View key={index} style={styles.card}>
-                <Text>{item.name}</Text>
-                <Text>${item.value}</Text>
-              </View>
+              <Item item={item} index={index} />
             )
           }}
-          ListHeaderComponent={(
-            <View style={styles.card}>
-              <TextInput style={{ fontSize: 18, padding: 5, backgroundColor: '#eee', marginVertical: 2 }} value={name} onChangeText={x => setName(x)} placeholder="Name" />
-              <TextInput style={{ fontSize: 18, padding: 5, backgroundColor: '#eee', marginVertical: 2 }} value={value ? String(value) : ''} onChangeText={x => {
-                if (!x.length) setValue(0)
-                if (Number(x)) setValue(Number(x))
-              }
-              } placeholder="Value" />
-              <Button onPress={() => addEntity({ name: name, value: value }, assetWindowOpen ? setAssets : setLiabilities)} title={assetWindowOpen ? 'Add asset' : 'Add Liability'} />
-            </View>)}
+        // ListHeaderComponent={
+        // }
         >
 
         </FlatList>
-
       </View>
     </View>
   );
@@ -78,23 +73,27 @@ export default function App() {
 const styles = StyleSheet.create({
   app: {
     flexGrow: 1,
+    backgroundColor: theme.bg
   },
   header: {
-    padding: 10,
+    paddingHorizontal: 20,
+    marginTop: 50,
     flexGrow: 0,
-    // borderColor: 'red',
-    // borderWidth: 1
+    // backgroundColor:'red'
   },
   main: {
     flexGrow: 1,
     flex: 1,
     padding: 10,
-    // borderColor: 'blue',
-    // borderWidth: 2,
+    // backgroundColor:'green'
   },
   mainHeader: {
-    flexGrow: 0,
     flexDirection: 'row',
+    justifyContent: 'center',
+    flexGrow: 0,
+    marginBottom: 10,
+    alignItems: 'center'
+
   },
   mainContent: {
     // borderWidth: 4,
@@ -102,30 +101,27 @@ const styles = StyleSheet.create({
     flexGrow: 1,
 
   },
-  list: {
-    display: 'flex',
-    flexGrow: 1,
-    backgroundColor: 'pink',
-  },
-  card: {
+  buttonSwitch: {
+    backgroundColor: theme.text,
+    color: theme.bg,
     padding: 10,
-    marginBottom: 8,
-    borderRadius: 7,
-    borderWidth: 1,
-    borderColor: '#000'
+    borderRadius: 5
   },
-
-
+  buttonSwitchText: {
+    fontSize: 25
+  },
 
   header1: {
+    color: theme.text,
     fontSize: 40
   },
   header2: {
+    color: theme.text,
     fontSize: 28
   },
   subtitle1: {
     fontSize: 15,
-    color: '#888'
+    color: theme.text
   },
 
 });
