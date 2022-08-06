@@ -1,6 +1,6 @@
 import React from 'react'
 import { StatusBar, StyleSheet, View } from 'react-native'
-
+import theme from '../theme'
 const Template = ({ children }) => {
     return (
         <View style={styles.app}>
