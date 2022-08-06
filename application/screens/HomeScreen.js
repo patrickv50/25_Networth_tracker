@@ -67,14 +67,7 @@ export default function HomeScreen() {
       {/* END MAIN ======================= */}
 
 
-      <LinearGradient
-        // Background Linear Gradient
-        // colors={['transparent', 'rgba(0,0,0,0.8)']}
-        colors={['transparent', 'rgba(0,0,0,.9)']}
-        style={styles.background}
-        start={{ x: 'opx', y: '0px' }}
-        end={{ x: '20px', y: '20px' }}
-      />
+ 
     </Template>
   );
 }
