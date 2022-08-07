@@ -1,28 +1,31 @@
-import { LinearGradient } from 'expo-linear-gradient';
-import { StatusBar } from 'expo-status-bar';
 import { useEffect, useMemo, useState } from 'react';
 import { StyleSheet, Text, View, Button, TextInput, ScrollView, FlatList, TouchableOpacity, Modal, ImageBackground } from 'react-native';
+import { useSelector } from 'react-redux';
 import Header from '../components/Header';
 import Input from '../components/Input';
-import Item from '../components/Item';
 import Template from '../components/Template';
 import theme from '../theme';
 
 export default function HomeScreen() {
-  const [assets, setAssets] = useState([])
-  const [liabilities, setLiabilities] = useState([])
+  const assets = useSelector((state) => state.assets)
+  const liabilities = useSelector((state) => state.liabilities)
   const [assetWindowOpen, setAssetWindowOpen] = useState(true)
 
   const [modalOpen, setModalOpen] = useState(false)
-  const netWorth = useMemo(() => {
-    let totAssets = assets.reduce((a, b) => a + b.value, 0) || 0
-    let totLiabilites = liabilities.reduce((a, b) => a + b.value, 0) || 0
-    return totAssets - totLiabilites
-  }, [assets, liabilities])
 
+  const totAssets = useMemo(() => {
+    return assets.reduce((a, b) => a + b.value, 0) || 0
+  }, [assets])
+
+  const totLiabilites = useMemo(() => {
+    return liabilities.reduce((a, b) => a + b.value, 0) || 0
+  }, [liabilities])
+
+  const netWorth = useMemo(() => {
+    return totAssets - totLiabilites
+  }, [totAssets, totLiabilites])
   const addEntity = (entity, setNew) => {
     setNew(state => {
-      // console.log([...state, entity])
       return [...state, entity]
     })
   }
@@ -41,57 +44,77 @@ export default function HomeScreen() {
       </View>
       {/* MAIN ======================= */}
       <View style={styles.main}>
-        <View style={styles.mainHeader}>
-          <TouchableOpacity style={styles.buttonSwitch} onPress={() => setAssetWindowOpen(x => !x)}>
+        <View style={styles.cardsContainer}>
+          <View style={styles.card}>
+            <Text style={styles.cardText}>Total Assets</Text>
+            <Text style={styles.cardText}>${totAssets}</Text>
+            <View style={styles.cardBarContainer}>
+              <View style={[styles.cardBar, { backgroundColor:'rgb(21,238,108)', width: `${(100 * (totAssets)) / (totAssets+totLiabilites)}%` }]}></View>
+            </View>
+          </View>
+          <View style={styles.card}>
+            <Text style={styles.cardText}>Total Liabilities</Text>
+            <Text style={styles.cardText}>${totLiabilites}</Text>
+            <View style={styles.cardBarContainer}>
+              <View style={[styles.cardBar, { backgroundColor:'rgb(255,42,82)', width: `${(100 * (totLiabilites)) / (totAssets+totLiabilites)}%` }]}></View>
+            </View>
+          </View>
+          {/* <TouchableOpacity style={styles.buttonSwitch} onPress={() => setAssetWindowOpen(x => !x)}>
             <Text style={styles.buttonSwitchText}>{assetWindowOpen ? "Asset" : "Liability"}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.buttonSwitch} onPress={() => setModalOpen(x => !x)}>
             <Text style={styles.buttonSwitchText}>+</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
         <Modal transparent={true} animationType='slide' visible={modalOpen}>
-          <Input setAssets={setAssets} setLiabilities={setLiabilities} addEntity={addEntity} assetWindowOpen={assetWindowOpen} setModalOpen={setModalOpen} />
+          {/* <Input setLiabilities={setLiabilities} addEntity={addEntity} assetWindowOpen={assetWindowOpen} setModalOpen={setModalOpen} /> */}
         </Modal>
-
-        <FlatList
-          showsVerticalScrollIndicator={false}
-          data={assetWindowOpen ? assets : liabilities}
-          renderItem={({ item, index }) => {
-            return (
-              <Item item={item} index={index} />
-            )
-          }}
-        >
-        </FlatList>
       </View>
       {/* END MAIN ======================= */}
 
 
- 
+
     </Template>
   );
 }
 
 const styles = StyleSheet.create({
   header: {
-    paddingHorizontal: 20,
-    marginTop: 50,
     flexGrow: 0,
     // backgroundColor:'red'
   },
   main: {
     flexGrow: 1,
     flex: 1,
-    padding: 10,
-    // backgroundColor:'green'
   },
-  mainHeader: {
+  cardsContainer: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    flexGrow: 0,
-    marginBottom: 10,
-    alignItems: 'center'
+    marginTop:20
+  },
+  card: {
+    marginHorizontal:10,
+    alignItems: 'flex-start',
+    flex: 1,
+    flexGrow: 1,
+    backgroundColor: theme.cardBg,
+    borderRadius: 10,
+    padding: 12
+  },
+  cardText: {
+    color: '#fff',
+    marginBottom:5
+  },
 
+  cardBarContainer: {
+    minHeight: 8,
+    overflow:'hidden',
+    borderRadius: 3,
+    backgroundColor: '#444',
+    width: '100%',
+  },
+  cardBar: {
+    minHeight: 8,
+    borderRadius: 3,
   },
   mainContent: {
     // borderWidth: 4,

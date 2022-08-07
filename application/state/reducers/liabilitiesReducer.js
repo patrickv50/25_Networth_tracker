@@ -1,16 +1,20 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 let initVal=[{
-    name:"Asset1",
+    name:"Liability1",
     category:"Misc",
-    value:2981
+    value:5123
 },{
-  name:"Asset1",
+  name:"Liability1",
   category:"Misc",
-  value:23981
+  value:123
+},{
+  name:"Liability1",
+  category:"Misc",
+  value:123
 }]
-export const assetsSlice = createSlice({
-  name: 'assets',
+export const liabilitiesSlice = createSlice({
+  name: 'liabilites',
   initialState: initVal,
   reducers: {
     add: (state,action) => {
@@ -18,7 +22,7 @@ export const assetsSlice = createSlice({
       // doesn't actually mutate the state because it uses the Immer library,
       // which detects changes to a "draft state" and produces a brand new
       // immutable state based off those changes
-      console.log(state)
+      // console.log(state)
       state.push(action.payload)
     },
     remove: (state,action) => {
@@ -28,6 +32,6 @@ export const assetsSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { add,remove } = assetsSlice.actions
+export const { add,remove } = liabilitiesSlice.actions
 
-export default assetsSlice.reducer
+export default liabilitiesSlice.reducer

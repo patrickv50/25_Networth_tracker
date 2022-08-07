@@ -6,7 +6,9 @@ const Template = ({ children }) => {
     return (
         <View style={styles.app}>
             <StatusBar hidden={false} style="light" />
+            <View style={{padding:20,flex:1,}}>
             {children}
+            </View>
             <LinearGradient
                 // Background Linear Gradient
                 // colors={['transparent', 'rgba(0,0,0,0.8)']}
@@ -29,7 +31,9 @@ export default Template
 
 const styles = StyleSheet.create({
     app: {
+        paddingTop: 50,
         flexGrow: 1,
+        flex:1,
         backgroundColor: theme.bg,
         borderColor: 'red',
         // borderWidth:2
