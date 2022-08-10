@@ -14,7 +14,9 @@ export default function HomeScreen() {
   const [modalOpen, setModalOpen] = useState(false)
 
   const totAssets = useMemo(() => {
-    return assets.reduce((a, b) => a + b.value, 0) || 0
+    return assets.reduce((a, b) => {
+      return a + b.items.reduce((a, b) => a + b.value, 0)
+    }, 0) || 0
   }, [assets])
 
   const totLiabilites = useMemo(() => {
@@ -41,30 +43,23 @@ export default function HomeScreen() {
       <View style={styles.header}>
         <Header netWorth={netWorth.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} styles={styles} />
         {/* Intl.NumberFormat('en-us').format(netWorth)  */}
+        <View style={styles.cardBarContainer}>
+          <View style={[styles.cardBar, { backgroundColor: 'rgb(21,238,108)', width: `${(100 * (totAssets)) / (totAssets + totLiabilites)}%` }]}></View>
+          <View style={[styles.cardBar, { backgroundColor: 'rgb(255,42,82)', width: `${(100 * (totLiabilites)) / (totAssets + totLiabilites)}%` }]}></View>
+
+        </View>
       </View>
       {/* MAIN ======================= */}
       <View style={styles.main}>
         <View style={styles.cardsContainer}>
           <View style={styles.card}>
             <Text style={styles.cardText}>Total Assets</Text>
-            <Text style={styles.cardText}>${totAssets}</Text>
-            <View style={styles.cardBarContainer}>
-              <View style={[styles.cardBar, { backgroundColor:'rgb(21,238,108)', width: `${(100 * (totAssets)) / (totAssets+totLiabilites)}%` }]}></View>
-            </View>
+            <Text style={styles.cardText}>${totAssets.toLocaleString("en-US")}</Text>
           </View>
           <View style={styles.card}>
             <Text style={styles.cardText}>Total Liabilities</Text>
-            <Text style={styles.cardText}>${totLiabilites}</Text>
-            <View style={styles.cardBarContainer}>
-              <View style={[styles.cardBar, { backgroundColor:'rgb(255,42,82)', width: `${(100 * (totLiabilites)) / (totAssets+totLiabilites)}%` }]}></View>
-            </View>
+            <Text style={styles.cardText}>${totLiabilites.toLocaleString("en-US")}</Text>
           </View>
-          {/* <TouchableOpacity style={styles.buttonSwitch} onPress={() => setAssetWindowOpen(x => !x)}>
-            <Text style={styles.buttonSwitchText}>{assetWindowOpen ? "Asset" : "Liability"}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.buttonSwitch} onPress={() => setModalOpen(x => !x)}>
-            <Text style={styles.buttonSwitchText}>+</Text>
-          </TouchableOpacity> */}
         </View>
         <Modal transparent={true} animationType='slide' visible={modalOpen}>
           {/* <Input setLiabilities={setLiabilities} addEntity={addEntity} assetWindowOpen={assetWindowOpen} setModalOpen={setModalOpen} /> */}
@@ -81,6 +76,8 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   header: {
     flexGrow: 0,
+    paddingHorizontal:15,
+    paddingTop:10
     // backgroundColor:'red'
   },
   main: {
@@ -89,10 +86,10 @@ const styles = StyleSheet.create({
   },
   cardsContainer: {
     flexDirection: 'row',
-    marginTop:20
+    marginTop: 20
   },
   card: {
-    marginHorizontal:10,
+    marginHorizontal: 10,
     alignItems: 'flex-start',
     flex: 1,
     flexGrow: 1,
@@ -102,15 +99,16 @@ const styles = StyleSheet.create({
   },
   cardText: {
     color: '#fff',
-    marginBottom:5
+    marginBottom: 5
   },
 
   cardBarContainer: {
     minHeight: 8,
-    overflow:'hidden',
+    overflow: 'hidden',
     borderRadius: 3,
     backgroundColor: '#444',
     width: '100%',
+    flexDirection:'row'
   },
   cardBar: {
     minHeight: 8,

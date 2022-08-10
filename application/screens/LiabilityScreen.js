@@ -15,7 +15,7 @@ const AssetScreen = () => {
         <Text style={styles.title}>Liabilities</Text>
       </TouchableOpacity>
       <View style={{ flexGrow: 1,flex:1}}>
-        <FlatList
+        {/* <FlatList
           showsVerticalScrollIndicator={false}
           data={liabilities}
           renderItem={({ item, index }) => {
@@ -25,7 +25,7 @@ const AssetScreen = () => {
           }}
           ListFooterComponent={<View style={{minHeight:100}}/>}
         >
-        </FlatList>
+        </FlatList> */}
       </View>
     </Template>
   )

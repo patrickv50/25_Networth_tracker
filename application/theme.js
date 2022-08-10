@@ -1,5 +1,5 @@
 const theme = {
-    bg:'#1e1f23',
+    bg:'#121313',
     text:'#eee',
     input:'#00020a',
     cardBg:'#080808'

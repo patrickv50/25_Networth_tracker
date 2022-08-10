@@ -7,7 +7,6 @@ const Header = ({ netWorth }) => {
     const [numx, setNumx] = useState(1)
     const [bar, setCharAr] = useState([])
     useEffect(() => {
-        console.log(netWorth)
         setCharAr(String(netWorth).split(""))
     }, [netWorth])
     return (

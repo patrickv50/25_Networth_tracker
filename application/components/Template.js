@@ -6,13 +6,11 @@ const Template = ({ children }) => {
     return (
         <View style={styles.app}>
             <View style={styles.body}>
-                <StatusBar hidden={false} style="light" />
-                <View style={{ padding: 20, flex: 1, }}>
+                <StatusBar hidden={false} style={{backgroundColor:'red'}}/>
+                <View style={{ flex: 1, }}>
                     {children}
                 </View>
                 <LinearGradient
-                    // Background Linear Gradient
-                    // colors={['transparent', 'rgba(0,0,0,0.8)']}
                     colors={['transparent', 'rgba(0,0,0,.9)']}
                     style={{
                         height: 170,
@@ -43,7 +41,7 @@ const styles = StyleSheet.create({
     body:{
         width:'100%',
         maxWidth: 900,
-        paddingTop: 50,
+        paddingTop: 40,
         flexGrow: 1,
         flex: 1,
         backgroundColor: theme.bg,

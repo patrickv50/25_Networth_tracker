@@ -1,44 +1,46 @@
-import { useEffect, useRef, useState } from "react"
-import { Button, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, View } from "react-native"
-import theme from "../theme"
-
-const Input = ({addEntity, setAssets, setLiabilities, assetWindowOpen, setModalOpen }) => {
+import React, { useRef, useState } from 'react'
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { add } from '../state/reducers/assetsReducer'
+import theme from '../theme'
+import { useDispatch } from 'react-redux'
+const Input = ({category,setInputOpen,setModalOpen}) => {
     const [name, setName] = useState("")
     const [value, setValue] = useState(0)
-    const [category, setCategory] = useState("")
-    const categoryRef = useRef()
     const nameRef = useRef()
     const valueRef = useRef()
-    const handleSubmit = () => {
-        setName("")
-        setValue(0)
-        nameRef.current.focus()
-        addEntity({ name: name, value: value }, assetWindowOpen ? setAssets : setLiabilities)
+
+    const dispatch=useDispatch()
+
+    const handleSubmit=()=>{
+        setInputOpen(false)
         setModalOpen(false)
+        dispatch(add({
+            name,value,category
+        }))
     }
-    useEffect(()=>{
-        nameRef.current.focus()
-    },[])
-    return (
-        <KeyboardAvoidingView
-            behavior={Platform.OS == "ios" ? "padding" : "height"}
-            keyboardVerticalOffset={Platform.OS == "ios" ? 0 : 20}
-            enabled={Platform.OS === "ios" ? true : false}
-            style={styles.container}
-            >
-            <TextInput placeholderTextColor="#999" style={styles.input} value={name} ref={nameRef} onChangeText={(x) => setName(x)} onSubmitEditing={() => categoryRef.current.focus()} placeholder="Name" />
-            <TextInput placeholderTextColor="#999" style={styles.input} value={category} ref={categoryRef} onChangeText={(x) => setCategory(x)} onSubmitEditing={() => valueRef.current.focus()} placeholder="Category" />
+  return (
+    <View style={styles.form}>
+        <TextInput editable={false} selectTextOnFocus={false} style={styles.input} value={category}/>
+        <TextInput placeholderTextColor="#999" style={styles.input} value={name} ref={nameRef} onChangeText={(x) => setName(x)} onSubmitEditing={() => valueRef.current.focus()} placeholder="Name" />
             <TextInput placeholderTextColor="#999" returnKeyType="done" keyboardType="number-pad" ref={valueRef} onSubmitEditing={handleSubmit} style={styles.input} value={value ? String(value) : ''} onChangeText={x => {
                 if (!x.length) setValue(0)
                 if (Number(x)) setValue(Number(x))
             }
             } placeholder="Value" />
-            <Button style={styles.input} onPress={handleSubmit} title={assetWindowOpen ? 'Add asset' : 'Add Liability'} />
-            {/* <Button style={styles.input} onPress={handleSubmit} title={assetWindowOpen ? 'Add asset' : 'Add Liability'} /> */}
-        </KeyboardAvoidingView>
-    )
+        <TouchableOpacity onPress={handleSubmit}>
+            <Text>Add</Text>
+        </TouchableOpacity>
+    </View>
+  )
 }
+
+export default Input
+
 const styles = StyleSheet.create({
+    form:{
+        width:'100%',
+        padding:10
+    },
     input: {
         fontSize: 18,
         padding: 8,
@@ -58,4 +60,3 @@ const styles = StyleSheet.create({
     },
 
 })
-export default Input
