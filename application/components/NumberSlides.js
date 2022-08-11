@@ -6,8 +6,8 @@ import theme from "../theme"
 let side = 'right'
 
 
-const NumberSlides = ({ value, size, delay }) => {
-    const [chars, setCharAr] = useState([])
+const NumberSlides = ({ value, size, delay, modalOpen }) => {
+    const [chars, setCharAr] = useState(["$","0"])
     useEffect(() => {
         let newVal = ('$' + (value)).split("")
         let size1 = chars.length
@@ -25,15 +25,25 @@ const NumberSlides = ({ value, size, delay }) => {
     }, [value])
     return (
         <View style={[styles.numberCounter, { height: size }]} >
-            {chars && chars.map((val, index) => (
-                <Number key={index} value={val} index={index} size={size} delay={delay} />
-            ))}
+            {chars.map((val, index) => {
+                return (
+                    <Number modalOpen={modalOpen} key={index} value={val} index={index} size={size} delay={delay} />
+                )
+            })}
         </View>
     )
 }
 
+const StaticNumber = ({ value, size, delay }) => {
 
-const Number = ({ value, index, size, delay }) => {
+    return (
+        <View style={{}}>
+            <Text style={[]}>{'2'}</Text>
+        </View>
+    )
+}
+
+const Number = ({ value, size, delay, modalOpen }) => {
     const derivedStyle = {
         height: size,
         fontSize: Math.floor(size * 2 / 3)
@@ -47,7 +57,7 @@ const Number = ({ value, index, size, delay }) => {
             default: return parseInt(value) + 1
         }
     }, [value])
-    const sliderContainerWidth = useMemo(() => {
+    const width = useMemo(() => {
         switch (value) {
             case ' ': return size * (20 / 50)
             case '0': return size * (21 / 50)
@@ -58,6 +68,7 @@ const Number = ({ value, index, size, delay }) => {
             default: return size / 2
         }
     }, [value])
+
     const slideAnim = useRef(new Animated.Value(0)).current;
     const widthAnim = useRef(new Animated.Value(size * (3 / 10))).current;
     useEffect(() => {
@@ -65,17 +76,26 @@ const Number = ({ value, index, size, delay }) => {
             toValue: position * -size,
             duration: 800,
             useNativeDriver: false,
-            delay: delay + Math.floor(Math.random() * (1000 - 200) + 200),
+            delay: delay + Math.floor(Math.random() * (1000 - 100) + 100),
             easing: Easing.easing
         }).start()
         Animated.timing(widthAnim, {
-            toValue: sliderContainerWidth,
+            toValue: width,
             duration: 300,
             useNativeDriver: false,
             delay: delay + 500
         }).start()
     }, [position])
-    return (
+
+    if (modalOpen) return (
+        <>
+        </>
+    )
+    // <StaticNumber value={value} size={size} />
+
+
+
+    else return (
         <Animated.View style={{ width: widthAnim }}>
             <Animated.View style={[styles.numberSlide, {
                 top: slideAnim,
@@ -111,9 +131,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
     },
     number: {
-        textAlign:'center',
-        // borderColor:'red',
-        // borderWidth:1,
+        textAlign: 'center',
         color: theme.text
     },
 })

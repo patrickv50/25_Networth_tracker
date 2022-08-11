@@ -6,7 +6,7 @@ import LiabilityScreen from '../screens/LiabilityScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import { Image, Text, View } from 'react-native';
 import theme from '../theme'
-import { Entypo } from '@expo/vector-icons';
+import { Feather,MaterialIcons,MaterialCommunityIcons } from '@expo/vector-icons';
 const Tab = createBottomTabNavigator();
 
 const BottomNav = () => {
@@ -32,7 +32,8 @@ const BottomNav = () => {
             <Tab.Screen name="Home" component={HomeScreen} options={{
                 tabBarIcon: (({ focused }) => (
                     <View style={{ alignItems: "center" }}>
-                        <Entypo name='list' size={30} color={theme.text} style={{ width: 30, fontWeight: '600' }} />
+                        {/* <Entypo name='list' size={30} color={theme.text} style={{ width: 30, fontWeight: '600' }} /> */}
+                        <MaterialIcons name="grid-view" size={30} color={theme.text} style={{ width: 30, fontWeight: '600' }}/>
                         <Text style={{ color: theme.text }}>Net Worth</Text>
                     </View>
                     
@@ -41,7 +42,8 @@ const BottomNav = () => {
             <Tab.Screen name="Assets" component={AssetScreen} options={{
                 tabBarIcon: (({ focused }) => (
                     <View style={{ alignItems: "center" }}>
-                        <Entypo name='wallet' size={30} color={theme.text} style={{ width: 30, fontWeight: '600' }} />
+                        <MaterialIcons name="attach-money" size={30} color={theme.text} style={{ width: 30, fontWeight: '600' }}/>
+                        {/* <Entypo name='wallet' size={30} color={theme.text} style={{ width: 30, fontWeight: '600' }} /> */}
                         <Text style={{ color: theme.text }}>Asset</Text>
                     </View>
                 ))
@@ -49,7 +51,8 @@ const BottomNav = () => {
             <Tab.Screen name="Liability" component={LiabilityScreen} options={{
                 tabBarIcon: (({ focused }) => (
                     <View style={{ alignItems: "center" }}>
-                        <Entypo name='credit-card' size={30} color={theme.text} style={{ width: 30, fontWeight: '600' }} />
+                        <MaterialCommunityIcons name="bank-minus" size={30} color={theme.text} style={{ width: 30, fontWeight: '600' }}/>
+                        {/* <Entypo name='credit-card' size={30} color={theme.text} style={{ width: 30, fontWeight: '600' }} /> */}
                         <Text style={{ color: theme.text }}>Liability</Text>
                     </View>
                 ))
@@ -57,7 +60,7 @@ const BottomNav = () => {
             <Tab.Screen name="Profile" component={ProfileScreen} options={{
                 tabBarIcon: (({ focused }) => (
                     <View style={{ alignItems: "center" }}>
-                        <Entypo name='user' size={30} color={theme.text} style={{ width: 30, fontWeight: '600' }} />
+                        <Feather name="user" size={30} color={theme.text} style={{ width: 30, fontWeight: '600' }}/>
                         <Text style={{ color: theme.text }}>Profile</Text>
                     </View>
                 ))

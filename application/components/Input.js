@@ -16,7 +16,11 @@ const Input = ({ category, setInputOpen, setModalOpen, add }) => {
         dispatch(add({
             name, value, category
         }))
+    }
 
+    const handleCancel = () => {
+        setModalOpen(false)
+        setInputOpen(false)
     }
     return (
         <View style={styles.form}>
@@ -24,12 +28,17 @@ const Input = ({ category, setInputOpen, setModalOpen, add }) => {
             <TextInput placeholderTextColor="#999" style={styles.input} value={name} ref={nameRef} onChangeText={(x) => setName(x)} onSubmitEditing={() => valueRef.current.focus()} placeholder="Name" />
             <TextInput placeholderTextColor="#999" returnKeyType="done" keyboardType="number-pad" ref={valueRef} onSubmitEditing={handleSubmit} style={styles.input} value={value ? (value).toLocaleString('en-US') : ''} onChangeText={x => {
                 if (!x.length) setValue(0)
-                console.log((x.replace(",","")))
-                if (Number(x.replace(',',''))) setValue(Number(x.replace(',','')))
+                if (Number(x.replace(',', ''))) setValue(Number(x.replace(',', '')))
             }
             } placeholder="Value" />
+            <TouchableOpacity style={{alignSelf:'flex-start',marginBottom:6}} onPress={handleSubmit}>
+                <Text style={{fontSize:12,color:'#888',marginVertical:4}}>{"Advance Fields >"}</Text>
+            </TouchableOpacity>
             <TouchableOpacity style={styles.addButton} onPress={handleSubmit}>
                 <Text style={styles.addButtonText}>Add</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.addButton,{backgroundColor:'transparent'}]} onPress={handleCancel}>
+                <Text style={[styles.addButtonText,{fontSize:15}]}>Cancel</Text>
             </TouchableOpacity>
         </View>
     )
@@ -40,14 +49,16 @@ export default Input
 const styles = StyleSheet.create({
     form: {
         width: '100%',
-        padding: 10
+        padding: 20,
+        alignItems: 'stretch'
     },
     input: {
+        width: '100%',
         fontSize: 18,
-        padding: 8,
+        padding: 12,
         backgroundColor: theme.input,
         color: '#ccc',
-        marginVertical: 2,
+        marginVertical: 4,
         borderRadius: 6
     },
     container: {
@@ -60,16 +71,21 @@ const styles = StyleSheet.create({
         width: '100%'
     },
     addButton: {
+        alignSelf:'flex-end',
+        width:150,
+        backgroundColor: '#333',
+        marginVertical: 4,
+        borderRadius: 4,
         padding: 5,
         flex: 0,
-
         // backgroundColor:'blue'
     },
     addButtonText: {
         color: theme.text,
-        fontSize: 28,
-        fontWeight: 'bold',
-        padding: 3
+        fontSize: 18,
+        fontWeight: '400',
+        padding: 3,
+        textAlign:'center'
     },
 
 })

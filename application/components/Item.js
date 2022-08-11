@@ -2,10 +2,11 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import { Animated, Button, FlatList, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native"
 import theme from "../theme"
 import NumberSlides from "./NumberSlides"
-import Ionicons from '@expo/vector-icons/Ionicons';
-import { Entypo } from '@expo/vector-icons';
+import { Entypo, Feather } from '@expo/vector-icons';
 
-const Item = ({ item, index,icon }) => {
+const heightOfItem = 38
+
+const Item = ({ item, index, icon, modalOpen, setMenuOpen }) => {
     const [accordionOpen, setAccordionOpen] = useState(false)
     const total = useMemo(() => item.items.reduce((a, b) => a + b.value, 0))
     const heightAnim = useRef(new Animated.Value(0)).current
@@ -16,26 +17,26 @@ const Item = ({ item, index,icon }) => {
         animateHeight(newState)
     }
 
-    const animateHeight=(newState)=>{
+    const animateHeight = (newState) => {
         Animated.timing(heightAnim, {
-            toValue: newState ? Math.min(200, item.items.length * 28)+16 : 0,
+            toValue: newState ? Math.min(200, item.items.length * (heightOfItem + 4)) + 16 : 0,
             duration: 250,
             useNativeDriver: false,
             delay: 0
         }).start()
     }
-    useEffect(()=>{
+    useEffect(() => {
         animateHeight(accordionOpen)
-    },[item])
+    }, [item])
     return (
         <View key={index} style={styles.card}>
             {/* CARD HEADER */}
             <TouchableOpacity onPress={toggleAccordion}>
                 <View style={styles.cardHeader}>
-                    <Entypo name={icon.name} size={20} color={icon.color} style={{width:30}}/>
+                    <Entypo name={icon.name} size={20} color={icon.color} style={{ width: 30 }} />
                     <Text style={styles.nameContainer}>{item.categoryName || "No Name"}</Text>
                     {/* <Text style={styles.totalContainer}>${(total).toLocaleString("en-US")}</Text> */}
-                    <NumberSlides value={(total).toLocaleString("en-US")} size={30} delay={index * 270} />
+                    <NumberSlides value={(total).toLocaleString("en-US")} size={30} delay={index * 240} modalOpen={modalOpen} />
                 </View>
             </TouchableOpacity>
             {/* CARD BODY */}
@@ -53,6 +54,9 @@ const Item = ({ item, index,icon }) => {
                                     <View style={[styles.cardBar, { backgroundColor: icon.color, width: `${(item.item.value / total) * 100}%` }]}></View>
                                 </View>
                                 <Text style={styles.assetValue}>${(item.item.value).toLocaleString("en-US")}</Text>
+                                <TouchableOpacity onPress={() => setMenuOpen(true)}>
+                                    <Feather name="info" size={17} color='rgb(200, 170, 0)' style={{ marginLeft: 4 }} />
+                                </TouchableOpacity>
                             </View>
                         )
                     }}
@@ -72,9 +76,9 @@ const styles = StyleSheet.create({
         overflow: 'hidden'
     },
     cardHeader: {
-        alignItems:'center',
+        alignItems: 'center',
         paddingVertical: 19,
-        paddingHorizontal:16,
+        paddingHorizontal: 16,
         flexDirection: 'row'
     },
     nameContainer: {
@@ -96,8 +100,8 @@ const styles = StyleSheet.create({
         // maxHeight:2
     },
     assetContainer: {
-        overflow:'hidden',
-        height:24,
+        overflow: 'hidden',
+        height: heightOfItem,
         // backgroundColor:'red',
         marginVertical: 2,
         alignItems: 'center',
