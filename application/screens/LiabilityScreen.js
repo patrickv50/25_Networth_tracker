@@ -1,21 +1,46 @@
-import React from 'react'
-import { Button, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { LinearGradient } from 'expo-linear-gradient'
+import React, { useState } from 'react'
+import { Button, FlatList, Modal, StyleSheet, Text, TouchableOpacity, TouchableOpacityBase, View } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
+import Input from '../components/Input'
 import Item from '../components/Item'
 import Template from '../components/Template'
 import { add } from '../state/reducers/liabilitiesReducer'
 import theme from '../theme'
 
+const categories = ['Credit Card', 'Student Loans', 'Car Loan']
+
 const AssetScreen = () => {
+  const [modalOpen, setModalOpen] = useState(false)
+  const [category, setCategory] = useState("")
+  const [inputOpen, setInputOpen] = useState(false)
+
   const liabilities = useSelector((state) => state.liabilities)
-  const dispatch = useDispatch()
+  
   return (
     <Template>
-      <TouchableOpacity style={{ flexGrow: 0,padding:10}} onPress={() => dispatch(add({ name: "Hello", category: "categ", value: 142 }))} >
+      {/* HEADE#R */}
+      <View style={{ flexGrow: 0, paddingHorizontal: 15, flexDirection: 'row', position: 'relative', zIndex: 100, alignItems: 'center' }}>
         <Text style={styles.title}>Liabilities</Text>
-      </TouchableOpacity>
-      <View style={{ flexGrow: 1,flex:1}}>
-        {/* <FlatList
+        <TouchableOpacity style={styles.addButton} onPress={() => setModalOpen(true)}>
+          <Text style={styles.addButtonText}>+</Text>
+        </TouchableOpacity>
+        <LinearGradient
+          colors={['rgba(0,0,0,.33)', 'transparent']}
+          style={{
+            height: 25,
+            width: '120%',
+            position: 'absolute',
+            bottom: -25,
+            left: 0
+          }}
+          start={{ x: '50%', y: '0px' }}
+          end={{ x: '50%', y: '25px' }}
+        />
+      </View>
+      {/* BODY */}
+      <View style={{ flexGrow: 1, flex: 1, paddingHorizontal: 16 }}>
+        <FlatList
           showsVerticalScrollIndicator={false}
           data={liabilities}
           renderItem={({ item, index }) => {
@@ -23,19 +48,81 @@ const AssetScreen = () => {
               <Item key={index} item={item} index={index} />
             )
           }}
-          ListFooterComponent={<View style={{minHeight:100}}/>}
+          ListFooterComponent={<View style={{ minHeight: 100 }} />}
+          ListHeaderComponent={<View style={{ minHeight: 20 }} />}
         >
-        </FlatList> */}
+        </FlatList>
       </View>
+      {/* MODAL */}
+      <Modal transparent={true} animationType='fade' visible={modalOpen}>
+        <View style={styles.modal}>
+          {inputOpen ?
+            <Input category={category} setInputOpen={setInputOpen} setModalOpen={setModalOpen} add={add} />
+            :
+            <>
+              <Text style={{ color: theme.text, fontSize: 22, marginBottom: 10 }}>Select Category</Text>
+              <View style={styles.catListContainer}>
+                {categories.map((catg, index) => (
+                  <TouchableOpacity key={index} style={[styles.categoryCard, { borderColor: category === catg ? 'green' : '#000' }]} onPress={() => setCategory(catg)}>
+                    <Text style={styles.categoryCardText}>{catg}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+              <TouchableOpacity style={{ backgroundColor: '#ccc', padding: 8, borderRadius: 4, marginVertical: 8, alignItems: 'center', width: '40%' }} onPress={() => setInputOpen(true)}>
+                <Text>Next</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => setModalOpen(false)}>
+                <Text style={{ color: '#999', marginVertical: 8, padding: 4 }}>Cancel</Text>
+              </TouchableOpacity>
+            </>
+          }
+        </View>
+      </Modal>
     </Template>
   )
 }
-const styles=StyleSheet.create({
-  title:{
-    color:theme.text,
-    textAlign:'center',
-    fontSize:25,
-    fontWeight:"600"
+const styles = StyleSheet.create({
+  title: {
+    color: theme.text,
+    fontSize: 29,
+    fontWeight: "600",
+    flex: 1
+  },
+  addButton: {
+    padding: 12,
+    flex: 0,
+  },
+  addButtonText: {
+    color: theme.text,
+    fontSize: 28,
+    fontWeight: 'bold',
+    padding: 3
+  },
+  modal: {
+    zIndex: 200,
+    backgroundColor: theme.bg,
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '100%'
+  },
+  catListContainer: {
+    flexDirection: 'row',
+    // backgroundColor:'blue',
+    width: '100%',
+    flexWrap: 'wrap'
+  },
+  categoryCard: {
+    borderWidth: 1,
+    padding: 8,
+    borderRadius: 5,
+    height: 100,
+    flexGrow: 1,
+    flexBasis: 100,
+    margin: 5,
+    backgroundColor: theme.cardBg
+  },
+  categoryCardText: {
+    color: theme.text
   }
 })
 export default AssetScreen

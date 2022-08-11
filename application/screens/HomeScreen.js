@@ -1,17 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
-import { StyleSheet, Text, View, Button, TextInput, ScrollView, FlatList, TouchableOpacity, Modal, ImageBackground } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { useSelector } from 'react-redux';
 import Header from '../components/Header';
-import Input from '../components/Input';
 import Template from '../components/Template';
 import theme from '../theme';
 
-export default function HomeScreen() {
+export default function HomeScreen({ navigation }) {
   const assets = useSelector((state) => state.assets)
   const liabilities = useSelector((state) => state.liabilities)
-  const [assetWindowOpen, setAssetWindowOpen] = useState(true)
-
-  const [modalOpen, setModalOpen] = useState(false)
 
   const totAssets = useMemo(() => {
     return assets.reduce((a, b) => {
@@ -20,20 +16,19 @@ export default function HomeScreen() {
   }, [assets])
 
   const totLiabilites = useMemo(() => {
-    return liabilities.reduce((a, b) => a + b.value, 0) || 0
+    return liabilities.reduce((a, b) => {
+      return a + b.items.reduce((a, b) => a + b.value, 0)
+    }, 0) || 0
   }, [liabilities])
 
-  const netWorth = useMemo(() => {
-    return totAssets - totLiabilites
-  }, [totAssets, totLiabilites])
-  const addEntity = (entity, setNew) => {
-    setNew(state => {
-      return [...state, entity]
-    })
-  }
+  const [netWorth, setNetWorth] = useState(0)
+
   useEffect(() => {
-    console.log("HELLO ")
-  }, [])
+    const unsubscribe = navigation.addListener('focus', () => {
+      setNetWorth(totAssets - totLiabilites)
+    })
+    return unsubscribe
+  }, [navigation, totAssets, totLiabilites])
 
   const funcX = () => {
   }
@@ -46,7 +41,6 @@ export default function HomeScreen() {
         <View style={styles.cardBarContainer}>
           <View style={[styles.cardBar, { backgroundColor: 'rgb(21,238,108)', width: `${(100 * (totAssets)) / (totAssets + totLiabilites)}%` }]}></View>
           <View style={[styles.cardBar, { backgroundColor: 'rgb(255,42,82)', width: `${(100 * (totLiabilites)) / (totAssets + totLiabilites)}%` }]}></View>
-
         </View>
       </View>
       {/* MAIN ======================= */}
@@ -61,9 +55,6 @@ export default function HomeScreen() {
             <Text style={styles.cardText}>${totLiabilites.toLocaleString("en-US")}</Text>
           </View>
         </View>
-        <Modal transparent={true} animationType='slide' visible={modalOpen}>
-          {/* <Input setLiabilities={setLiabilities} addEntity={addEntity} assetWindowOpen={assetWindowOpen} setModalOpen={setModalOpen} /> */}
-        </Modal>
       </View>
       {/* END MAIN ======================= */}
 
@@ -76,11 +67,12 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   header: {
     flexGrow: 0,
-    paddingHorizontal:15,
-    paddingTop:10
+    paddingHorizontal: 25,
+    paddingTop: 20
     // backgroundColor:'red'
   },
   main: {
+    paddingHorizontal: 15,
     flexGrow: 1,
     flex: 1,
   },
@@ -103,12 +95,13 @@ const styles = StyleSheet.create({
   },
 
   cardBarContainer: {
+    marginTop: 8,
     minHeight: 8,
     overflow: 'hidden',
     borderRadius: 3,
     backgroundColor: '#444',
     width: '100%',
-    flexDirection:'row'
+    flexDirection: 'row'
   },
   cardBar: {
     minHeight: 8,

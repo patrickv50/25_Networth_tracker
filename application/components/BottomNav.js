@@ -25,7 +25,7 @@ const BottomNav = () => {
 
                 }
             }}
-            initialRouteName='Assets'
+            initialRouteName='Home'
         >
             <Tab.Screen name="Home" component={HomeScreen} options={{
                 tabBarIcon: (({ focused }) => (
