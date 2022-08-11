@@ -1,37 +1,26 @@
 import { createSlice } from '@reduxjs/toolkit'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 let initVal = [{
   categoryName: "Credit Card",
-  items: [{
-    name: "AMD",
-    value: 96005
-  }, {
-    name: "APL",
-    value: 40785
-  },{
-    name: "SPY",
-    value: 23981
-  },{
-    name: "TSLA",
-    value: 13981
-  }]
+  items: []
 },{
   categoryName:"Student Loans",
-  items:[{
-    name:"PC",
-    value:1500
-  },{
-    name:"MacBook",
-    value:650
-  }
-  ]
+  items:[]
 },{
   categoryName:"Car Loan",
-  items:[{
-    name:"GR86",
-    value:20000
-  }]
+  items:[]
 }]
+
+const storeData = async (value) => {
+  try {
+    await AsyncStorage.setItem('@liabilities', JSON.stringify(value))
+  } catch (e) {
+    // saving error
+    console.log("ERROR")
+  }
+}
+
 export const liabilitiesSlice = createSlice({
   name: 'liabilites',
   initialState: initVal,
@@ -42,8 +31,15 @@ export const liabilitiesSlice = createSlice({
       // which detects changes to a "draft state" and produces a brand new
       // immutable state based off those changes
       let index = state.findIndex((elem) => elem.categoryName === action.payload.category)
-      // console.log(index)
+      if (index === -1) {
+        return [...state, { categoryName: action.payload.category, items: [{ name: action.payload.name, value: action.payload.value }] }]
+      }
       state[index].items.push(action.payload)
+      storeData(state)
+    },
+    addInit: (state, action) => {
+      storeData(action.payload || init)
+      return action.payload || init
     },
     remove: (state, action) => {
       state.filter(x => x !== action.payload)
@@ -52,6 +48,6 @@ export const liabilitiesSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { add, remove } = liabilitiesSlice.actions
+export const { add, remove,addInit } = liabilitiesSlice.actions
 
 export default liabilitiesSlice.reducer

@@ -14,8 +14,8 @@ const NumberSlides = ({ value, size, delay }) => {
         let size2 = newVal.length
         if (size2 > size1) {
             let ar1 = new Array(size2 - size1).fill(" ")
-            
-            setCharAr(newVal)
+            ar1.push(...newVal)
+            setCharAr(ar1)
         } else {
             let ar1 = new Array(size1 - size2).fill(" ")
             ar1.push(...newVal)

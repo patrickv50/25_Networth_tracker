@@ -8,9 +8,28 @@ import Item from '../components/Item'
 import Template from '../components/Template'
 import { add, addInit } from '../state/reducers/assetsReducer'
 import theme from '../theme'
+import { Entypo } from '@expo/vector-icons';
 
-const categories = ['Cash', 'Stocks', 'Tangible', 'Intangible', 'Real estate','Misc']
-
+const categories = ['Cash', 'Stocks', 'Real Estate', 'Tangible', 'Intangible','Misc']
+const icons = [{
+  name:'wallet',
+  color:'rgb(252,199,92)'
+},{
+  name:'bar-graph',
+  color:'rgb(145,250,147)'
+},{
+  name:'home',
+  color:'rgb(132,211,219)'
+},{
+  name:'laptop',
+  color:'rgb(207,140,120)'
+},{
+  name:'book',
+  color:'rgb(239,176,129)'
+},{
+  name:'box',
+  color:'white'
+},]
 const AssetScreen = () => {
   const [modalOpen, setModalOpen] = useState(false)
   const [category, setCategory] = useState("")
@@ -41,14 +60,14 @@ const AssetScreen = () => {
       <View style={{ flexGrow: 0, paddingHorizontal: 25, flexDirection: 'row', position: 'relative', zIndex: 100, alignItems: 'center' }}>
         <Text style={styles.title}>Assets</Text>
         <TouchableOpacity style={styles.addButton} onPress={() => setModalOpen(true)}>
-          <Text style={styles.addButtonText}>+</Text>
+          <Entypo name='plus' size={30} color={theme.text} style={{width:30,fontWeight:'600'}}/>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.addButton} onPress={() => dispatch(addInit(null))}>
+        {/* <TouchableOpacity style={styles.addButton} onPress={() => dispatch(addInit(null))}>
           <Text style={styles.addButtonText}>A</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.addButton} onPress={() => dispatch(addInit(sampleData))}>
           <Text style={styles.addButtonText}>A</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <LinearGradient
           colors={['rgba(0,0,0,.33)', 'transparent']}
           style={{
@@ -69,7 +88,7 @@ const AssetScreen = () => {
           data={assets}
           renderItem={({ item, index }) => {
             return (
-              <Item key={index} item={item} index={index} add={add} />
+              <Item key={index} item={item} index={index} add={add} icon={icons[index]}/>
             )
           }}
           ListFooterComponent={<View style={{ minHeight: 100 }} />}
@@ -87,7 +106,8 @@ const AssetScreen = () => {
               <Text style={{ color: theme.text, fontSize: 22, marginBottom: 10 }}>Select Category</Text>
               <View style={styles.catListContainer}>
                 {categories.map((catg, index) => (
-                  <TouchableOpacity key={index} style={[styles.categoryCard, { borderColor: category === catg ? 'green' : '#000' }]} onPress={() => setCategory(catg)}>
+                  <TouchableOpacity key={index} style={[styles.categoryCard, { borderColor: category === catg ? icons[index].color : '#333' }]} onPress={() => setCategory(catg)}>
+                    <Entypo name={icons[index].name} size={37} color={icons[index].color} style={{width:37, marginBottom:4, fontWeight:'600'}}/>
                     <Text style={styles.categoryCardText}>{catg}</Text>
                   </TouchableOpacity>
                 ))}
@@ -142,7 +162,8 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     flexBasis: 100,
     margin: 5,
-    backgroundColor: theme.cardBg
+    alignItems:'center',
+    justifyContent:'center'
   },
   categoryCardText: {
     color: theme.text

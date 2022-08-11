@@ -4,7 +4,9 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import AssetScreen from '../screens/AssetScreen';
 import LiabilityScreen from '../screens/LiabilityScreen';
 import ProfileScreen from '../screens/ProfileScreen';
-import { Image, View } from 'react-native';
+import { Image, Text, View } from 'react-native';
+import theme from '../theme'
+import { Entypo } from '@expo/vector-icons';
 const Tab = createBottomTabNavigator();
 
 const BottomNav = () => {
@@ -29,61 +31,34 @@ const BottomNav = () => {
         >
             <Tab.Screen name="Home" component={HomeScreen} options={{
                 tabBarIcon: (({ focused }) => (
-                    <View>
-                        <Image
-                            source={require('../assets/home.png')}
-                            resizeMode='contain'
-                            style={{
-                                width: 27,
-                                height: 27,
-                                tintColor: focused ? '#fff' : "#b2b2b2"
-                            }}
-                        />
+                    <View style={{ alignItems: "center" }}>
+                        <Entypo name='list' size={30} color={theme.text} style={{ width: 30, fontWeight: '600' }} />
+                        <Text style={{ color: theme.text }}>Net Worth</Text>
                     </View>
+                    
                 ))
             }} />
             <Tab.Screen name="Assets" component={AssetScreen} options={{
                 tabBarIcon: (({ focused }) => (
-                    <View>
-                        <Image
-                            source={require('../assets/money.png')}
-                            resizeMode='contain'
-                            style={{
-                                width: 27,
-                                height: 27,
-                                tintColor: focused ? '#fff' : "#b2b2b2"
-                            }}
-                        />
+                    <View style={{ alignItems: "center" }}>
+                        <Entypo name='wallet' size={30} color={theme.text} style={{ width: 30, fontWeight: '600' }} />
+                        <Text style={{ color: theme.text }}>Asset</Text>
                     </View>
                 ))
             }} />
             <Tab.Screen name="Liability" component={LiabilityScreen} options={{
                 tabBarIcon: (({ focused }) => (
-                    <View>
-                        <Image
-                            source={require('../assets/card.png')}
-                            resizeMode='contain'
-                            style={{
-                                width: 27,
-                                height: 27,
-                                tintColor: focused ? '#fff' : "#b2b2b2"
-                            }}
-                        />
+                    <View style={{ alignItems: "center" }}>
+                        <Entypo name='credit-card' size={30} color={theme.text} style={{ width: 30, fontWeight: '600' }} />
+                        <Text style={{ color: theme.text }}>Liability</Text>
                     </View>
                 ))
             }} />
             <Tab.Screen name="Profile" component={ProfileScreen} options={{
                 tabBarIcon: (({ focused }) => (
-                    <View>
-                        <Image
-                            source={require('../assets/user.png')}
-                            resizeMode='contain'
-                            style={{
-                                width: 27,
-                                height: 27,
-                                tintColor: focused ? '#fff' : "#b2b2b2"
-                            }}
-                        />
+                    <View style={{ alignItems: "center" }}>
+                        <Entypo name='user' size={30} color={theme.text} style={{ width: 30, fontWeight: '600' }} />
+                        <Text style={{ color: theme.text }}>Profile</Text>
                     </View>
                 ))
             }} />

@@ -11,14 +11,15 @@ const Template = ({ children }) => {
                     {children}
                 </View>
                 <LinearGradient
-                    colors={['transparent', 'rgba(0,0,0,.9)']}
+                    colors={['transparent', 'rgba(0,0,0,.85)']}
                     style={{
-                        height: 170,
+                        height: 150,
                         width: '100%',
                         position: 'absolute',
                         bottom: 0,
                         zIndex: 99
                     }}
+                    locations={[.15,1]}
                     start={{ x: 'opx', y: '0px' }}
                     end={{ x: '20px', y: '20px' }}
                 />
