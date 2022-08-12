@@ -4,7 +4,7 @@ import { Animated, Button, Easing, StyleSheet, Text, View } from "react-native"
 import theme from "../theme"
 
 let side = 'right'
-
+let chars = [' ', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-', ',', '$', 'M' ]
 
 const NumberSlides = ({ value, size, delay, modalOpen }) => {
     const [chars, setCharAr] = useState(["$", "0"])
@@ -34,7 +34,7 @@ const NumberSlides = ({ value, size, delay, modalOpen }) => {
     )
 }
 
-const StaticNumber = ({ value, size, delay }) => {
+const StaticNumber = ({ value, size }) => {
     const derivedStyle = {
         height: size,
         fontSize: Math.floor(size * 2 / 3)
@@ -96,8 +96,7 @@ const Number = ({ value, size, delay, modalOpen }) => {
             delay: delay + Math.floor(Math.random() * (1000 - 100) + 100),
             easing: Easing.easing
         }).start(({ finished }) => {
-            setShowStatic(true)
-            console.log("FINISHED")
+            if(finished)setShowStatic(true)
         })
         Animated.timing(widthAnim, {
             toValue: width,
@@ -120,21 +119,9 @@ const Number = ({ value, size, delay, modalOpen }) => {
             <Animated.View style={[styles.numberSlide, {
                 top: slideAnim,
             }]}>
-                <Text style={[styles.number, derivedStyle]}> </Text>
-                <Text style={[styles.number, derivedStyle]}>0</Text>
-                <Text style={[styles.number, derivedStyle]}>1</Text>
-                <Text style={[styles.number, derivedStyle]}>2</Text>
-                <Text style={[styles.number, derivedStyle]}>3</Text>
-                <Text style={[styles.number, derivedStyle]}>4</Text>
-                <Text style={[styles.number, derivedStyle]}>5</Text>
-                <Text style={[styles.number, derivedStyle]}>6</Text>
-                <Text style={[styles.number, derivedStyle]}>7</Text>
-                <Text style={[styles.number, derivedStyle]}>8</Text>
-                <Text style={[styles.number, derivedStyle]}>9</Text>
-                <Text style={[styles.number, derivedStyle]}>-</Text>
-                <Text style={[styles.number, derivedStyle]}>,</Text>
-                <Text style={[styles.number, derivedStyle]}>$</Text>
-                <Text style={[styles.number, derivedStyle]}>M</Text>
+                {chars.map(char=>(
+                    <Text key={char} style={[derivedStyle,styles.number]}>{char}</Text>
+                ))}
             </Animated.View>
         </Animated.View>
     )

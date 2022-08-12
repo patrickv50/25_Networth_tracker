@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { LinearGradient } from 'expo-linear-gradient'
 import React, { useEffect, useState } from 'react'
-import { Button, FlatList, Modal, StyleSheet, Text, TouchableOpacity, TouchableOpacityBase, TouchableWithoutFeedback, View } from 'react-native'
+import {  FlatList, Modal, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
 import Input from '../components/Input'
 import Item from '../components/Item'
@@ -52,9 +52,7 @@ const AssetScreen = () => {
       // error reading value
     }
   }
-  useEffect(() => {
-    getData()
-  }, [])
+
   const renderItem = ({ item, index }) => {
     return (
       <View style={{ display: modalOpen ? 'none' : 'flex', }}>
@@ -71,7 +69,9 @@ const AssetScreen = () => {
   const toggleMenu = () => {
 
   }
-
+  useEffect(() => {
+    getData()
+  }, [])
   return (
     <Template>
       {/* HEADER ======== */}
@@ -80,12 +80,12 @@ const AssetScreen = () => {
         <TouchableOpacity style={styles.addButton} onPress={() => setModalOpen(true)}>
           <Entypo name='plus' size={30} color={theme.text} style={{ width: 30, fontWeight: '600' }} />
         </TouchableOpacity>
-        {/* <TouchableOpacity style={styles.addButton} onPress={() => dispatch(addInit(null))}>
+        <TouchableOpacity style={styles.addButton} onPress={() => dispatch(addInit(null))}>
           <Text style={styles.addButtonText}>A</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.addButton} onPress={() => dispatch(addInit(sampleData))}>
           <Text style={styles.addButtonText}>A</Text>
-        </TouchableOpacity> */}
+        </TouchableOpacity>
         <LinearGradient
           colors={['rgba(0,0,0,.33)', 'transparent']}
           style={{
@@ -140,7 +140,7 @@ const AssetScreen = () => {
         </View>
       </Modal>
       {/* MENU ========*/}
-      <Menu menuOpen={menuOpen} setMenuOpen={setMenuOpen}/>
+      <Menu menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
     </Template>
   )
 }
@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
   },
   modal: {
     zIndex: 200,
-    // backgroundColor: theme.bg,
+    // backgroundColor: th eme.bg,
     alignItems: 'center',
     justifyContent: 'center',
     height: '100%'
@@ -204,37 +204,37 @@ let sampleData = [{
   categoryName: "Stocks",
   items: [{
     name: "AMD",
-    value: 87600
+    value: 8700
   }, {
     name: "APL",
     value: 6300
+  }, {
+    name: "RUN",
+    value: 3300
   }]
 }, {
   categoryName: "Real Estate",
   items: [{
-    name: "Desk",
-    value: 3
+    name: "Amazon Box",
+    value: 2
   }]
 }, {
   categoryName: "Tangible",
   items: [{
-    name: "Electronics",
-    value: 12305
-  }, {
     name: "RAV4",
     value: 15000
+  }, {
+    name: "Electronics",
+    value: 13000
   }]
 }, {
   categoryName: "Intangible",
   items: [{
-    name: "Bachelor's",
+    name: "Degrees",
     value: 10
   }]
 }, {
   categoryName: "Misc",
-  items: [{
-    name: "Others",
-    value: 5000
-  }]
+  items: []
 }
 ]
