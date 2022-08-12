@@ -3,10 +3,11 @@ import { Animated, Button, FlatList, StyleSheet, Text, TouchableOpacity, Touchab
 import theme from "../theme"
 import NumberSlides from "./NumberSlides"
 import { Entypo, Feather } from '@expo/vector-icons';
+import Menu from "./Menu";
 
 const heightOfItem = 38
 
-const Item = ({ item, index, icon, modalOpen, setMenuOpen }) => {
+const Item = ({ item, index, icon, modalOpen,setMenuOpen  }) => {
     const [accordionOpen, setAccordionOpen] = useState(false)
     const total = useMemo(() => item.items.reduce((a, b) => a + b.value, 0))
     const heightAnim = useRef(new Animated.Value(0)).current
@@ -73,7 +74,8 @@ const styles = StyleSheet.create({
         marginBottom: 12,
         borderRadius: 7,
         borderColor: '#eee',
-        overflow: 'hidden'
+        // overflow: 'hidden',
+        zIndex:1,
     },
     cardHeader: {
         alignItems: 'center',

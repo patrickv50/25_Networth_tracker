@@ -9,6 +9,7 @@ import Template from '../components/Template'
 import { add, addInit } from '../state/reducers/assetsReducer'
 import theme from '../theme'
 import { Entypo, AntDesign } from '@expo/vector-icons';
+import Menu from '../components/Menu'
 
 const categories = ['Cash', 'Stocks', 'Real Estate', 'Tangible', 'Intangible', 'Misc']
 const icons = [{
@@ -34,7 +35,7 @@ const AssetScreen = () => {
   const [modalOpen, setModalOpen] = useState(false)
   const [category, setCategory] = useState("")
   const [inputOpen, setInputOpen] = useState(false)
-  const [menuOpen, setMenuOpen] = useState(true)
+  const [menuOpen, setMenuOpen] = useState(false)
 
   const dispatch = useDispatch()
   const assets = useSelector((state) => state.assets)
@@ -57,7 +58,7 @@ const AssetScreen = () => {
   const renderItem = ({ item, index }) => {
     return (
       <View style={{ display: modalOpen ? 'none' : 'flex', }}>
-        <Item item={item} index={index} add={add} icon={icons[index]} modalOpen={modalOpen} setMenuOpen={setMenuOpen} />
+        <Item item={item} index={index} add={add} icon={icons[index]} modalOpen={modalOpen} menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
       </View>
     )
   }
@@ -139,26 +140,7 @@ const AssetScreen = () => {
         </View>
       </Modal>
       {/* MENU ========*/}
-      <View style={{ display: menuOpen ? 'flex' : 'none', position: 'absolute', backgroundColor: 'white', padding: 12,width:150, top: 150, right: 0, borderTopLeftRadius: 18, borderBottomLeftRadius: 18, zIndex: 299, }}>
-        <TouchableOpacity>
-          <View style={{ padding: 6, marginVertical: 4,flexDirection:'row',backgroundColor:'orange',borderRadius:7 }}>
-            <Entypo name="edit" size={18} color='#111' style={{  marginRight: 4, fontWeight: '600' }} />
-            <Text style={{fontSize:16}}>Edit</Text>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <View style={{ padding: 6, marginVertical: 4,flexDirection:'row',backgroundColor:'orange',borderRadius:7 }}>
-            <Entypo name="trash" size={18} color='#111' style={{  marginRight: 4, fontWeight: '600' }} />
-            <Text style={{fontSize:16}}>Delete</Text>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setMenuOpen(false)}>
-        <View style={{ padding: 6, marginVertical: 4,flexDirection:'row',backgroundColor:'orange',borderRadius:7 }}>
-            <AntDesign name="close" size={18} color='#111' style={{  marginRight: 4, fontWeight: '600' }} />
-            <Text style={{fontSize:16}}>Close</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
+      <Menu menuOpen={menuOpen} setMenuOpen={setMenuOpen}/>
     </Template>
   )
 }

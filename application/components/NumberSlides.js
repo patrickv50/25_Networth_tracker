@@ -7,7 +7,7 @@ let side = 'right'
 
 
 const NumberSlides = ({ value, size, delay, modalOpen }) => {
-    const [chars, setCharAr] = useState(["$","0"])
+    const [chars, setCharAr] = useState(["$", "0"])
     useEffect(() => {
         let newVal = ('$' + (value)).split("")
         let size1 = chars.length
@@ -35,15 +35,30 @@ const NumberSlides = ({ value, size, delay, modalOpen }) => {
 }
 
 const StaticNumber = ({ value, size, delay }) => {
-
+    const derivedStyle = {
+        height: size,
+        fontSize: Math.floor(size * 2 / 3)
+    }
+    const width = useMemo(() => {
+        switch (value) {
+            case ' ': return size * (20 / 50)
+            case '0': return size * (21 / 50)
+            case '1': return size * (16 / 50)
+            case '7': return size * (23 / 50)
+            case '-': return size * (15 / 50)
+            case ',': return size * (7 / 50)
+            default: return size / 2
+        }
+    }, [value])
     return (
-        <View style={{}}>
-            <Text style={[]}>{'2'}</Text>
+        <View style={{ width: width }}>
+            <Text style={[styles.number,derivedStyle,]}>{value}</Text>
         </View>
     )
 }
 
 const Number = ({ value, size, delay, modalOpen }) => {
+    const [showStatic, setShowStatic] = useState(false)
     const derivedStyle = {
         height: size,
         fontSize: Math.floor(size * 2 / 3)
@@ -68,7 +83,9 @@ const Number = ({ value, size, delay, modalOpen }) => {
             default: return size / 2
         }
     }, [value])
-
+    useEffect(() => {
+        setShowStatic(false)
+    }, [value])
     const slideAnim = useRef(new Animated.Value(0)).current;
     const widthAnim = useRef(new Animated.Value(size * (3 / 10))).current;
     useEffect(() => {
@@ -78,7 +95,10 @@ const Number = ({ value, size, delay, modalOpen }) => {
             useNativeDriver: false,
             delay: delay + Math.floor(Math.random() * (1000 - 100) + 100),
             easing: Easing.easing
-        }).start()
+        }).start(({ finished }) => {
+            setShowStatic(true)
+            console.log("FINISHED")
+        })
         Animated.timing(widthAnim, {
             toValue: width,
             duration: 300,
@@ -87,11 +107,11 @@ const Number = ({ value, size, delay, modalOpen }) => {
         }).start()
     }, [position])
 
-    if (modalOpen) return (
+    if (showStatic) return (
         <>
+            <StaticNumber value={value} size={size} />
         </>
     )
-    // <StaticNumber value={value} size={size} />
 
 
 
