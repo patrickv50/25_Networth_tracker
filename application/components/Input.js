@@ -26,7 +26,7 @@ const Input = ({ category, setInputOpen, setModalOpen, add }) => {
         <View style={styles.form}>
             <TextInput editable={false} selectTextOnFocus={false} style={styles.input} value={category} />
             <TextInput placeholderTextColor="#999" style={styles.input} value={name} ref={nameRef} onChangeText={(x) => setName(x)} onSubmitEditing={() => valueRef.current.focus()} placeholder="Name" />
-            <TextInput placeholderTextColor="#999" returnKeyType="done" keyboardType="number-pad" ref={valueRef} onSubmitEditing={handleSubmit} style={styles.input} value={value ? (value).toLocaleString('en-US') : ''} onChangeText={x => {
+            <TextInput placeholderTextColor="#999" returnKeyType="done" keyboardType="number-pad" ref={valueRef} onSubmitEditing={handleSubmit} style={styles.input} value={String(value) ? String(value): ''} onChangeText={x => {
                 if (!x.length) setValue(0)
                 if (Number(x.replace(',', ''))) setValue(Number(x.replace(',', '')))
             }

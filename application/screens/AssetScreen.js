@@ -1,14 +1,13 @@
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import { LinearGradient } from 'expo-linear-gradient'
 import React, { useEffect, useState } from 'react'
-import {  FlatList, Modal, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native'
+import { FlatList, Modal, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
 import Input from '../components/Input'
 import Item from '../components/Item'
 import Template from '../components/Template'
-import { add, addInit } from '../state/reducers/assetsReducer'
+import { add, addInit, remove } from '../state/reducers/assetsReducer'
 import theme from '../theme'
-import { Entypo, AntDesign } from '@expo/vector-icons';
+import { Entypo,  } from '@expo/vector-icons';
 import Menu from '../components/Menu'
 
 const categories = ['Cash', 'Stocks', 'Real Estate', 'Tangible', 'Intangible', 'Misc']
@@ -36,27 +35,17 @@ const AssetScreen = () => {
   const [category, setCategory] = useState("")
   const [inputOpen, setInputOpen] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [focusedAsset, setFocusedAsset] = useState({})
 
   const dispatch = useDispatch()
-  const assets = useSelector((state) => state.assets)
 
-  const getData = async () => {
-    try {
-      const data = JSON.parse(await AsyncStorage.getItem('@assets'))
-      if (data) {
-        dispatch(addInit(data))
-      } else {
-        console.log("NO DATA")
-      }
-    } catch (e) {
-      // error reading value
-    }
-  }
+  const assets = useSelector(state => state.assets)
 
+  
   const renderItem = ({ item, index }) => {
     return (
       <View style={{ display: modalOpen ? 'none' : 'flex', }}>
-        <Item item={item} index={index} add={add} icon={icons[index]} modalOpen={modalOpen} menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
+        <Item total={assets[index].total} item={item} index={index} add={add} icon={icons[index]} modalOpen={modalOpen} menuOpen={menuOpen} setMenuOpen={setMenuOpen} setFocusedAsset={setFocusedAsset} />
       </View>
     )
   }
@@ -64,28 +53,31 @@ const AssetScreen = () => {
 
   }
   const handleDelete = () => {
-
+    setMenuOpen(false)
+    dispatch(remove(focusedAsset))
   }
   const toggleMenu = () => {
 
   }
-  useEffect(() => {
-    getData()
-  }, [])
+
   return (
     <Template>
       {/* HEADER ======== */}
-      <View style={{ flexGrow: 0, paddingHorizontal: 25, flexDirection: 'row', position: 'relative', zIndex: 100, alignItems: 'center' }}>
+      <View style={{ flexGrow: 0, paddingHorizontal: 25, paddingTop:25, flexDirection: 'row', position: 'relative', zIndex: 100, alignItems: 'center' }}>
         <Text style={styles.title}>Assets</Text>
         <TouchableOpacity style={styles.addButton} onPress={() => setModalOpen(true)}>
           <Entypo name='plus' size={30} color={theme.text} style={{ width: 30, fontWeight: '600' }} />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.addButton} onPress={() => dispatch(addInit(null))}>
+        {/* DEBUG ACTIONS ========== */}
+        {/* <TouchableOpacity style={styles.addButton} onPress={() => dispatch(addInit(null))}>
           <Text style={styles.addButtonText}>A</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.addButton} onPress={() => dispatch(addInit(sampleData))}>
-          <Text style={styles.addButtonText}>A</Text>
+          <Text style={styles.addButtonText}>B</Text>
         </TouchableOpacity>
+        <TouchableOpacity style={styles.addButton} onPress={() => dispatch(addInit(sampleData))}>
+          <Text style={styles.addButtonText}>C</Text>
+        </TouchableOpacity> */}
         <LinearGradient
           colors={['rgba(0,0,0,.33)', 'transparent']}
           style={{
@@ -95,8 +87,8 @@ const AssetScreen = () => {
             bottom: -25,
             left: 0
           }}
-          start={{ x: '50%', y: '0px' }}
-          end={{ x: '50%', y: '25px' }}
+          start={{ x: .5, y: 0 }}
+          end={{ x: .5, y: 1 }}
         />
       </View>
       {/* BODY ========*/}
@@ -112,26 +104,29 @@ const AssetScreen = () => {
         </FlatList>
       </View>
       {/* MODAL ========*/}
-      <Modal animationType="slide" transparent={true} visible={modalOpen}>
+      <Modal animationType="fade" transparent={true} visible={modalOpen}>
         <View style={styles.modal}>
           {inputOpen ?
+            // INPUT =======
             <Input category={category} setInputOpen={setInputOpen} setModalOpen={setModalOpen} add={add} />
             :
+            // CATEGORY SELECT =======
             <>
               <Text style={{ color: theme.text, fontSize: 22, marginBottom: 10 }}>Select Category</Text>
               <View style={styles.catListContainer}>
                 {categories.map((catg, index) => (
-                  <TouchableWithoutFeedback key={index} onPress={() => setCategory(catg)}>
-                    <View key={index} style={[styles.categoryCard, { borderColor: category === catg ? icons[index].color : '#333' }]} onPress={() => setCategory(catg)}>
+                  <TouchableWithoutFeedback key={index} onPress={() => {
+                    setCategory(catg)
+                    setInputOpen(true)
+                    }}>
+                    <View key={index} style={[styles.categoryCard, { borderColor: icons[index].color  }]} onPress={() => setCategory(catg)}>
                       <Entypo name={icons[index].name} size={37} color={icons[index].color} style={{ width: 37, marginBottom: 4, fontWeight: '600' }} />
                       <Text style={styles.categoryCardText}>{catg}</Text>
                     </View>
                   </TouchableWithoutFeedback>
                 ))}
               </View>
-              <TouchableOpacity style={{ backgroundColor: '#ccc', padding: 8, borderRadius: 4, marginVertical: 8, alignItems: 'center', width: '40%' }} onPress={() => setInputOpen(true)}>
-                <Text>Next</Text>
-              </TouchableOpacity>
+  
               <TouchableOpacity onPress={() => setModalOpen(false)}>
                 <Text style={{ color: '#999', marginVertical: 8, padding: 4 }}>Cancel</Text>
               </TouchableOpacity>
@@ -140,7 +135,7 @@ const AssetScreen = () => {
         </View>
       </Modal>
       {/* MENU ========*/}
-      <Menu menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
+      <Menu menuOpen={menuOpen} setMenuOpen={setMenuOpen} remove={handleDelete} />
     </Template>
   )
 }
@@ -172,7 +167,8 @@ const styles = StyleSheet.create({
   catListContainer: {
     flexDirection: 'row',
     width: '100%',
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
+    paddingHorizontal:8
   },
   categoryCard: {
     borderWidth: 1,
@@ -193,48 +189,39 @@ export default AssetScreen
 
 let sampleData = [{
   categoryName: "Cash",
-  items: [{
-    name: "Chase",
-    value: 12305
-  }, {
-    name: "Wells Fargo",
-    value: 3600
-  }]
+  total: 0,
+  top3: [],
+  items: [],
+  largest: null
 }, {
   categoryName: "Stocks",
-  items: [{
-    name: "AMD",
-    value: 8700
-  }, {
-    name: "APL",
-    value: 6300
-  }, {
-    name: "RUN",
-    value: 3300
-  }]
+  total: 0,
+  top3: [],
+  items: [],
+  largest: null
 }, {
   categoryName: "Real Estate",
-  items: [{
-    name: "Amazon Box",
-    value: 2
-  }]
+  total: 0,
+  top3: [],
+  items: [],
+  largest: null
 }, {
   categoryName: "Tangible",
-  items: [{
-    name: "RAV4",
-    value: 15000
-  }, {
-    name: "Electronics",
-    value: 13000
-  }]
+  total: 0,
+  top3: [],
+  items: [],
+  largest: null
 }, {
   categoryName: "Intangible",
-  items: [{
-    name: "Degrees",
-    value: 10
-  }]
+  total: 0,
+  top3: [],
+  items: [],
+  largest: null
 }, {
   categoryName: "Misc",
-  items: []
+  total: 0,
+  top3: [],
+  items: [],
+  largest: null
 }
 ]

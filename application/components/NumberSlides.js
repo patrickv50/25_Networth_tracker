@@ -3,125 +3,142 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import { Animated, Button, Easing, StyleSheet, Text, View } from "react-native"
 import theme from "../theme"
 
-let side = 'right'
-let chars = [' ', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-', ',', '$', 'M' ]
+let firstChar = ' '
+// let charsAr = [firstChar, '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-', ',', '.', '$', 'M']
 
-const NumberSlides = ({ value, size, delay, modalOpen }) => {
+let maxSlides = 10
+const NumberSlides = ({ value, size, delay, side,duration }) => {
     const [chars, setCharAr] = useState(["$", "0"])
     useEffect(() => {
-        let newVal = ('$' + (value)).split("")
-        let size1 = chars.length
-        let size2 = newVal.length
-        if (size2 > size1) {
-            let ar1 = new Array(size2 - size1).fill(" ")
-            ar1.push(...newVal)
-            setCharAr(ar1)
+        let stringVal = firstChar
+        if (value > 1000000) {
+            let whole = Math.floor(value / 1000000)
+            let tenth = Math.floor((value - 1000000 * whole) / 100000)
+            stringVal = (whole.toString() + "." + tenth.toString()) + 'M'
         } else {
-            let ar1 = new Array(size1 - size2).fill(" ")
-            ar1.push(...newVal)
-            setCharAr(ar1)
+            stringVal = value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
         }
 
-    }, [value])
+        let ar = ('$' + stringVal).split("")
+        let ar2 = new Array(maxSlides - ar.length).fill(firstChar)
+        if (side === 'right') {
+            ar2.push(...ar)
+            setCharAr(ar2)
+        }
+        else if (side === 'left') {
+            ar.push(...ar2)
+            setCharAr(ar)
+        }
+        else {
+            let count = Math.floor((maxSlides - ar.length) / 2)
+            let remainder = Math.ceil((maxSlides - ar.length) % 2)
+            let ar3 = new Array(count + remainder).fill(firstChar)
+            ar3.push(...ar)
+            ar3.push(...new Array(count + remainder).fill(firstChar))
+            setCharAr(ar3)
+        }
+
+    }, [value, side, size])
     return (
         <View style={[styles.numberCounter, { height: size }]} >
             {chars.map((val, index) => {
                 return (
-                    <Number modalOpen={modalOpen} key={index} value={val} index={index} size={size} delay={delay} />
+                    <Number key={index} value={val} index={index} size={size} delay={delay} duration={duration}/>
                 )
             })}
         </View>
     )
 }
-
+// STATIC NUMBER COMPONENT
 const StaticNumber = ({ value, size }) => {
     const derivedStyle = {
         height: size,
-        fontSize: Math.floor(size * 2 / 3)
+        fontSize: value === "M" ? Math.floor(size * 2 / 4) : Math.floor(size * 3 / 4),
+        paddingTop: value === "M" ? size / 3 : size / 12
     }
     const width = useMemo(() => {
-        switch (value) {
-            case ' ': return size * (20 / 50)
-            case '0': return size * (21 / 50)
-            case '1': return size * (16 / 50)
-            case '7': return size * (23 / 50)
-            case '-': return size * (15 / 50)
-            case ',': return size * (7 / 50)
-            default: return size / 2
-        }
-    }, [value])
+        return getWidth(value, size)
+    }, [value, size])
     return (
         <View style={{ width: width }}>
-            <Text style={[styles.number,derivedStyle,]}>{value}</Text>
+            <Text style={[styles.number, derivedStyle]}>{value === "M" ? "Million" : value}</Text>
         </View>
     )
 }
-
-const Number = ({ value, size, delay, modalOpen }) => {
+// DYNAMIC NUMBER COMPONENT
+const Number = ({ value, size, delay,duration }) => {
     const [showStatic, setShowStatic] = useState(false)
     const derivedStyle = {
         height: size,
-        fontSize: Math.floor(size * 2 / 3)
+        fontSize: value === "M" ? Math.floor(size * 2 / 4) : Math.floor(size * 3 / 4),
+        paddingTop: value === "M" ? size / 3 : size / 12
+
     }
     const position = useMemo(() => {
         switch (value) {
-            case ' ': return 0
+            case firstChar: return 0
             case '-': return 11
             case ',': return 12
-            case '$': return 13
+            case '.': return 13
+            case '$': return 14
+            case 'M': return 15
             default: return parseInt(value) + 1
         }
     }, [value])
+
     const width = useMemo(() => {
-        switch (value) {
-            case ' ': return size * (20 / 50)
-            case '0': return size * (21 / 50)
-            case '1': return size * (16 / 50)
-            case '7': return size * (23 / 50)
-            case '-': return size * (15 / 50)
-            case ',': return size * (7 / 50)
-            default: return size / 2
-        }
+        return getWidth(value, size)
     }, [value])
+
     useEffect(() => {
         setShowStatic(false)
     }, [value])
-    const slideAnim = useRef(new Animated.Value(0)).current;
+    const slideAnim = useRef(new Animated.Value(value==='0'?1:value==='$'?14:0)).current;
     const widthAnim = useRef(new Animated.Value(size * (3 / 10))).current;
     useEffect(() => {
         Animated.timing(slideAnim, {
             toValue: position * -size,
-            duration: 800,
+            duration: duration,
             useNativeDriver: false,
-            delay: delay + Math.floor(Math.random() * (1000 - 100) + 100),
+            delay: delay + Math.floor(Math.random() * (800 - 0) + 0),
             easing: Easing.easing
         }).start(({ finished }) => {
-            if(finished)setShowStatic(true)
+            if (finished) setShowStatic(true)
         })
         Animated.timing(widthAnim, {
             toValue: width,
-            duration: 300,
+            duration: duration/2,
             useNativeDriver: false,
             delay: delay + 500
         }).start()
     }, [position])
 
+    // SHOW STATIC NUMBER IF DONT ANIMATING
     if (showStatic) return (
-        <>
-            <StaticNumber value={value} size={size} />
-        </>
+        <StaticNumber value={value} size={size} />
     )
-
-
-
+    // ELSE SHOW ANIMATION
     else return (
         <Animated.View style={{ width: widthAnim }}>
             <Animated.View style={[styles.numberSlide, {
                 top: slideAnim,
             }]}>
-                {chars.map(char=>(
-                    <Text key={char} style={[derivedStyle,styles.number]}>{char}</Text>
-                ))}
+                <Text style={[styles.number, derivedStyle]}>{firstChar}</Text>
+                <Text style={[styles.number, derivedStyle]}>0</Text>
+                <Text style={[styles.number, derivedStyle]}>1</Text>
+                <Text style={[styles.number, derivedStyle]}>2</Text>
+                <Text style={[styles.number, derivedStyle]}>3</Text>
+                <Text style={[styles.number, derivedStyle]}>4</Text>
+                <Text style={[styles.number, derivedStyle]}>5</Text>
+                <Text style={[styles.number, derivedStyle]}>6</Text>
+                <Text style={[styles.number, derivedStyle]}>7</Text>
+                <Text style={[styles.number, derivedStyle]}>8</Text>
+                <Text style={[styles.number, derivedStyle]}>9</Text>
+                <Text style={[styles.number, derivedStyle]}>-</Text>
+                <Text style={[styles.number, derivedStyle]}>,</Text>
+                <Text style={[styles.number, derivedStyle]}>.</Text>
+                <Text style={[styles.number, derivedStyle]}>$</Text>
+                <Text style={[styles.number, derivedStyle]}>Million</Text>
             </Animated.View>
         </Animated.View>
     )
@@ -133,7 +150,7 @@ const styles = StyleSheet.create({
         overflow: 'hidden',
     },
     numberSlide: {
-        alignContent: 'center',
+        justifyContent: 'center',
         flexDirection: 'column',
         position: 'absolute',
     },
@@ -143,4 +160,21 @@ const styles = StyleSheet.create({
     },
 })
 
+
+
+// HELPER FUNCTIONS
+
+const getWidth = (value, size) => {
+    switch (value) {
+        case firstChar: return size * (20 / 46)
+        case '0': return size * (21 / 46)
+        case '1': return size * (16 / 46)
+        case '7': return size * (23 / 46)
+        case '-': return size * (15 / 46)
+        case ',': return size * (7 / 46)
+        case '.': return size * (7 / 46)
+        case 'M': return size * (67 / 46)
+        default: return size * (25 / 46)
+    }
+}
 export default NumberSlides

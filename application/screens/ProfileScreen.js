@@ -1,11 +1,13 @@
 import { Text, View } from "react-native"
+import Template from "../components/Template"
 
 const ProfileScreen = () => {
-    return (
+  return (
+    <Template>
       <View>
-          <Text>PROFILE</Text>
       </View>
-    )
-  }
-  
-  export default ProfileScreen
+    </Template>
+  )
+}
+
+export default ProfileScreen

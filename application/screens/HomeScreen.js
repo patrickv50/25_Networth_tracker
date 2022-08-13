@@ -1,59 +1,115 @@
-import { useEffect, useMemo, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { useSelector } from 'react-redux';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Animated, Easing, StyleSheet, Text, View } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
 import Header from '../components/Header';
 import Template from '../components/Template';
+import { addInit } from '../state/reducers/assetsReducer';
+import { addInit as addInitLia } from '../state/reducers/liabilitiesReducer';
 import theme from '../theme';
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export default function HomeScreen({ navigation }) {
   const assets = useSelector((state) => state.assets)
   const liabilities = useSelector((state) => state.liabilities)
+  const [dims, setDims] = useState({});
+  const dispatch = useDispatch()
 
   const totAssets = useMemo(() => {
+    if (!assets[0].top3) return 1
     return assets.reduce((a, b) => {
-      return a + b.items.reduce((a, b) => a + b.value, 0)
+      return a + (b.items.reduce((a, b) => a + b.value, 0) + b.top3.reduce((a, b) => a + b.value, 0))
     }, 0) || 0
   }, [assets])
 
   const totLiabilites = useMemo(() => {
+    if (!liabilities[0].top3) return 1
     return liabilities.reduce((a, b) => {
-      return a + b.items.reduce((a, b) => a + b.value, 0)
+      return a + (b.items.reduce((a, b) => a + b.value, 0) + b.top3.reduce((a, b) => a + b.value, 0))
     }, 0) || 0
   }, [liabilities])
 
   const [netWorth, setNetWorth] = useState(0)
 
+  const widthAnim = useRef(new Animated.Value(0)).current;
+
+  const animate = (num, num2) => {
+    Animated.timing(widthAnim, {
+      toValue: (dims.width * (num / (num + num2))),
+      duration: 2000,
+      useNativeDriver: false,
+      delay: 100,
+      easing: Easing.easing
+    }).start()
+  }
+  const getData = async () => {
+    try {
+      const data = JSON.parse(await AsyncStorage.getItem('@assets'))
+      const data2 = JSON.parse(await AsyncStorage.getItem('@liabilities'))
+
+      if (data && data[0].top3) {
+        console.log("YES DATA")
+        dispatch(addInit(data))
+      } else {
+        dispatch(addInit(false))
+        console.log("NO DATA")
+      }
+      if (data2 && data2[0].top3) {
+        console.log("YES DATA2")
+        dispatch(addInitLia(data2))
+      } else {
+        dispatch(addInitLia(false))
+        console.log("NO DATA2")
+      }
+    } catch (e) {
+      console.log(e.message)
+    }
+  }
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       setNetWorth(totAssets - totLiabilites)
+      if (dims.width) animate(totAssets,totLiabilites)
     })
     return unsubscribe
   }, [navigation, totAssets, totLiabilites])
-
-  const funcX = () => {
-  }
+  useEffect(() => {
+    if (dims.width) {
+      const timeOut = setTimeout(() => {
+        setNetWorth(totAssets - totLiabilites)
+        animate(totAssets,totLiabilites)
+      }, 500)
+      return () => clearTimeout(timeOut)
+    }
+  }, [dims])
+  useEffect(() => {
+    getData()
+  }, [])
   return (
     <Template>
-      {/* HEADER ===================== */}
-      <View style={styles.header}>
-        <Header netWorth={netWorth.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} styles={styles} />
-        {/* Intl.NumberFormat('en-us').format(netWorth)  */}
-        <View style={styles.cardBarContainer}>
-          <View style={[styles.cardBar, { backgroundColor: 'rgb(21,238,108)', width: `${(100 * (totAssets)) / (totAssets + totLiabilites)}%` }]}></View>
-          <View style={[styles.cardBar, { backgroundColor: 'rgb(255,42,82)', width: `${(100 * (totLiabilites)) / (totAssets + totLiabilites)}%` }]}></View>
+      <View style={{ flex: 1, justifyContent: 'center' }}>
+        {/* HEADER ===================== */}
+        <View style={styles.header}>
+          <Header netWorth={netWorth} styles={styles} />
+          {/* Intl.NumberFormat('en-us').format(netWorth)  */}
+          <View onLayout={(event) => {
+            const { x, y, width, height } = event.nativeEvent.layout;
+            setDims({ x, y, width, height });
+          }} style={styles.barContainer}>
+            <Animated.View style={[styles.bar, { backgroundColor: 'rgb(21,238,108)', width: widthAnim }]}></Animated.View>
+            <View style={[styles.bar]}></View>
+          </View>
+          <View style={styles.barLabel}>
+            <View style={styles.label}>
+              <Text style={styles.labelText}>${totAssets.toLocaleString("en-US")}</Text>
+              <Text style={styles.labelSubText}>Total Assets</Text>
+            </View>
+            <View style={[styles.label, { alignItems: 'flex-end' }]}>
+              <Text style={styles.labelText}>${totLiabilites.toLocaleString("en-US")}</Text>
+              <Text style={styles.labelSubText}>Total Liabilities</Text>
+            </View>
+          </View>
         </View>
-      </View>
-      {/* MAIN ======================= */}
-      <View style={styles.main}>
-        <View style={styles.cardsContainer}>
-          <View style={styles.card}>
-            <Text style={styles.cardText}>Total Assets</Text>
-            <Text style={styles.cardText}>${totAssets.toLocaleString("en-US")}</Text>
-          </View>
-          <View style={styles.card}>
-            <Text style={styles.cardText}>Total Liabilities</Text>
-            <Text style={styles.cardText}>${totLiabilites.toLocaleString("en-US")}</Text>
-          </View>
+        {/* MAIN ======================= */}
+        <View style={styles.main}>
         </View>
       </View>
       {/* END MAIN ======================= */}
@@ -66,52 +122,47 @@ export default function HomeScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   header: {
-    flexGrow: 0,
-    paddingHorizontal: 25,
-    paddingTop: 20
-    // backgroundColor:'red'
+    padding: 25
   },
   main: {
     paddingHorizontal: 15,
-    flexGrow: 1,
-    flex: 1,
+    paddingBottom: 150,
+    flex: 0,
   },
-  cardsContainer: {
+  barLabel: {
     flexDirection: 'row',
-    marginTop: 20
+    justifyContent: 'space-between',
   },
-  card: {
-    marginHorizontal: 10,
+  label: {
     alignItems: 'flex-start',
     flex: 1,
     flexGrow: 1,
-    backgroundColor: theme.cardBg,
     borderRadius: 10,
-    padding: 12
+    // padding: 12
+    // backgroundColor: 'red'
   },
-  cardText: {
+  labelText: {
     color: '#fff',
     marginBottom: 5
   },
-
-  cardBarContainer: {
-    marginTop: 8,
-    minHeight: 8,
+  labelSubText: {
+    color: '#999'
+  },
+  barContainer: {
+    backgroundColor: 'rgb(255,42,82)',
+    marginVertical: 18,
+    minHeight: 18,
     overflow: 'hidden',
-    borderRadius: 3,
-    backgroundColor: '#444',
+    borderRadius: 5,
     width: '100%',
     flexDirection: 'row'
   },
-  cardBar: {
-    minHeight: 8,
-    borderRadius: 3,
+  bar: {
+    minHeight: 18,
+    // borderRadius: 15,
   },
   mainContent: {
-    // borderWidth: 4,
-    // borderColor: 'green',
     flexGrow: 1,
-
   },
   buttonSwitch: {
     backgroundColor: theme.text,

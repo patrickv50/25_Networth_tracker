@@ -1,21 +1,24 @@
-import { useEffect, useMemo, useRef, useState } from "react"
-import { Animated, Button, Easing, StyleSheet, Text, View } from "react-native"
-import theme from "../theme"
+import {  StyleSheet, Text, View } from "react-native"
 import NumberSlides from "./NumberSlides"
 
 const Header = ({ netWorth }) => {
 
     return (
         <>
-            <View>
+            <View style={styles.header}>
+                {netWorth?<NumberSlides value={netWorth} size={52} delay={0} duration={1000} side='center'/>:<View style={{}}/>}
                 <Text style={styles.subtitle1}>Net Worth</Text>
-                <NumberSlides value={netWorth} size={40} delay={0} />
             </View>
 
         </>
     )
 }
 const styles = StyleSheet.create({
+    header:{
+        minHeight:80,
+        justifyContent:'flex-end',
+        alignItems:'center'
+    },
     subtitle1: {
         fontSize: 15,
         color: '#888'

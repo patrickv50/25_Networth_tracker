@@ -1,34 +1,51 @@
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { Animated, Button, FlatList, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native"
 import theme from "../theme"
 import NumberSlides from "./NumberSlides"
 import { Entypo, Feather } from '@expo/vector-icons';
 import Menu from "./Menu";
+import { useSelector } from "react-redux";
 
-const heightOfItem = 38
+const heightOfItem = 34
 
-const Item = ({ item, index, icon, modalOpen,setMenuOpen  }) => {
+const Item = ({ item, index, icon, modalOpen, setMenuOpen, setFocusedAsset,total }) => {
     const [accordionOpen, setAccordionOpen] = useState(false)
-    const total = useMemo(() => item.items.reduce((a, b) => a + b.value, 0))
     const heightAnim = useRef(new Animated.Value(0)).current
 
     const toggleAccordion = () => {
-        let newState = !accordionOpen
-        setAccordionOpen(newState)
-        animateHeight(newState)
+        if (accordionOpen) {
+            setAccordionOpen(false)
+            animateHeight(false)
+        }
+        else {
+            if (item.top3.length> 0) {
+                animateHeight(true)
+                setAccordionOpen(true)
+            }
+        }
     }
-
-    const animateHeight = (newState) => {
+    const toggleInfo = (obj) => {
+        setFocusedAsset(obj)
+        setMenuOpen(true)
+    }
+    const animateHeight = useCallback((x) => {
         Animated.timing(heightAnim, {
-            toValue: newState ? Math.min(200, item.items.length * (heightOfItem + 4)) + 16 : 0,
-            duration: 250,
+            toValue: x ? Math.min(200, item.top3.length * (heightOfItem + 4)) + 16 + (item.items.length > 0 ? 30 : 0) : 0,
+            duration: 400,
             useNativeDriver: false,
             delay: 0
         }).start()
-    }
+    }, [item.top3, item.items])
+
     useEffect(() => {
-        animateHeight(accordionOpen)
-    }, [item])
+        if (item.top3.length === 0) {
+            setAccordionOpen(false)
+            animateHeight(false)
+        }
+        if (accordionOpen && item.top3.length > 0) {
+            animateHeight(true)
+        }
+    }, [item.top3])
     return (
         <View key={index} style={styles.card}>
             {/* CARD HEADER */}
@@ -37,7 +54,7 @@ const Item = ({ item, index, icon, modalOpen,setMenuOpen  }) => {
                     <Entypo name={icon.name} size={20} color={icon.color} style={{ width: 30 }} />
                     <Text style={styles.nameContainer}>{item.categoryName || "No Name"}</Text>
                     {/* <Text style={styles.totalContainer}>${(total).toLocaleString("en-US")}</Text> */}
-                    <NumberSlides value={(total).toLocaleString("en-US")} size={30} delay={index * 240} modalOpen={modalOpen} />
+                    <NumberSlides value={total} size={30} delay={index * 240} modalOpen={modalOpen} side='right' duration={700}/>
                 </View>
             </TouchableOpacity>
             {/* CARD BODY */}
@@ -46,23 +63,27 @@ const Item = ({ item, index, icon, modalOpen,setMenuOpen  }) => {
             }]}>
                 <FlatList
                     showsVerticalScrollIndicator={false}
-                    data={item.items}
+                    data={item.top3}
                     renderItem={(item, index) => {
                         return (
-                            <View key={index} style={styles.assetContainer}>
+                            <View style={styles.assetContainer}>
                                 <Text style={styles.assetName} numberOfLines={1}>{item.item.name}</Text>
                                 <View style={styles.cardBarContainer}>
                                     <View style={[styles.cardBar, { backgroundColor: icon.color, width: `${(item.item.value / total) * 100}%` }]}></View>
                                 </View>
-                                <Text style={styles.assetValue}>${(item.item.value).toLocaleString("en-US")}</Text>
-                                <TouchableOpacity onPress={() => setMenuOpen(true)}>
+                                <Text style={styles.assetValue}>${(item.item.value ).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</Text>
+                                <TouchableOpacity onPress={() => toggleInfo(item.item)}>
                                     <Feather name="info" size={17} color='rgb(200, 170, 0)' style={{ marginLeft: 4 }} />
                                 </TouchableOpacity>
                             </View>
                         )
                     }}
+                    keyExtractor={(x) => x.id}
                     ListHeaderComponent={<View style={{ minHeight: 8 }} />}
                 />
+                {item.top3.length+ item.items.length > 3 && <TouchableOpacity>
+                    <Text style={{ color: theme.text, padding: 4, textAlign: 'center', textDecorationLine: 'underline' }}>View All {item.items.length + 3} </Text>
+                </TouchableOpacity>}
             </Animated.View>
         </View>
     )
@@ -75,7 +96,7 @@ const styles = StyleSheet.create({
         borderRadius: 7,
         borderColor: '#eee',
         // overflow: 'hidden',
-        zIndex:1,
+        zIndex: 1,
     },
     cardHeader: {
         alignItems: 'center',

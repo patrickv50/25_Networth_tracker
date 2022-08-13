@@ -6,10 +6,13 @@ import LiabilityScreen from '../screens/LiabilityScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import { Image, Text, View } from 'react-native';
 import theme from '../theme'
-import { Feather,MaterialIcons,MaterialCommunityIcons } from '@expo/vector-icons';
+import { Feather, Entypo, MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 const Tab = createBottomTabNavigator();
 
+let focusedColor = '#da7'
+let unfocusedColor = '#494949'
 const BottomNav = () => {
+
     return (
         <Tab.Navigator
             screenOptions={{
@@ -24,44 +27,46 @@ const BottomNav = () => {
                     borderWidth: 0,
                     borderTopWidth: 0,
                     zIndex: 500,
-
+                    maxWidth: 900,
                 }
             }}
             initialRouteName='Home'
         >
             <Tab.Screen name="Home" component={HomeScreen} options={{
-                tabBarIcon: (({ focused }) => (
+                tabBarIcon: (({ focused }) =>
+                (
                     <View style={{ alignItems: "center" }}>
                         {/* <Entypo name='list' size={30} color={theme.text} style={{ width: 30, fontWeight: '600' }} /> */}
-                        <MaterialIcons name="grid-view" size={30} color={theme.text} style={{ width: 30, fontWeight: '600' }}/>
-                        <Text style={{ color: theme.text }}>Net Worth</Text>
+                        <MaterialIcons name="grid-view" size={30} color={focused?focusedColor:unfocusedColor} style={{ width: 30, fontWeight: '600' }} />
+                        <Text style={[{ color: focused ? focusedColor : unfocusedColor },
+                        ]}>Net Worth</Text>
                     </View>
-                    
+
                 ))
             }} />
             <Tab.Screen name="Assets" component={AssetScreen} options={{
                 tabBarIcon: (({ focused }) => (
                     <View style={{ alignItems: "center" }}>
-                        <MaterialIcons name="attach-money" size={30} color={theme.text} style={{ width: 30, fontWeight: '600' }}/>
-                        {/* <Entypo name='wallet' size={30} color={theme.text} style={{ width: 30, fontWeight: '600' }} /> */}
-                        <Text style={{ color: theme.text }}>Asset</Text>
+                        <MaterialIcons name="attach-money" size={30} color={focused?focusedColor:unfocusedColor} style={{ width: 30, fontWeight: '600' }} />
+                        {/* <Entypo name='wallet' size={30} color={unfocusedColor} style={{ width: 30, fontWeight: '600' }} /> */}
+                        <Text style={{ color: focused ? focusedColor : unfocusedColor }}>Asset</Text>
                     </View>
                 ))
             }} />
             <Tab.Screen name="Liability" component={LiabilityScreen} options={{
                 tabBarIcon: (({ focused }) => (
                     <View style={{ alignItems: "center" }}>
-                        <MaterialCommunityIcons name="bank-minus" size={30} color={theme.text} style={{ width: 30, fontWeight: '600' }}/>
-                        {/* <Entypo name='credit-card' size={30} color={theme.text} style={{ width: 30, fontWeight: '600' }} /> */}
-                        <Text style={{ color: theme.text }}>Liability</Text>
+                        <MaterialCommunityIcons name="bank-minus" size={30} color={focused?focusedColor:unfocusedColor} style={{ width: 30, fontWeight: '600' }} />
+                        {/* <Entypo name='credit-card' size={30} color={unfocusedColor} style={{ width: 30, fontWeight: '600' }} /> */}
+                        <Text style={{ color: focused ? focusedColor : unfocusedColor }}>Liability</Text>
                     </View>
                 ))
             }} />
             <Tab.Screen name="Profile" component={ProfileScreen} options={{
                 tabBarIcon: (({ focused }) => (
                     <View style={{ alignItems: "center" }}>
-                        <Feather name="user" size={30} color={theme.text} style={{ width: 30, fontWeight: '600' }}/>
-                        <Text style={{ color: theme.text }}>Profile</Text>
+                        <Entypo name="area-graph" size={30} color={focused?focusedColor:unfocusedColor} style={{ width: 30, fontWeight: '600' }} />
+                        <Text style={{ color: focused ? focusedColor : unfocusedColor }}>Projection</Text>
                     </View>
                 ))
             }} />
