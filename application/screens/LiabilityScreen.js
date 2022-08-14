@@ -14,7 +14,7 @@ import theme from '../theme'
 import { Entypo, } from '@expo/vector-icons';
 import Menu from '../components/Menu'
 
-const categories = ['Credit Card', 'Student Loans', 'Car Loan']
+const categories = ['Credit Card', 'Student Loans', 'Car Loan', 'Mortage']
 const icons = [{
   name: 'credit-card',
   color: 'rgb(256,170,110)'
@@ -25,15 +25,10 @@ const icons = [{
   name: 'gauge',
   color: 'rgb(211,70,80)'
 }, {
-  name: 'laptop',
-  color: 'rgb(207,140,120)'
-}, {
-  name: 'book',
-  color: 'rgb(239,176,129)'
-}, {
-  name: 'box',
-  color: 'white'
-},]
+  name: 'home',
+  color: 'rgb(222,211,150)'
+},
+]
 const LiabilityScreen = () => {
   const [modalOpen, setModalOpen] = useState(false)
   const [category, setCategory] = useState("")
@@ -119,7 +114,12 @@ const LiabilityScreen = () => {
               <Text style={{ color: theme.text, fontSize: 22, marginBottom: 10 }}>Select Category</Text>
               <View style={styles.catListContainer}>
                 {categories.map((catg, index) => (
-                  <TouchableWithoutFeedback key={index} onPress={() => setCategory(catg)}>
+                  <TouchableWithoutFeedback key={index} onPress={() => {
+                    setCategory({
+                      name: catg,
+                      icon: icons[index]
+                    })
+                  }}>
                     <View key={index} style={[styles.categoryCard, { borderColor: category === catg ? icons[index].color : '#333' }]} onPress={() => setCategory(catg)}>
                       <Entypo name={icons[index].name} size={37} color={icons[index].color} style={{ width: 37, marginBottom: 4, fontWeight: '600' }} />
                       <Text style={styles.categoryCardText}>{catg}</Text>

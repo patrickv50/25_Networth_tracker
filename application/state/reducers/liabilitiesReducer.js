@@ -48,7 +48,14 @@ export const liabilities = createSlice({
       let index = state.findIndex((elem) => elem.categoryName === action.payload.category)
       // If not then create a new one
       if (index === -1) {
-        return [...state, { categoryName: action.payload.category, items: { name: action.payload.name, value: action.payload.value } }]
+        return [...state, { 
+          categoryName: action.payload.category, 
+          items: [],
+          top3:[action.payload],
+          total:action.payload.value,
+          largest:action.payload
+        },
+        ]
       }
       // Else push payload
       if (state[index].top3.length < 3) {

@@ -116,10 +116,13 @@ const AssetScreen = () => {
               <View style={styles.catListContainer}>
                 {categories.map((catg, index) => (
                   <TouchableWithoutFeedback key={index} onPress={() => {
-                    setCategory(catg)
+                    setCategory({
+                      name:catg,
+                      icon:icons[index]
+                    })
                     setInputOpen(true)
                     }}>
-                    <View key={index} style={[styles.categoryCard, { borderColor: icons[index].color  }]} onPress={() => setCategory(catg)}>
+                    <View key={index} style={[styles.categoryCard, { borderColor: icons[index].color  }]}>
                       <Entypo name={icons[index].name} size={37} color={icons[index].color} style={{ width: 37, marginBottom: 4, fontWeight: '600' }} />
                       <Text style={styles.categoryCardText}>{catg}</Text>
                     </View>

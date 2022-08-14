@@ -1,7 +1,8 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import theme from '../theme'
 import { useDispatch } from 'react-redux'
+import { Entypo, } from '@expo/vector-icons';
 const Input = ({ category, setInputOpen, setModalOpen, add }) => {
     const [name, setName] = useState("")
     const [value, setValue] = useState(0)
@@ -14,7 +15,7 @@ const Input = ({ category, setInputOpen, setModalOpen, add }) => {
         setInputOpen(false)
         setModalOpen(false)
         dispatch(add({
-            name, value, category
+            name, value, category: category.name
         }))
     }
 
@@ -22,23 +23,30 @@ const Input = ({ category, setInputOpen, setModalOpen, add }) => {
         setModalOpen(false)
         setInputOpen(false)
     }
+    useEffect(()=>{
+        nameRef.current.focus()
+    },[category])
     return (
         <View style={styles.form}>
-            <TextInput editable={false} selectTextOnFocus={false} style={styles.input} value={category} />
+            <View style={{ flexDirection: 'row',justifyContent:'center',alignItems:'center',marginBottom:8 }}>
+                <Entypo name={category.icon.name} size={20} color={category.icon.color} style={{ width: 25, marginBottom: 4, fontWeight: '600' }} />
+                <Text style={{fontSize:18,color:theme.text}}>{category.name}</Text>
+            </View>
+
             <TextInput placeholderTextColor="#999" style={styles.input} value={name} ref={nameRef} onChangeText={(x) => setName(x)} onSubmitEditing={() => valueRef.current.focus()} placeholder="Name" />
-            <TextInput placeholderTextColor="#999" returnKeyType="done" keyboardType="number-pad" ref={valueRef} onSubmitEditing={handleSubmit} style={styles.input} value={String(value) ? String(value): ''} onChangeText={x => {
+            <TextInput placeholderTextColor="#999" returnKeyType="done" keyboardType="number-pad" ref={valueRef} onSubmitEditing={handleSubmit} style={styles.input} value={String(value) ? String(value) : ''} onChangeText={x => {
                 if (!x.length) setValue(0)
                 if (Number(x.replace(',', ''))) setValue(Number(x.replace(',', '')))
             }
             } placeholder="Value" />
-            <TouchableOpacity style={{alignSelf:'flex-start',marginBottom:6}} onPress={handleSubmit}>
-                <Text style={{fontSize:12,color:'#888',marginVertical:4}}>{"Advance Fields >"}</Text>
+            <TouchableOpacity style={{ alignSelf: 'flex-start', marginBottom: 6 }} onPress={handleSubmit}>
+                <Text style={{ fontSize: 12, color: '#888', marginVertical: 4 }}>{"Advance Fields >"}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.addButton} onPress={handleSubmit}>
                 <Text style={styles.addButtonText}>Add</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.addButton,{backgroundColor:'transparent'}]} onPress={handleCancel}>
-                <Text style={[styles.addButtonText,{fontSize:15}]}>Cancel</Text>
+            <TouchableOpacity style={[styles.addButton, { backgroundColor: 'transparent' }]} onPress={handleCancel}>
+                <Text style={[styles.addButtonText, { fontSize: 15 }]}>Cancel</Text>
             </TouchableOpacity>
         </View>
     )
@@ -71,8 +79,8 @@ const styles = StyleSheet.create({
         width: '100%'
     },
     addButton: {
-        alignSelf:'flex-end',
-        width:150,
+        alignSelf: 'flex-end',
+        width: 150,
         backgroundColor: '#333',
         marginVertical: 4,
         borderRadius: 4,
@@ -85,7 +93,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: '400',
         padding: 3,
-        textAlign:'center'
+        textAlign: 'center'
     },
 
 })

@@ -54,7 +54,7 @@ const Item = ({ item, index, icon, modalOpen, setMenuOpen, setFocusedAsset,total
                     <Entypo name={icon.name} size={20} color={icon.color} style={{ width: 30 }} />
                     <Text style={styles.nameContainer}>{item.categoryName || "No Name"}</Text>
                     {/* <Text style={styles.totalContainer}>${(total).toLocaleString("en-US")}</Text> */}
-                    <NumberSlides value={total} size={30} delay={index * 240} modalOpen={modalOpen} side='right' duration={700}/>
+                    <NumberSlides value={total} size={30} fontWeight='normal' delay={index * 240} modalOpen={modalOpen} side='right' duration={700}/>
                 </View>
             </TouchableOpacity>
             {/* CARD BODY */}
