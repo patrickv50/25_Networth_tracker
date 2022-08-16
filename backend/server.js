@@ -1,6 +1,8 @@
 const express = require('express')
 const redis = require('redis')
 const finnhub = require('finnhub');
+const {searchListing} = require('./redis/redis.js')
+
 
 const PORT = process.env.PORT || 5000
 const REDIS_PORT = process.env.PORT || 6379
@@ -11,16 +13,10 @@ api_key.apiKey = "cbss4fiad3i9sd7nj8d0" // Replace this
 const finnhubClient = new finnhub.DefaultApi()
 const app = express()
 
-
-// // Cache middleare
-// const cache = async (req, res, next) => {
-//     await client.connect()
-//     const { ticker } = req.params
-//     const data = await client.get(ticker.toUpperCase(), (er, data) => {
-//         console.log(data.c)
-//     })
-//     console.log(data)
-// }
+app.get('/search/:q',async(req,res)=>{
+    let q=req.params.q
+    res.send(await searchListing(q))
+})
 
 app.get('/quote/:ticker', async (req, res) => {
     try {
@@ -51,7 +47,4 @@ app.get('/quote/:ticker', async (req, res) => {
     }
 })
 
-
-
-
-app.listen(5001, () => console.log("SERVER UP"))
+app.listen(5002, () => console.log("SERVER UP"))
