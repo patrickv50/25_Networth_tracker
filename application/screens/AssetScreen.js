@@ -7,7 +7,7 @@ import Item from '../components/Item'
 import Template from '../components/Template'
 import { add, addInit, remove } from '../state/reducers/assetsReducer'
 import theme from '../theme'
-import { Entypo,  } from '@expo/vector-icons';
+import { Entypo, } from '@expo/vector-icons';
 import Menu from '../components/Menu'
 
 const categories = ['Cash', 'Stocks', 'Real Estate', 'Tangible', 'Intangible', 'Misc']
@@ -41,7 +41,7 @@ const AssetScreen = () => {
 
   const assets = useSelector(state => state.assets)
 
-  
+
   const renderItem = ({ item, index }) => {
     return (
       <View style={{ display: modalOpen ? 'none' : 'flex', }}>
@@ -63,21 +63,16 @@ const AssetScreen = () => {
   return (
     <Template>
       {/* HEADER ======== */}
-      <View style={{ flexGrow: 0, paddingHorizontal: 25, paddingTop:25, flexDirection: 'row', position: 'relative', zIndex: 100, alignItems: 'center' }}>
+      <View style={{ flexGrow: 0, paddingHorizontal: 25, paddingTop: 25, flexDirection: 'row', position: 'relative', zIndex: 100, alignItems: 'center' }}>
         <Text style={styles.title}>Assets</Text>
         <TouchableOpacity style={styles.addButton} onPress={() => setModalOpen(true)}>
           <Entypo name='plus' size={30} color={theme.text} style={{ width: 30, fontWeight: '600' }} />
         </TouchableOpacity>
         {/* DEBUG ACTIONS ========== */}
-        {/* <TouchableOpacity style={styles.addButton} onPress={() => dispatch(addInit(null))}>
+        <TouchableOpacity style={styles.addButton} onPress={() => dispatch(addInit(null))}>
           <Text style={styles.addButtonText}>A</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.addButton} onPress={() => dispatch(addInit(sampleData))}>
-          <Text style={styles.addButtonText}>B</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.addButton} onPress={() => dispatch(addInit(sampleData))}>
-          <Text style={styles.addButtonText}>C</Text>
-        </TouchableOpacity> */}
+        {/* DEBUG ACTIONS ========== */}
         <LinearGradient
           colors={['rgba(0,0,0,.33)', 'transparent']}
           style={{
@@ -104,7 +99,7 @@ const AssetScreen = () => {
         </FlatList>
       </View>
       {/* MODAL ========*/}
-      <Modal animationType="fade" transparent={true} visible={modalOpen}>
+      <Modal animationType="fade" transparent={false} visible={modalOpen}>
         <View style={styles.modal}>
           {inputOpen ?
             // INPUT =======
@@ -117,19 +112,19 @@ const AssetScreen = () => {
                 {categories.map((catg, index) => (
                   <TouchableWithoutFeedback key={index} onPress={() => {
                     setCategory({
-                      name:catg,
-                      icon:icons[index]
+                      name: catg,
+                      icon: icons[index]
                     })
                     setInputOpen(true)
-                    }}>
-                    <View key={index} style={[styles.categoryCard, { borderColor: icons[index].color  }]}>
+                  }}>
+                    <View key={index} style={[styles.categoryCard, { borderColor: icons[index].color }]}>
                       <Entypo name={icons[index].name} size={37} color={icons[index].color} style={{ width: 37, marginBottom: 4, fontWeight: '600' }} />
                       <Text style={styles.categoryCardText}>{catg}</Text>
                     </View>
                   </TouchableWithoutFeedback>
                 ))}
               </View>
-  
+
               <TouchableOpacity onPress={() => setModalOpen(false)}>
                 <Text style={{ color: '#999', marginVertical: 8, padding: 4 }}>Cancel</Text>
               </TouchableOpacity>
@@ -162,7 +157,7 @@ const styles = StyleSheet.create({
   },
   modal: {
     zIndex: 200,
-    // backgroundColor: th eme.bg,
+    backgroundColor: theme.bg,
     alignItems: 'center',
     justifyContent: 'center',
     height: '100%'
@@ -171,7 +166,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     width: '100%',
     flexWrap: 'wrap',
-    paddingHorizontal:8
+    paddingHorizontal: 8
   },
   categoryCard: {
     borderWidth: 1,

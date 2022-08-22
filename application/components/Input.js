@@ -3,6 +3,7 @@ import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-nativ
 import theme from '../theme'
 import { useDispatch } from 'react-redux'
 import { Entypo, } from '@expo/vector-icons';
+import StockInput from './input-screens/StockInput';
 const Input = ({ category, setInputOpen, setModalOpen, add }) => {
     const [name, setName] = useState("")
     const [value, setValue] = useState(0)
@@ -23,10 +24,9 @@ const Input = ({ category, setInputOpen, setModalOpen, add }) => {
         setModalOpen(false)
         setInputOpen(false)
     }
-    useEffect(()=>{
-        nameRef.current.focus()
-    },[category])
-    return (
+
+    if (category.name==='Stocks')return<StockInput setInputOpen={setInputOpen} setModalOpen={setModalOpen} add={add} />
+    else return (
         <View style={styles.form}>
             <View style={{ flexDirection: 'row',justifyContent:'center',alignItems:'center',marginBottom:8 }}>
                 <Entypo name={category.icon.name} size={20} color={category.icon.color} style={{ width: 25, marginBottom: 4, fontWeight: '600' }} />

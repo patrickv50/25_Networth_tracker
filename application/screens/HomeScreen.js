@@ -12,7 +12,10 @@ export default function HomeScreen({ navigation }) {
   const assets = useSelector((state) => state.assets)
   const liabilities = useSelector((state) => state.liabilities)
   const [dims, setDims] = useState({});
+  const [netWorth, setNetWorth] = useState(0)
   const dispatch = useDispatch()
+
+  const widthAnim = useRef(new Animated.Value(0)).current;
 
   const totAssets = useMemo(() => {
     if (!assets[0].top3) return 1
@@ -27,10 +30,6 @@ export default function HomeScreen({ navigation }) {
       return a + (b.items.reduce((a, b) => a + b.value, 0) + b.top3.reduce((a, b) => a + b.value, 0))
     }, 0) || 0
   }, [liabilities])
-
-  const [netWorth, setNetWorth] = useState(0)
-
-  const widthAnim = useRef(new Animated.Value(0)).current;
 
   const animate = (num, num2) => {
     Animated.timing(widthAnim, {
@@ -67,19 +66,16 @@ export default function HomeScreen({ navigation }) {
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       setNetWorth(totAssets - totLiabilites)
-      if (dims.width) animate(totAssets,totLiabilites)
+      if (dims.width) animate(totAssets, totLiabilites)
     })
     return unsubscribe
   }, [navigation, totAssets, totLiabilites])
   useEffect(() => {
     if (dims.width) {
-      const timeOut = setTimeout(() => {
-        setNetWorth(totAssets - totLiabilites)
-        animate(totAssets,totLiabilites)
-      }, 500)
-      return () => clearTimeout(timeOut)
+      setNetWorth(totAssets - totLiabilites)
+      animate(totAssets, totLiabilites)
     }
-  }, [dims])
+  }, [dims, totAssets, totLiabilites])
   useEffect(() => {
     getData()
   }, [])

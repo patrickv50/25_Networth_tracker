@@ -7,7 +7,7 @@ let firstChar = ' '
 // let charsAr = [firstChar, '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-', ',', '.', '$', 'M']
 
 let maxSlides = 10
-const NumberSlides = ({ value, size, delay, side,duration,fontWeight }) => {
+const NumberSlides = ({ value, size, delay, side,duration }) => {
     const [chars, setCharAr] = useState(["$", "0"])
     useEffect(() => {
         let stringVal = firstChar
@@ -43,16 +43,15 @@ const NumberSlides = ({ value, size, delay, side,duration,fontWeight }) => {
         <View style={[styles.numberCounter, { height: size }]} >
             {chars.map((val, index) => {
                 return (
-                    <Number fontWeight={fontWeight} key={index} value={val} index={index} size={size} delay={delay} duration={duration}/>
+                    <Number key={index} value={val} index={index} size={size} delay={delay} duration={duration}/>
                 )
             })}
         </View>
     )
 }
 // STATIC NUMBER COMPONENT
-const StaticNumber = ({ value, size,fontWeight }) => {
+const StaticNumber = ({ value, size }) => {
     const derivedStyle = {
-        fontWeight:fontWeight,
         height: size,
         fontSize: value === "M" ? Math.floor(size * 2 / 4) : Math.floor(size * 3 / 4),
         paddingTop: value === "M" ? size / 3 : size / 12
@@ -67,10 +66,9 @@ const StaticNumber = ({ value, size,fontWeight }) => {
     )
 }
 // DYNAMIC NUMBER COMPONENT
-const Number = ({ value, size, delay,duration, fontWeight}) => {
+const Number = ({ value, size, delay,duration }) => {
     const [showStatic, setShowStatic] = useState(false)
     const derivedStyle = {
-        fontWeight:fontWeight,
         height: size,
         fontSize: value === "M" ? Math.floor(size * 2 / 4) : Math.floor(size * 3 / 4),
         paddingTop: value === "M" ? size / 3 : size / 12
@@ -117,7 +115,7 @@ const Number = ({ value, size, delay,duration, fontWeight}) => {
 
     // SHOW STATIC NUMBER IF DONT ANIMATING
     if (showStatic) return (
-        <StaticNumber value={value} size={size} fontWeight={fontWeight} />
+        <StaticNumber value={value} size={size} />
     )
     // ELSE SHOW ANIMATION
     else return (
@@ -175,7 +173,7 @@ const getWidth = (value, size) => {
         case '-': return size * (15 / 46)
         case ',': return size * (7 / 46)
         case '.': return size * (7 / 46)
-        case 'M': return size * (69 / 46)
+        case 'M': return size * (67 / 46)
         default: return size * (25 / 46)
     }
 }
