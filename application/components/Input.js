@@ -4,6 +4,7 @@ import theme from '../theme'
 import { useDispatch } from 'react-redux'
 import { Entypo, } from '@expo/vector-icons';
 import StockInput from './input-screens/StockInput';
+import CashInput from './input-screens/CashInput';
 const Input = ({ category, setInputOpen, setModalOpen, add }) => {
     const [name, setName] = useState("")
     const [value, setValue] = useState("")
@@ -13,12 +14,12 @@ const Input = ({ category, setInputOpen, setModalOpen, add }) => {
     const dispatch = useDispatch()
 
     const handleSubmit = () => {
-        let val=Number(value.replace(",",""))
-        if(!val)return
+        let val = Number(value.replace(",", ""))
+        if (!val) return
         setInputOpen(false)
         setModalOpen(false)
         dispatch(add({
-            name, value:val, category: category.name
+            name, value: val, category: category.name
         }))
     }
 
@@ -27,12 +28,13 @@ const Input = ({ category, setInputOpen, setModalOpen, add }) => {
         setInputOpen(false)
     }
 
-    if (category.name==='Stocks')return<StockInput setInputOpen={setInputOpen} setModalOpen={setModalOpen} add={add} />
+    if (category.name === 'Stocks') return <StockInput setInputOpen={setInputOpen} setModalOpen={setModalOpen} add={add} />
+    else if (category.name === 'Cash') return <CashInput setInputOpen={setInputOpen} setModalOpen={setModalOpen} add={add} />
     else return (
         <View style={styles.form}>
-            <View style={{ flexDirection: 'row',justifyContent:'center',alignItems:'center',marginBottom:8 }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginBottom: 8 }}>
                 <Entypo name={category.icon.name} size={20} color={category.icon.color} style={{ width: 25, marginBottom: 4, fontWeight: '600' }} />
-                <Text style={{fontSize:18,color:theme.text}}>{category.name}</Text>
+                <Text style={{ fontSize: 18, color: theme.text }}>{category.name}</Text>
             </View>
 
             <TextInput placeholderTextColor="#999" style={styles.input} value={name} ref={nameRef} onChangeText={(x) => setName(x)} onSubmitEditing={() => valueRef.current.focus()} placeholder="Name" />
