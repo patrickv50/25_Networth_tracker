@@ -31,7 +31,7 @@ const addData = () => {
     })
     parser.on('end', () => {
         console.log(records.length)
-        injectToRedis(records.slice(1, 10))
+        injectToRedis(records.slice(1, records.length))
     })
     // parser.end()
     fs.createReadStream(__dirname + '/redis/nasdaq-listed.csv').pipe(parser)
