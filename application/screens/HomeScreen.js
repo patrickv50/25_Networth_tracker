@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Animated, Easing, StyleSheet, Text, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import Header from '../components/Header';
@@ -31,34 +31,36 @@ export default function HomeScreen({ navigation }) {
     }, 0) || 0
   }, [liabilities])
 
-  const animate = (num, num2) => {
+  const animate = useCallback((num, num2) => {
     Animated.timing(widthAnim, {
-      toValue: (dims.width * (num / (num + num2))),
+      toValue: dims.width&&num?(dims.width * (num / (num + num2))):0,
       duration: 2000,
       useNativeDriver: false,
       delay: 100,
       easing: Easing.easing
     }).start()
-  }
+  }, [dims])
   const getData = async () => {
     try {
-      const data = JSON.parse(await AsyncStorage.getItem('@assets'))
-      const data2 = JSON.parse(await AsyncStorage.getItem('@liabilities'))
+      dispatch(addInit(false))
+      dispatch(addInitLia(false))
+      // const data = JSON.parse(await AsyncStorage.getItem('@assets'))
+      // const data2 = JSON.parse(await AsyncStorage.getItem('@liabilities'))
 
-      if (data && data[0].top3) {
-        console.log("YES DATA")
-        dispatch(addInit(data))
-      } else {
-        dispatch(addInit(false))
-        console.log("NO DATA")
-      }
-      if (data2 && data2[0].top3) {
-        console.log("YES DATA2")
-        dispatch(addInitLia(data2))
-      } else {
-        dispatch(addInitLia(false))
-        console.log("NO DATA2")
-      }
+      // if (data && data[0].top3) {
+      //   console.log("YES DATA")
+      //   dispatch(addInit(data))
+      // } else {
+      //   dispatch(addInit(false))
+      //   console.log("NO DATA")
+      // }
+      // if (data2 && data2[0].top3) {
+      //   console.log("YES DATA2")
+      //   dispatch(addInitLia(data2))
+      // } else {
+      //   dispatch(addInitLia(false))
+      //   console.log("NO DATA2")
+      // }
     } catch (e) {
       console.log(e.message)
     }
@@ -66,16 +68,18 @@ export default function HomeScreen({ navigation }) {
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       setNetWorth(totAssets - totLiabilites)
+      console.log(dims)
       if (dims.width) animate(totAssets, totLiabilites)
     })
     return unsubscribe
   }, [navigation, totAssets, totLiabilites])
-  useEffect(() => {
-    if (dims.width) {
-      setNetWorth(totAssets - totLiabilites)
-      animate(totAssets, totLiabilites)
-    }
-  }, [dims, totAssets, totLiabilites])
+  // useEffect(() => {
+  //   if (dims.width) {
+  //     console.log(totAssets, totLiabilites)
+  //     setNetWorth(totAssets - totLiabilites)
+  //     animate(totAssets, totLiabilites)
+  //   }
+  // }, [dims, totAssets, totLiabilites])
   useEffect(() => {
     getData()
   }, [])
@@ -87,6 +91,7 @@ export default function HomeScreen({ navigation }) {
           <Header netWorth={netWorth} styles={styles} />
           {/* Intl.NumberFormat('en-us').format(netWorth)  */}
           <View onLayout={(event) => {
+            console.log(event.nativeEvent.layout)
             const { x, y, width, height } = event.nativeEvent.layout;
             setDims({ x, y, width, height });
           }} style={styles.barContainer}>

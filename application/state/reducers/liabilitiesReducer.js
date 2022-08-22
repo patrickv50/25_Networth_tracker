@@ -21,7 +21,13 @@ let init = [{
   top3: [],
   items: [],
   largest: null
-},
+}, {
+  categoryName: "Mortage",
+  total:0,
+  top3:[],
+  items:[],
+  largest:null
+}
 ]
 const storeData = async (value) => {
   try {
