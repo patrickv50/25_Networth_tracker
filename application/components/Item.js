@@ -31,7 +31,7 @@ const Item = ({ item, index, icon, modalOpen, setMenuOpen, setFocusedAsset, tota
     const animateHeight = useCallback((x) => {
         Animated.timing(heightAnim, {
             toValue: x ? Math.min(200, item.top3.length * (heightOfItem + 4)) + 16 + (item.items.length > 0 ? 30 : 0) : 0,
-            duration: 400,
+            duration: 200,
             useNativeDriver: false,
             delay: 0
         }).start()
@@ -95,13 +95,12 @@ const AssetContainer = ({ item, index, toggleInfo, icon, total, accordionOpen })
     const animateHeight = useCallback((x,instant) => {
         Animated.timing(containerTop, {
             toValue: x,
-            duration: instant?0:600,
+            duration: instant?0:400,
             useNativeDriver: false,
-            delay: (instant?2:item.index) * 100
+            delay: (instant?2:item.index+.5) * 100
         }).start()
     }, [item.top3, item.items, index,accordionOpen])
     useEffect(() => {
-        console.log(accordionOpen)
         if(accordionOpen)animateHeight(0)
         else animateHeight(40,true)
     }, [accordionOpen])

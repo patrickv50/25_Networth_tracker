@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState } from 'react'
-import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { Button, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import theme from '../../theme'
 import { useDispatch } from 'react-redux'
 import { Entypo, } from '@expo/vector-icons';
@@ -15,15 +15,23 @@ const StockInput = ({ setInputOpen, setModalOpen, add }) => {
     })
     const [shares, setShares] = useState(0)
     const nameRef = useRef()
+    let controller = useRef(new AbortController())
     const total = useMemo(() => {
         return stock.price * shares
     }, [stock, shares])
     const dispatch = useDispatch()
 
-    const fetchData = async (x) => {
-        await axios.get('https://networthtrkr.herokuapp.com/search/' + x).then(res => {
-            setRec(res.data.slice(0, 4))
-        }).catch(e => console.error(e))
+    const fetchData = async (query) => {
+        try {
+            controller.current.abort()
+            controller.current = new AbortController()
+            await axios.get('https://networthtrkr.herokuapp.com/search/' + query, {
+                signal: controller.current.signal
+            }).then(res => {
+                setRec(res.data.slice(0, 4))
+            }).catch(e => console.error(e))
+        } catch (e) {
+        }
     }
     const fetchPrice = async ({ symbol, companyName }) => {
         setRec([])
@@ -37,10 +45,12 @@ const StockInput = ({ setInputOpen, setModalOpen, add }) => {
     }
     const handleChange = (x) => {
         setQuery(x)
-        if (x.length <= 2) {
+        if (x.length <= 1) {
             setRec([])
         }
-        else fetchData(x)
+        else {
+            fetchData(x)
+        }
     }
     const handleSubmit = () => {
         setInputOpen(false)
@@ -54,21 +64,25 @@ const StockInput = ({ setInputOpen, setModalOpen, add }) => {
         setModalOpen(false)
     }
     const handleShareChange = (x) => {
-        console.log(x)
+        if (!Number(x)) return
         let num = Number(x.toString().replace(',', ''))
-        console.log(num)
         if (num > 2000000) return
         else setShares(num)
     }
 
     return (
-        <KeyboardAvoidingView style={styles.form} behavior={Platform.OS === "ios" ? "padding" : "height"}>
-            {/* HEADER */}
-            <View style={{ flexDirection: 'row', justifyContent: 'left', alignItems: 'center', marginBottom: 8,paddingTop:40 }}>
+        <KeyboardAvoidingView style={styles.form}
+        // behavior={Platform.OS === "ios" ? "padding" : "height"}
+        >
+            {/* HEADER =========*/}
+            <View style={{ flexDirection: 'row', justifyContent: 'left', alignItems: 'center', marginBottom: 8, paddingTop: 40 }}>
                 <Entypo name='bar-graph' size={20} color='rgb(145,250,147)' style={{ width: 25, marginBottom: 4, fontWeight: '600' }} />
-                <Text style={{ fontSize: 18, color: theme.text }}>Adding Stocks</Text>
+                <Text style={{ fontSize: 18, color: theme.text, flex: 1 }}>Adding Stocks</Text>
+                <TouchableOpacity onPress={handleCancel}>
+                    <Text style={{color:theme.text}}>Cancel</Text>
+                </TouchableOpacity>
             </View>
-            {/* BODY */}
+            {/* BODY =========*/}
             <View style={{ marginTop: 20 }}>
                 {!stock.price ?
                     <>
@@ -91,6 +105,7 @@ const StockInput = ({ setInputOpen, setModalOpen, add }) => {
                                     </TouchableOpacity>
                                 ))}
                             </View>}
+
                     </>
                     :
                     <View>

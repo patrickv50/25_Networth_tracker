@@ -1,6 +1,6 @@
 import { LinearGradient } from 'expo-linear-gradient'
 import React, { useEffect, useState } from 'react'
-import { FlatList, Modal, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native'
+import { FlatList, Modal, StyleSheet, Text, TouchableHighlight, TouchableOpacity, TouchableWithoutFeedback, TouchableWithoutFeedbackComponent, View } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
 import Input from '../components/Input'
 import Item from '../components/Item'
@@ -107,26 +107,25 @@ const AssetScreen = () => {
             :
             // CATEGORY SELECT =======
             <>
-              <Text style={{ color: theme.text, fontSize: 22, marginBottom: 10 }}>Select Category</Text>
+              <Text style={{ color: theme.text, fontSize: 26,fontWeight:'bold', marginBottom: 18 }}>Select Category</Text>
               <View style={styles.catListContainer}>
                 {categories.map((catg, index) => (
-                  <TouchableWithoutFeedback key={index} onPress={() => {
+                  <TouchableOpacity key={index} onPress={() => {
                     setCategory({
                       name: catg,
                       icon: icons[index]
                     })
                     setInputOpen(true)
-                  }}>
-                    <View key={index} style={[styles.categoryCard, { borderColor: icons[index].color }]}>
+                  }}
+                  style={[styles.categoryCard,{borderColor:'#777'}]}>
                       <Entypo name={icons[index].name} size={37} color={icons[index].color} style={{ width: 37, marginBottom: 4, fontWeight: '600' }} />
                       <Text style={styles.categoryCardText}>{catg}</Text>
-                    </View>
-                  </TouchableWithoutFeedback>
+                  </TouchableOpacity>
                 ))}
               </View>
 
               <TouchableOpacity onPress={() => setModalOpen(false)}>
-                <Text style={{ color: '#999', marginVertical: 8, padding: 4 }}>Cancel</Text>
+                <Text style={{ color: '#999', marginTop: 18, fontSize:18, padding: 4 }}>Cancel</Text>
               </TouchableOpacity>
             </>
           }

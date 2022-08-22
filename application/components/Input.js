@@ -6,17 +6,19 @@ import { Entypo, } from '@expo/vector-icons';
 import StockInput from './input-screens/StockInput';
 const Input = ({ category, setInputOpen, setModalOpen, add }) => {
     const [name, setName] = useState("")
-    const [value, setValue] = useState(0)
+    const [value, setValue] = useState("")
     const nameRef = useRef()
     const valueRef = useRef()
 
     const dispatch = useDispatch()
 
     const handleSubmit = () => {
+        let val=Number(value.replace(",",""))
+        if(!val)return
         setInputOpen(false)
         setModalOpen(false)
         dispatch(add({
-            name, value, category: category.name
+            name, value:val, category: category.name
         }))
     }
 
@@ -34,9 +36,9 @@ const Input = ({ category, setInputOpen, setModalOpen, add }) => {
             </View>
 
             <TextInput placeholderTextColor="#999" style={styles.input} value={name} ref={nameRef} onChangeText={(x) => setName(x)} onSubmitEditing={() => valueRef.current.focus()} placeholder="Name" />
-            <TextInput placeholderTextColor="#999" returnKeyType="done" keyboardType="number-pad" ref={valueRef} onSubmitEditing={handleSubmit} style={styles.input} value={String(value) ? String(value) : ''} onChangeText={x => {
-                if (!x.length) setValue(0)
-                if (Number(x.replace(',', ''))) setValue(Number(x.replace(',', '')))
+            <TextInput placeholderTextColor="#999" returnKeyType="done" keyboardType="number-pad" ref={valueRef} onSubmitEditing={handleSubmit} style={styles.input} value={value} onChangeText={x => {
+                if (!x.length) setValue("")
+                if (Number(x.replace(',', ''))) setValue(x)
             }
             } placeholder="Value" />
             <TouchableOpacity style={{ alignSelf: 'flex-start', marginBottom: 6 }} onPress={handleSubmit}>
