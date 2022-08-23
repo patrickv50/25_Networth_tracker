@@ -5,10 +5,11 @@ import NumberSlides from "./NumberSlides"
 import { Entypo, Feather } from '@expo/vector-icons';
 import Menu from "./Menu";
 import { useSelector } from "react-redux";
+import AssetContainer from "./AssetContainer";
 
-const heightOfItem = 34
+const heightOfItem = 40
 
-const Item = ({ item, index, icon, modalOpen, setMenuOpen, setFocusedAsset, total }) => {
+const Item = ({ item, index, category, setMenuOpen, setFocusedAsset, total,navigateToTable }) => {
     const [accordionOpen, setAccordionOpen] = useState(false)
     const heightAnim = useRef(new Animated.Value(0)).current
 
@@ -31,9 +32,9 @@ const Item = ({ item, index, icon, modalOpen, setMenuOpen, setFocusedAsset, tota
     const animateHeight = useCallback((x) => {
         Animated.timing(heightAnim, {
             toValue: x ? Math.min(200, item.top3.length * (heightOfItem + 4)) + 16 + (item.items.length > 0 ? 30 : 0) : 0,
-            duration: 200,
+            duration: 300,
             useNativeDriver: false,
-            delay: 0
+            delay: 0,
         }).start()
     }, [item.top3, item.items])
 
@@ -51,10 +52,10 @@ const Item = ({ item, index, icon, modalOpen, setMenuOpen, setFocusedAsset, tota
             {/* CARD HEADER */}
             <TouchableOpacity onPress={toggleAccordion}>
                 <View style={styles.cardHeader}>
-                    <Entypo name={icon.name} size={20} color={icon.color} style={{ width: 30 }} />
+                    <Entypo name={item.icon} size={20} color={item.color} style={{ width: 30 }} />
                     <Text style={styles.nameContainer}>{item.categoryName || "No Name"}</Text>
                     {/* <Text style={styles.totalContainer}>${(total).toLocaleString("en-US")}</Text> */}
-                    <NumberSlides value={total} size={30} fontWeight='normal' delay={index * 240} modalOpen={modalOpen} side='right' duration={700} />
+                    <NumberSlides value={total} size={30} fontWeight='normal' delay={index * 240} side='right' duration={700} />
                 </View>
             </TouchableOpacity>
             {/* CARD BODY */}
@@ -64,66 +65,20 @@ const Item = ({ item, index, icon, modalOpen, setMenuOpen, setFocusedAsset, tota
                 <FlatList
                     showsVerticalScrollIndicator={false}
                     data={item.top3}
-                    renderItem={(item, index) => {
-                        return (
-                            // <View style={styles.assetContainer}>
-                            //     <Text style={styles.assetName} numberOfLines={1}>{item.item.name}</Text>
-                            //     <View style={styles.cardBarContainer}>
-                            //         <View style={[styles.cardBar, { backgroundColor: icon.color, width: `${(item.item.value / total) * 100}%` }]}></View>
-                            //     </View>
-                            //     <Text style={styles.assetValue}>${(item.item.value).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</Text>
-                            //     <TouchableOpacity onPress={() => toggleInfo(item.item)}>
-                            //         <Feather name="info" size={17} color='rgb(200, 170, 0)' style={{ marginLeft: 4 }} />
-                            //     </TouchableOpacity>
-                            // </View>
-                            <AssetContainer item={item} accordionOpen={accordionOpen} toggleInfo={toggleInfo} icon={icon} total={total} />
-                        )
-                    }}
+                    renderItem={(item, index) => <AssetContainer item={item} accordionOpen={accordionOpen} toggleInfo={toggleInfo} category={category} total={total} />}
                     keyExtractor={(x) => x.id}
                     ListHeaderComponent={<View style={{ minHeight: 8 }} />}
                 />
-                {item.top3.length + item.items.length > 3 && <TouchableOpacity>
-                    <Text style={{ color: theme.text, padding: 4, textAlign: 'center', textDecorationLine: 'underline' }}>View All {item.items.length + 3} </Text>
-                </TouchableOpacity>}
+                {item.items.length > 0 &&
+                    <TouchableOpacity onPress={()=>navigateToTable(item)}>
+                        <Text style={{ color: theme.text, padding: 4, textAlign: 'center', textDecorationLine: 'underline' }}>View All {item.items.length + 3} </Text>
+                    </TouchableOpacity>}
             </Animated.View>
         </View>
     )
 }
 
-const AssetContainer = ({ item, index, toggleInfo, icon, total, accordionOpen }) => {
-    const containerTop = useRef(new Animated.Value(40)).current
-    const animateHeight = useCallback((x,instant) => {
-        Animated.timing(containerTop, {
-            toValue: x,
-            duration: instant?0:400,
-            useNativeDriver: false,
-            delay: (instant?2:item.index+.5) * 100
-        }).start()
-    }, [item.top3, item.items, index,accordionOpen])
-    useEffect(() => {
-        if(accordionOpen)animateHeight(0)
-        else animateHeight(40,true)
-    }, [accordionOpen])
-    return (
-        <View style={[{ width: '100%', minHeight: heightOfItem-6,marginVertical:3, overflow: 'hidden',backgroundColor:'transparent' }]}>
-            <Animated.View style={[styles.assetContainer, {
-                top: containerTop,
-                position: 'absolute',
-                left: 0
-            }]}>
-                <Text style={styles.assetName} numberOfLines={1}>{item.item.name}</Text>
-                <View style={styles.cardBarContainer}>
-                    <View style={[styles.cardBar, { backgroundColor: icon.color, width: `${(item.item.value / total) * 100}%` }]}></View>
-                </View>
-                <Text style={styles.assetValue}>${(item.item.value).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</Text>
-                <TouchableOpacity onPress={() => toggleInfo(item.item)}>
-                    <Feather name="info" size={17} color='rgb(200, 170, 0)' style={{ marginLeft: 4 }} />
-                </TouchableOpacity>
-            </Animated.View>
 
-        </View>
-    )
-}
 const styles = StyleSheet.create({
     card: {
         flex: 1,
@@ -153,48 +108,10 @@ const styles = StyleSheet.create({
         flex: 1,
         overflow: 'hidden',
         paddingHorizontal: 15,
-        backgroundColor: '#252526',
+        backgroundColor: '#212425',
         minHeight: 0,
         height: 0,
         // maxHeight:2
     },
-    assetContainer: {
-        width: '100%',
-        overflow: 'hidden',
-        height: heightOfItem,
-        // backgroundColor:'red',
-        marginVertical: 2,
-        alignItems: 'center',
-        flexDirection: 'row',
-        // paddingVertical: 4,
-    },
-    assetName: {
-        flex: 2,
-        color: theme.text,
-        minHeight: 0,
-    },
-    assetValue: {
-        flex: 2,
-        fontSize: 15,
-        color: theme.text,
-        textAlign: 'right'
-    },
-    cardBarContainer: {
-        marginHorizontal: 20,
-        flex: 3,
-        minHeight: 5,
-        overflow: 'hidden',
-        borderRadius: 2,
-        backgroundColor: '#444',
-        // width: '100%',
-    },
-    cardBar: {
-        position: 'absolute',
-        top: 0,
-        right: 0,
-        minHeight: 5,
-        borderRadius: 2,
-    },
-
 })
 export default Item

@@ -9,7 +9,8 @@ import theme from '../theme'
 import { Feather, Entypo, MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 const Tab = createBottomTabNavigator();
 
-let focusedColor = '#da7'
+// let focusedColor = '#da7'
+let focusedColor = '#eee'
 let unfocusedColor = '#494949'
 const BottomNav = () => {
 

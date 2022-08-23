@@ -68,7 +68,6 @@ export default function HomeScreen({ navigation }) {
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       setNetWorth(totAssets - totLiabilites)
-      console.log(dims)
       if (dims.width) animate(totAssets, totLiabilites)
     })
     return unsubscribe

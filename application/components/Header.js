@@ -10,19 +10,6 @@ const Header = ({ netWorth }) => {
             <View style={styles.header}>
                 <NumberSlides value={netWorth} size={52} fontWeight='bold' delay={0} duration={1000} side='center' />
                 <Text style={styles.subtitle1}>Net Worth</Text>
-                <LinearGradient
-                    colors={[theme.bg, 'rbga(200,200,200,.5)']}
-                    style={{
-                        height: 20,
-                        width: '100%',
-                        position: 'absolute',
-                        top: 0,
-                        zIndex: 99
-                    }}
-                    locations={[.20, .90]}
-                    start={{ x: 1, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                />
             </View>
 
         </>

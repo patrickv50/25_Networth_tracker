@@ -1,11 +1,10 @@
 import React, { useMemo, useRef, useState } from 'react'
-import { Button, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import theme from '../../theme'
-import { useDispatch } from 'react-redux'
 import { Entypo, } from '@expo/vector-icons';
 import axios from 'axios';
 
-const StockInput = ({ setInputOpen, setModalOpen, add }) => {
+const StockInput = ({ add, cancel }) => {
     const [query, setQuery] = useState("")
     const [recs, setRec] = useState([])
     const [stock, setStock] = useState({
@@ -15,23 +14,22 @@ const StockInput = ({ setInputOpen, setModalOpen, add }) => {
     })
     const [shares, setShares] = useState(0)
     const nameRef = useRef()
-    let controller = useRef(new AbortController())
     const total = useMemo(() => {
         return stock.price * shares
     }, [stock, shares])
-    const dispatch = useDispatch()
 
+    let controller = useRef(new AbortController())
     const fetchData = async (query) => {
         try {
             controller.current.abort()
             controller.current = new AbortController()
             await axios.get('https://networthtrkr.herokuapp.com/search/' + query, {
                 signal: controller.current.signal
-            }).then(res => {
+            })
+            .then(res => {
                 setRec(res.data.slice(0, 4))
-            }).catch(e => console.error(e))
-        } catch (e) {
-        }
+            })
+        } catch (e) {}
     }
     const fetchPrice = async ({ symbol, companyName }) => {
         setRec([])
@@ -53,15 +51,9 @@ const StockInput = ({ setInputOpen, setModalOpen, add }) => {
         }
     }
     const handleSubmit = () => {
-        setInputOpen(false)
-        setModalOpen(false)
-        dispatch(add({
-            name: stock.symbol, value: Math.floor(total), category: 'Stocks'
-        }))
-    }
-    const handleCancel = () => {
-        setInputOpen(false)
-        setModalOpen(false)
+        add({
+            name: stock.symbol, value: total, category: 'Stocks'
+        })
     }
     const handleShareChange = (x) => {
         if (!Number(x)) return
@@ -75,11 +67,11 @@ const StockInput = ({ setInputOpen, setModalOpen, add }) => {
         // behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
             {/* HEADER =========*/}
-            <View style={{ flexDirection: 'row', justifyContent: 'left', alignItems: 'center', marginBottom: 8, paddingTop: 40 }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginBottom: 8,}}>
                 <Entypo name='bar-graph' size={20} color='rgb(145,250,147)' style={{ width: 25, marginBottom: 4, fontWeight: '600' }} />
-                <Text style={{ fontSize: 18, color: theme.text, flex: 1 }}>Adding Stocks</Text>
-                <TouchableOpacity onPress={handleCancel}>
-                    <Text style={{color:theme.text}}>Cancel</Text>
+                <Text style={{ fontSize: 22, color: theme.text, flex: 1 }}>Adding Stocks</Text>
+                <TouchableOpacity onPress={cancel}>
+                    <Text style={{ color: theme.text }}>Cancel</Text>
                 </TouchableOpacity>
             </View>
             {/* BODY =========*/}
@@ -87,7 +79,7 @@ const StockInput = ({ setInputOpen, setModalOpen, add }) => {
                 {!stock.price ?
                     <>
                         <TextInput
-                            autoFocus={true}
+                            // autoFocus={true}
                             placeholder="Enter company name or ticker symbol"
                             placeholderTextColor="#999"
                             style={styles.input}
@@ -138,7 +130,7 @@ const StockInput = ({ setInputOpen, setModalOpen, add }) => {
                             <TouchableOpacity style={styles.addButton} onPress={handleSubmit}>
                                 <Text numberOfLines={2} style={styles.addButtonText}>Add {stock.symbol}</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={[styles.addButton, { backgroundColor: 'transparent' }]} onPress={handleCancel}>
+                            <TouchableOpacity style={[styles.addButton, { backgroundColor: 'transparent' }]} onPress={cancel}>
                                 <Text style={[styles.addButtonText, { fontSize: 15, color: theme.text }]}>Cancel</Text>
                             </TouchableOpacity>
                         </View>
@@ -153,7 +145,7 @@ export default StockInput
 
 const styles = StyleSheet.create({
     form: {
-        paddingTop: 50,
+        // paddingTop: 50,
         height: '100%',
         width: '100%',
         padding: 20,

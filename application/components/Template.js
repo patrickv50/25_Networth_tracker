@@ -7,7 +7,7 @@ const Template = ({ children }) => {
         <View style={styles.app}>
             <View style={styles.body}>
                 <StatusBar hidden={false} style={{}} />
-                <View style={{ flex: 1 }}>
+                <View style={{ flex: 1}}>
                     {children}
                 </View>
                 <LinearGradient
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     body: {
         width: '100%',
         maxWidth: 900,
-        paddingTop: 40,
+        // paddingTop: 40,
         // backgroundColor: theme.bg,
         flex: 1,
     }

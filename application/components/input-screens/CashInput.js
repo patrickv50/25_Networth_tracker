@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux'
 import { Entypo, } from '@expo/vector-icons';
 import axios from 'axios';
 
-const CashInput = ({ setInputOpen, setModalOpen, add }) => {
+const CashInput = ({ add,cancel }) => {
     const [query, setQuery] = useState("")
     const [recs, setRec] = useState([])
     const [stock, setStock] = useState({
@@ -21,47 +21,14 @@ const CashInput = ({ setInputOpen, setModalOpen, add }) => {
     }, [stock, shares])
     const dispatch = useDispatch()
 
-    const fetchData = async (query) => {
-        try {
-            controller.current.abort()
-            controller.current = new AbortController()
-            await axios.get('https://networthtrkr.herokuapp.com/search/' + query, {
-                signal: controller.current.signal
-            }).then(res => {
-                setRec(res.data.slice(0, 4))
-            }).catch(e => console.error(e))
-        } catch (e) {
-        }
-    }
-    const fetchPrice = async ({ symbol, companyName }) => {
-        setRec([])
-        await axios.get('https://networthtrkr.herokuapp.com/quote/' + symbol).then(res => {
-            setStock({
-                symbol: symbol,
-                companyName: companyName,
-                price: res.data
-            })
-        }).catch(e => console.error(e))
-    }
-    const handleChange = (x) => {
-        setQuery(x)
-        if (x.length <= 1) {
-            setRec([])
-        }
-        else {
-            fetchData(x)
-        }
-    }
     const handleSubmit = () => {
-        setInputOpen(false)
-        setModalOpen(false)
-        dispatch(add({
-            name: stock.symbol, value: Math.floor(total), category: 'Cash'
-        }))
+
+        add({
+            name: stock.symbol, value: total, category: 'Cash'
+        })
     }
     const handleCancel = () => {
-        setInputOpen(false)
-        setModalOpen(false)
+        cancel()
     }
     const handleShareChange = (x) => {
         if (!Number(x)) return
@@ -142,7 +109,6 @@ export default CashInput
 
 const styles = StyleSheet.create({
     form: {
-        paddingTop: 50,
         height: '100%',
         width: '100%',
         padding: 20,

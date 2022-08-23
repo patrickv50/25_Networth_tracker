@@ -5,36 +5,48 @@ import { v4 as uuid } from 'uuid';
 
 let init = [{
   categoryName: "Cash",
+  icon: 'wallet',
+  color: 'rgb(252,199,92)',
   total: 0,
   top3: [],
   items: [],
   largest: null
 }, {
   categoryName: "Stocks",
+  icon: 'bar-graph',
+  color: 'rgb(145,250,147)',
   total: 0,
   top3: [],
   items: [],
   largest: null
 }, {
   categoryName: "Real Estate",
+  icon: 'home',
+  color: 'rgb(132,211,219)',
   total: 0,
   top3: [],
   items: [],
   largest: null
 }, {
   categoryName: "Tangible",
+  icon: 'laptop',
+  color: 'rgb(207,140,120)',
   total: 0,
   top3: [],
   items: [],
   largest: null
 }, {
   categoryName: "Intangible",
+  icon: 'book',
+  color: 'rgb(239,176,129)',
   total: 0,
   top3: [],
   items: [],
   largest: null
 }, {
   categoryName: "Misc",
+  icon: 'box',
+  color: 'white',
   total: 0,
   top3: [],
   items: [],

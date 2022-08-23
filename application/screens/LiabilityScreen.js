@@ -6,7 +6,7 @@ import { LinearGradient } from 'expo-linear-gradient'
 import React, { useEffect, useState } from 'react'
 import { FlatList, Modal, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
-import Input from '../components/Input'
+import InputSwitch from '../components/InputSwitch'
 import Item from '../components/Item'
 import Template from '../components/Template'
 import { add, addInit, remove } from '../state/reducers/liabilitiesReducer'
@@ -107,7 +107,7 @@ const LiabilityScreen = () => {
         <View style={styles.modal}>
           {inputOpen ?
             // INPUT =======
-            <Input category={category} setInputOpen={setInputOpen} setModalOpen={setModalOpen} add={add} />
+            <InputSwitch category={category} setInputOpen={setInputOpen} setModalOpen={setModalOpen} add={add} />
             :
             // CATEGORY SELECT =======
             <>
