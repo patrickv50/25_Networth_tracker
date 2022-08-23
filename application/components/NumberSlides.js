@@ -8,7 +8,7 @@ let firstChar = ' '
 
 let maxSlides = 10
 const NumberSlides = ({ value, size, delay, side,duration }) => {
-    const [chars, setCharAr] = useState(["$", "0"])
+    const [chars, setCharAr] = useState([])
     useEffect(() => {
         let stringVal = firstChar
         if (value > 1000000) {
@@ -50,15 +50,10 @@ const NumberSlides = ({ value, size, delay, side,duration }) => {
     )
 }
 // STATIC NUMBER COMPONENT
-const StaticNumber = ({ value, size }) => {
-    const derivedStyle = {
-        height: size,
-        fontSize: value === "M" ? Math.floor(size * 2 / 4) : Math.floor(size * 3 / 4),
-        paddingTop: value === "M" ? size / 3 : size / 12
-    }
+const StaticNumber = ({ value, size, derivedStyle }) => {
     const width = useMemo(() => {
-        return getWidth(value, size)
-    }, [value, size])
+        return getWidth(value)*size
+    }, [value])
     return (
         <View style={{ width: width }}>
             <Text style={[styles.number, derivedStyle]}>{value === "M" ? "Million" : value}</Text>
@@ -67,7 +62,7 @@ const StaticNumber = ({ value, size }) => {
 }
 // DYNAMIC NUMBER COMPONENT
 const Number = ({ value, size, delay,duration }) => {
-    const [showStatic, setShowStatic] = useState(false)
+    const [showStatic, setShowStatic] = useState(true)
     const derivedStyle = {
         height: size,
         fontSize: value === "M" ? Math.floor(size * 2 / 4) : Math.floor(size * 3 / 4),
@@ -75,35 +70,26 @@ const Number = ({ value, size, delay,duration }) => {
 
     }
     const position = useMemo(() => {
-        switch (value) {
-            case firstChar: return 0
-            case '-': return 11
-            case ',': return 12
-            case '.': return 13
-            case '$': return 14
-            case 'M': return 15
-            default: return parseInt(value) + 1
-        }
+        return getTop(value)*-size
     }, [value])
 
     const width = useMemo(() => {
-        return getWidth(value, size)
+        return getWidth(value)*size
     }, [value])
 
+    const slideAnim = useRef(new Animated.Value(0)).current;
+    const widthAnim = useRef(new Animated.Value(getWidth(value)*size)).current;
     useEffect(() => {
         setShowStatic(false)
-    }, [value])
-    const slideAnim = useRef(new Animated.Value(value==='0'?1:value==='$'?14:0)).current;
-    const widthAnim = useRef(new Animated.Value(size * (3 / 10))).current;
-    useEffect(() => {
         Animated.timing(slideAnim, {
-            toValue: position * -size,
-            duration: duration,
+            toValue: position,
+            duration: 500,
             useNativeDriver: false,
             delay: delay + Math.floor(Math.random() * (800 - 0) + 0),
             easing: Easing.easing
         }).start(({ finished }) => {
             if (finished) setShowStatic(true)
+            console.log('hello')
         })
         Animated.timing(widthAnim, {
             toValue: width,
@@ -114,9 +100,7 @@ const Number = ({ value, size, delay,duration }) => {
     }, [position])
 
     // SHOW STATIC NUMBER IF DONT ANIMATING
-    if (showStatic) return (
-        <StaticNumber value={value} size={size} />
-    )
+    if (showStatic) return <StaticNumber value={value} size={size} derivedStyle={derivedStyle}/>
     // ELSE SHOW ANIMATION
     else return (
         <Animated.View style={{ width: widthAnim }}>
@@ -164,17 +148,29 @@ const styles = StyleSheet.create({
 
 // HELPER FUNCTIONS
 
-const getWidth = (value, size) => {
+const getWidth = (value) => {
     switch (value) {
-        case firstChar: return size * (20 / 46)
-        case '0': return size * (21 / 46)
-        case '1': return size * (16 / 46)
-        case '7': return size * (23 / 46)
-        case '-': return size * (15 / 46)
-        case ',': return size * (7 / 46)
-        case '.': return size * (7 / 46)
-        case 'M': return size * (67 / 46)
-        default: return size * (25 / 46)
+        case firstChar: return (20 / 46)
+        case '0': return (21 / 46)
+        case '1': return (16 / 46)
+        case '7': return (23 / 46)
+        case '-': return (15 / 46)
+        case ',': return (7 / 46)
+        case '.': return (7 / 46)
+        case 'M': return (67 / 46)
+        default: return (25 / 46)
+    }
+}
+
+const getTop = (value) =>{
+    switch (value) {
+        case firstChar: return 0
+        case '-': return 11
+        case ',': return 12
+        case '.': return 13
+        case '$': return 14
+        case 'M': return 15
+        default: return parseInt(value) + 1
     }
 }
 export default NumberSlides

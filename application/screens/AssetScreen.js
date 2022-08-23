@@ -152,7 +152,7 @@ const SummaryScreen = ({ route, navigation }) => {
   const assets = useSelector(state => state.assets)
 
   const categoryCard = ({ item, index }) => {
-    return <Item navigateToTable={navigateToTable} total={assets[index].total} item={item} index={index} add={add} menuOpen={menuOpen} setMenuOpen={setMenuOpen} setFocusedAsset={setFocusedAsset} />
+    return <Item navigateToTable={navigateToTable} category={item} index={index} add={add} menuOpen={menuOpen} setMenuOpen={setMenuOpen} setFocusedAsset={setFocusedAsset} />
       
   }
   const handleDelete = () => {
@@ -172,9 +172,9 @@ const SummaryScreen = ({ route, navigation }) => {
           <Entypo name='plus' size={30} color={theme.text} style={{ width: 30, fontWeight: '600' }} />
         </TouchableOpacity>
         {/* DEBUG ACTIONS ========== */}
-        {/* <TouchableOpacity style={styles.addButton} onPress={() => dispatch(addInit(null))}>
+        <TouchableOpacity style={styles.addButton} onPress={() => dispatch(addInit(null))}>
           <Text style={styles.addButtonText}>A</Text>
-        </TouchableOpacity> */}
+        </TouchableOpacity>
         {/* DEBUG ACTIONS ========== */}
         <LinearGradient
           colors={['rgba(0,0,0,.33)', 'transparent']}
@@ -216,7 +216,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     position: 'relative',
     alignItems: 'center',
-    // backgroundColor:'red',
     alignContent: 'stretch'
   },
   title: {
@@ -226,14 +225,12 @@ const styles = StyleSheet.create({
     flex: 1
   },
   addButton: {
-    // padding: 12,
     flex: 0,
   },
   addButtonText: {
     color: theme.text,
     fontSize: 28,
     fontWeight: 'bold',
-    // padding: 3
   },
   modal: {
     backgroundColor: theme.bg,

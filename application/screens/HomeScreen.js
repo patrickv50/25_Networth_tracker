@@ -84,7 +84,6 @@ export default function HomeScreen({ navigation }) {
           <Header netWorth={netWorth} styles={styles} />
           {/* Intl.NumberFormat('en-us').format(netWorth)  */}
           <View onLayout={(event) => {
-            console.log(event.nativeEvent.layout)
             const { x, y, width, height } = event.nativeEvent.layout;
             setDims({ x, y, width, height });
           }} style={styles.barContainer}>

@@ -43,11 +43,9 @@ const styles = StyleSheet.create({
         width: '100%',
         overflow: 'hidden',
         height: heightOfItem,
-        // backgroundColor:'red',
         marginVertical: 2,
         alignItems: 'center',
         flexDirection: 'row',
-        // paddingVertical: 4,
     },
     assetName: {
         flex: 2,

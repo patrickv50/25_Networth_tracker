@@ -1,15 +1,13 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react"
-import { Animated, Button, FlatList, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native"
+import { useCallback, useEffect, useRef, useState } from "react"
+import { Animated, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import theme from "../theme"
 import NumberSlides from "./NumberSlides"
-import { Entypo, Feather } from '@expo/vector-icons';
-import Menu from "./Menu";
-import { useSelector } from "react-redux";
+import { Entypo, } from '@expo/vector-icons';
 import AssetContainer from "./AssetContainer";
 
 const heightOfItem = 40
 
-const Item = ({ item, index, category, setMenuOpen, setFocusedAsset, total,navigateToTable }) => {
+const Item = ({ category, index, setMenuOpen, setFocusedAsset, navigateToTable }) => {
     const [accordionOpen, setAccordionOpen] = useState(false)
     const heightAnim = useRef(new Animated.Value(0)).current
 
@@ -19,7 +17,7 @@ const Item = ({ item, index, category, setMenuOpen, setFocusedAsset, total,navig
             animateHeight(false)
         }
         else {
-            if (item.top3.length > 0) {
+            if (category.top3.length > 0) {
                 animateHeight(true)
                 setAccordionOpen(true)
             }
@@ -31,31 +29,31 @@ const Item = ({ item, index, category, setMenuOpen, setFocusedAsset, total,navig
     }
     const animateHeight = useCallback((x) => {
         Animated.timing(heightAnim, {
-            toValue: x ? Math.min(200, item.top3.length * (heightOfItem + 4)) + 16 + (item.items.length > 0 ? 30 : 0) : 0,
+            toValue: x ? Math.min(200, category.top3.length * (heightOfItem + 4)) + 16 + (category.items.length > 0 ? 30 : 0) : 0,
             duration: 300,
             useNativeDriver: false,
             delay: 0,
         }).start()
-    }, [item.top3, item.items])
+    }, [category.top3, category.items])
 
     useEffect(() => {
-        if (item.top3.length === 0) {
+        if (category.top3.length === 0) {
             setAccordionOpen(false)
             animateHeight(false)
         }
-        if (accordionOpen && item.top3.length > 0) {
+        if (accordionOpen && category.top3.length > 0) {
             animateHeight(true)
         }
-    }, [item.top3])
+    }, [category.top3])
     return (
-        <View key={index} style={styles.card}>
+        <View style={styles.card}>
             {/* CARD HEADER */}
             <TouchableOpacity onPress={toggleAccordion}>
                 <View style={styles.cardHeader}>
-                    <Entypo name={item.icon} size={20} color={item.color} style={{ width: 30 }} />
-                    <Text style={styles.nameContainer}>{item.categoryName || "No Name"}</Text>
+                    <Entypo name={category.icon} size={20} color={category.color} style={{ width: 30 }} />
+                    <Text style={styles.nameContainer}>{category.categoryName || "No Name"}</Text>
                     {/* <Text style={styles.totalContainer}>${(total).toLocaleString("en-US")}</Text> */}
-                    <NumberSlides value={total} size={30} fontWeight='normal' delay={index * 240} side='right' duration={700} />
+                    <NumberSlides value={category.total} size={30} fontWeight='normal' delay={index * 240} side='right' duration={700} />
                 </View>
             </TouchableOpacity>
             {/* CARD BODY */}
@@ -64,20 +62,19 @@ const Item = ({ item, index, category, setMenuOpen, setFocusedAsset, total,navig
             }]}>
                 <FlatList
                     showsVerticalScrollIndicator={false}
-                    data={item.top3}
-                    renderItem={(item, index) => <AssetContainer item={item} accordionOpen={accordionOpen} toggleInfo={toggleInfo} category={category} total={total} />}
+                    data={category.top3}
+                    renderItem={(item) => <AssetContainer item={item} accordionOpen={accordionOpen} toggleInfo={toggleInfo} color={category.color} total={category.total} />}
                     keyExtractor={(x) => x.id}
                     ListHeaderComponent={<View style={{ minHeight: 8 }} />}
                 />
-                {item.items.length > 0 &&
-                    <TouchableOpacity onPress={()=>navigateToTable(item)}>
-                        <Text style={{ color: theme.text, padding: 4, textAlign: 'center', textDecorationLine: 'underline' }}>View All {item.items.length + 3} </Text>
+                {category.items.length > 0 &&
+                    <TouchableOpacity onPress={() => navigateToTable(category)}>
+                        <Text style={{ color: theme.text, padding: 4, textAlign: 'center', textDecorationLine: 'underline' }}>View All {category.items.length + 3} </Text>
                     </TouchableOpacity>}
             </Animated.View>
         </View>
     )
 }
-
 
 const styles = StyleSheet.create({
     card: {
