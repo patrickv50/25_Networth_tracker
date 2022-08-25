@@ -89,7 +89,6 @@ const Number = ({ value, size, delay,duration }) => {
             easing: Easing.easing
         }).start(({ finished }) => {
             if (finished) setShowStatic(true)
-            console.log('hello')
         })
         Animated.timing(widthAnim, {
             toValue: width,

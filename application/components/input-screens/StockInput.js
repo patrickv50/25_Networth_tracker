@@ -3,8 +3,10 @@ import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, Vi
 import theme from '../../theme'
 import { Entypo, } from '@expo/vector-icons';
 import axios from 'axios';
+import { useEffect } from 'react';
 
 const StockInput = ({ add, cancel }) => {
+    console.log('hello')
     const [query, setQuery] = useState("")
     const [recs, setRec] = useState([])
     const [stock, setStock] = useState({
@@ -61,14 +63,17 @@ const StockInput = ({ add, cancel }) => {
         if (num > 2000000) return
         else setShares(num)
     }
+    useEffect(()=>{
+        nameRef.current.focus()
+    },[])
 
     return (
         <KeyboardAvoidingView style={styles.form}
         // behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
             {/* HEADER =========*/}
-            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginBottom: 8,}}>
-                <Entypo name='bar-graph' size={20} color='rgb(145,250,147)' style={{ width: 25, marginBottom: 4, fontWeight: '600' }} />
+            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+                <Entypo name='bar-graph' size={20} color='rgb(145,250,147)' style={{ width: 25,fontWeight: '600' }} />
                 <Text style={{ fontSize: 22, color: theme.text, flex: 1 }}>Adding Stocks</Text>
                 <TouchableOpacity onPress={cancel}>
                     <Text style={{ color: theme.text }}>Cancel</Text>
@@ -145,10 +150,10 @@ export default StockInput
 
 const styles = StyleSheet.create({
     form: {
-        // paddingTop: 50,
+        // padding: 20,
+        paddingHorizontal:20,
         height: '100%',
         width: '100%',
-        padding: 20,
         alignItems: 'stretch'
     },
     input: {
@@ -213,7 +218,6 @@ const styles = StyleSheet.create({
         borderRadius: 4,
         padding: 5,
         flex: 0,
-        // backgroundColor:'blue'
     },
     addButtonText: {
         color: '#333',

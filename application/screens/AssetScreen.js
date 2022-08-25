@@ -1,6 +1,6 @@
 import { LinearGradient } from 'expo-linear-gradient'
 import React, { useMemo, useState } from 'react'
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { FlatList, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
 import InputSwitch from '../components/InputSwitch'
 import Item from '../components/Item'
@@ -49,38 +49,12 @@ const AssetScreen = () => {
           headerShown: false,
           contentStyle: { backgroundColor: theme.bg, },
         }}>
-          <Stack.Screen name='Main' component={SummaryScreen} />
+          <Stack.Screen name='Main' component={MainScreen} />
           <Stack.Screen name='AssetTable' component={AssetTableScreen} />
           <Stack.Screen name='Input' component={InputScreen} />
-          <Stack.Screen name='Selection' component={SelectScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </Template>
-  )
-}
-// SELECT SCREEN
-const SelectScreen = ({ navigation, route }) => {
-  return (
-    <View style={styles.modal}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Select Category</Text>
-      </View>
-      <View style={styles.catListContainer}>
-        {categories.map((catg, index) => (
-          <TouchableOpacity key={index} onPress={() => navigation.navigate('Input', { category: catg })} style={[styles.categoryCard, { borderColor: '#777' }]}>
-            <>
-              <Entypo name={catg.icon} size={37} color={catg.color} style={{ width: 37, marginBottom: 4, fontWeight: '600' }} />
-              <Text style={styles.categoryCardText}>{catg.name}</Text>
-            </>
-          </TouchableOpacity>
-        )
-        )
-        }
-      </View>
-      <TouchableOpacity onPress={() => navigation.popToTop()}>
-        <Text style={{ color: '#999', marginTop: 18, fontSize: 18, padding: 4 }}>Cancel</Text>
-      </TouchableOpacity>
-    </View>
   )
 }
 // INPUT SCREEN
@@ -93,8 +67,7 @@ const InputScreen = ({ navigation, route }) => {
 }
 // ASSET TABLE SCREEN
 const AssetTableScreen = ({ navigation, route }) => {
-  const { item } = route.params
-  const { categoryName, items, top3, largest, total } = item
+  const { categoryName, items, color, icon, top3, largest, total } = route.params
   const [showDivider, setShowDivider] = useState(false)
   const assets = useSelector(state => state.assets)
 
@@ -110,26 +83,27 @@ const AssetTableScreen = ({ navigation, route }) => {
     navigation.popToTop()
   }
   return (
-    <Template>
+    <>
       {/* HEADER */}
       <View style={[styles.header, { borderColor: showDivider ? '#333' : theme.bg }]}>
-        <TouchableOpacity style={{ position: 'absolute', top: 40, left: -14, paddingVertical:20,paddingLeft:20,paddingRight:200}} onPress={handlePopNav}>
-          <Entypo name='chevron-left' size={30} color={item.color} style={{ width: 30}} />
-        </TouchableOpacity>
-        <View style={{ flex: 1,flexDirection:'row',justifyContent:'center',alignItems:'center' }}>
-          <Entypo name={item.icon} size={25} color={item.color} style={{ width: 30 }} />
+        <TouchableWithoutFeedback onPress={handlePopNav}>
+          <View style={{position:'absolute',left:10,top: -5,zIndex:200}}>
+            <Entypo name='chevron-left' size={32} color={color} style={{width:60}} />
+          </View>
+        </TouchableWithoutFeedback>
+        <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+          <Entypo name={icon} size={25} color={color} style={{ width: 30 }} />
           <TextComp variant='h3'>{categoryName}</TextComp>
         </View>
       </View>
       {/* BODY */}
-      <View style={{ paddingHorizontal: 16, flex: 1 }}>
-
+      <View style={{ paddingHorizontal: 16,paddingTop:15, flex: 1 }}>
         <FlatList
           initialNumToRender={15}
           onScroll={(x) => setShowDivider(x.nativeEvent.contentOffset.y < 3 ? false : true)}
           showsVerticalScrollIndicator={false}
           data={arr}
-          renderItem={(item, index) => <AssetContainer item={item} accordionOpen={true} toggleInfo={() => { }} total={total} />}
+          renderItem={(item, index) => <AssetContainer item={item} accordionOpen={true} toggleInfo={() => { }} color={color} total={total} />}
           keyExtractor={(x) => x.id}
           ListHeaderComponent={<View style={{ marginBottom: 12 }}>
             <TextComp variant='h2' marginBottom weight='600'>Your stock portfolio is {Math.ceil(total * 100 / assetsTotal)}% of your total assets.</TextComp>
@@ -140,27 +114,29 @@ const AssetTableScreen = ({ navigation, route }) => {
 
         />
       </View>
-    </Template>
+    </>
   )
 }
-// MAIN SCREEN
-const SummaryScreen = ({ route, navigation }) => {
+// MAIN SCREEN ============================================
+const MainScreen = ({ route, navigation }) => {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [inputEnabled, setInputEnabled] = useState(false)
   const [focusedAsset, setFocusedAsset] = useState({})
 
   const dispatch = useDispatch()
   const assets = useSelector(state => state.assets)
 
   const categoryCard = ({ item, index }) => {
-    return <Item navigateToTable={navigateToTable} category={item} index={index} add={add} menuOpen={menuOpen} setMenuOpen={setMenuOpen} setFocusedAsset={setFocusedAsset} />
-      
+    return <Item inputEnabled={inputEnabled} handleNavigate={handleNavigate} category={item} index={index} add={add} menuOpen={menuOpen} setMenuOpen={setMenuOpen} setFocusedAsset={setFocusedAsset} />
+
   }
   const handleDelete = () => {
     setMenuOpen(false)
     dispatch(remove(focusedAsset))
   }
-  const navigateToTable = (item, cat) => {
-    navigation.navigate('AssetTable', { item })
+
+  const handleNavigate = (destination, item) => {
+    navigation.navigate(destination, item)
   }
   return (
     <>
@@ -168,13 +144,15 @@ const SummaryScreen = ({ route, navigation }) => {
       < View style={styles.header
       }>
         <Text style={styles.title}>Assets</Text>
-        <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('Selection')}>
-          <Entypo name='plus' size={30} color={theme.text} style={{ width: 30, fontWeight: '600' }} />
+        <TouchableOpacity style={styles.addButton} onPress={(x) => setInputEnabled(!inputEnabled)}>
+          {inputEnabled ?
+            <Entypo name='cross' size={30} color={theme.red} style={{ width: 30, fontWeight: '600' }} /> :
+            <Entypo name='plus' size={30} color={theme.text} style={{ width: 30, fontWeight: '600' }} />}
         </TouchableOpacity>
         {/* DEBUG ACTIONS ========== */}
-        <TouchableOpacity style={styles.addButton} onPress={() => dispatch(addInit(null))}>
+        {/* <TouchableOpacity style={styles.addButton} onPress={() => dispatch(addInit(null))}>
           <Text style={styles.addButtonText}>A</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         {/* DEBUG ACTIONS ========== */}
         <LinearGradient
           colors={['rgba(0,0,0,.33)', 'transparent']}
@@ -210,8 +188,7 @@ const styles = StyleSheet.create({
   header: {
     flexGrow: 0,
     paddingHorizontal: 25,
-    paddingTop: 60,
-    paddingBottom: 20,
+    paddingBottom: 10,
     borderBottomWidth: .4,
     flexDirection: 'row',
     position: 'relative',

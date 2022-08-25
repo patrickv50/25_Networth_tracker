@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import theme from '../theme'
 import { useDispatch } from 'react-redux'
 import { Entypo, } from '@expo/vector-icons';
@@ -28,13 +28,15 @@ const InputSwitch = ({ category, add, goBack }) => {
         goBack()
     }
 
-    if (category.name === 'Stocks') return <StockInput add={handleSubmit} cancel={handleCancel} />
-    else if (category.name === 'Cash') return <CashInput add={handleSubmit} cancel={handleCancel} />
+    if (category.categoryName === 'Stocks') return <StockInput add={handleSubmit} cancel={handleCancel} />
+    else if (category.categoryName === 'Cash') return <CashInput add={handleSubmit} cancel={handleCancel} />
     else return (
-        <View style={styles.form}>
+        <KeyboardAvoidingView style={styles.form}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        >
             <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginBottom: 8 }}>
                 <Entypo name={category.icon} size={20} color={category.color} style={{ width: 25, marginBottom: 4, fontWeight: '600' }} />
-                <Text style={{ fontSize: 18, color: theme.text }}>{category.name}</Text>
+                <Text style={{ fontSize: 18, color: theme.text }}>{category.categoryName}</Text>
             </View>
 
             <TextInput placeholderTextColor="#999" style={styles.input} value={name} ref={nameRef} onChangeText={(x) => setName(x)} onSubmitEditing={() => valueRef.current.focus()} placeholder="Name" />
@@ -56,7 +58,7 @@ const InputSwitch = ({ category, add, goBack }) => {
             <TouchableOpacity style={[styles.addButton, { backgroundColor: 'transparent' }]} onPress={handleCancel}>
                 <Text style={[styles.addButtonText, { fontSize: 15 }]}>Cancel</Text>
             </TouchableOpacity>
-        </View>
+        </KeyboardAvoidingView>
     )
 }
 
@@ -64,9 +66,11 @@ export default InputSwitch
 
 const styles = StyleSheet.create({
     form: {
+        flex:1,
         width: '100%',
         padding: 20,
-        alignItems: 'stretch'
+        alignItems: 'center',
+        justifyContent:'center'
     },
     input: {
         width: '100%',

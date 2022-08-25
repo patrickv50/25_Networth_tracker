@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
     form: {
         height: '100%',
         width: '100%',
-        padding: 20,
+        padding: 60,
         alignItems: 'stretch'
     },
     input: {

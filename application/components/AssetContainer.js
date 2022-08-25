@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
     cardBar: {
         position: 'absolute',
         top: 0,
-        right: 0,
+        left: 0,
         minHeight: 7,
         borderRadius: 2,
     },

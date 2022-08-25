@@ -6,12 +6,15 @@ const Template = ({ children }) => {
     return (
         <View style={styles.app}>
             <View style={styles.body}>
-                <StatusBar hidden={false} style={{}} />
-                <View style={{ flex: 1}}>
+                <StatusBar hidden={false} barStyle='light-content' />
+                <View style={{
+                    flex: 1,
+                    paddingTop: 60,
+                }}>
                     {children}
                 </View>
                 <LinearGradient
-                    colors={['rgba(0,0,0,.9)', 'rgba(6,6,6,.05)']}
+                    colors={['rgba(5,5,10,.95)', 'rgba(0,0,0,0)']}
                     style={{
                         height: 150,
                         width: '100%',
@@ -19,7 +22,7 @@ const Template = ({ children }) => {
                         bottom: 0,
                         zIndex: 99
                     }}
-                    locations={[.55, .90]}
+                    locations={[.6, 1]}
                     start={{ x: 1, y: 1 }}
                     end={{ x: 1, y: 0 }}
                 />
@@ -34,13 +37,15 @@ const styles = StyleSheet.create({
     app: {
         flex: 1,
         backgroundColor: theme.bg,
-        alignItems:'center'
+        alignItems: 'center'
     },
     body: {
         width: '100%',
         maxWidth: 900,
-        // paddingTop: 40,
-        // backgroundColor: theme.bg,
         flex: 1,
+    },
+    statusBar: {
+        backgroundColor: 'red',
+        padding: 20
     }
 })

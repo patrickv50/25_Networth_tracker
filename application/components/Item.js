@@ -7,7 +7,7 @@ import AssetContainer from "./AssetContainer";
 
 const heightOfItem = 40
 
-const Item = ({ category, index, setMenuOpen, setFocusedAsset, navigateToTable }) => {
+const Item = ({ inputEnabled, handleNavigate, category, index, setMenuOpen, setFocusedAsset }) => {
     const [accordionOpen, setAccordionOpen] = useState(false)
     const heightAnim = useRef(new Animated.Value(0)).current
 
@@ -53,7 +53,11 @@ const Item = ({ category, index, setMenuOpen, setFocusedAsset, navigateToTable }
                     <Entypo name={category.icon} size={20} color={category.color} style={{ width: 30 }} />
                     <Text style={styles.nameContainer}>{category.categoryName || "No Name"}</Text>
                     {/* <Text style={styles.totalContainer}>${(total).toLocaleString("en-US")}</Text> */}
-                    <NumberSlides value={category.total} size={30} fontWeight='normal' delay={index * 240} side='right' duration={700} />
+                    {inputEnabled ?
+                        <TouchableOpacity onPress={() => handleNavigate('Input', { category: category })} style={{ width: 30, borderWidth: 1, borderColor: category.color, alignItems: 'center', aspectRatio: 1, borderRadius: 4, justifyContent: 'center' }}>
+                            <Entypo name="plus" size={20} color={category.color} style={{}} />
+                        </TouchableOpacity> :
+                        <NumberSlides value={category.total} size={30} fontWeight='normal' delay={index * 240} side='right' duration={700} />}
                 </View>
             </TouchableOpacity>
             {/* CARD BODY */}
@@ -68,7 +72,7 @@ const Item = ({ category, index, setMenuOpen, setFocusedAsset, navigateToTable }
                     ListHeaderComponent={<View style={{ minHeight: 8 }} />}
                 />
                 {category.items.length > 0 &&
-                    <TouchableOpacity onPress={() => navigateToTable(category)}>
+                    <TouchableOpacity onPress={() => handleNavigate('AssetTable', category)}>
                         <Text style={{ color: theme.text, padding: 4, textAlign: 'center', textDecorationLine: 'underline' }}>View All {category.items.length + 3} </Text>
                     </TouchableOpacity>}
             </Animated.View>
@@ -88,7 +92,7 @@ const styles = StyleSheet.create({
     },
     cardHeader: {
         alignItems: 'center',
-        paddingVertical: 19,
+        paddingVertical: 16,
         paddingHorizontal: 16,
         flexDirection: 'row'
     },

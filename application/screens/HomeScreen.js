@@ -25,6 +25,7 @@ export default function HomeScreen({ navigation }) {
   }, [assets])
 
   const totLiabilites = useMemo(() => {
+    return 35000
     if (!liabilities[0].top3) return 1
     return liabilities.reduce((a, b) => {
       return a + (b.items.reduce((a, b) => a + b.value, 0) + b.top3.reduce((a, b) => a + b.value, 0))
@@ -32,7 +33,7 @@ export default function HomeScreen({ navigation }) {
   }, [liabilities])
 
   const animate = useCallback((num, num2) => {
-    Animated.timing(widthAnim, {
+    if (dims.width) Animated.timing(widthAnim, {
       toValue: dims.width && num ? (dims.width * (num / (num + num2))) : 0,
       duration: 2000,
       useNativeDriver: false,
@@ -68,11 +69,14 @@ export default function HomeScreen({ navigation }) {
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       setNetWorth(totAssets - totLiabilites)
-      if (dims.width) animate(totAssets, totLiabilites)
+      animate(totAssets, totLiabilites)
     })
     return unsubscribe
   }, [navigation, totAssets, totLiabilites])
 
+  useEffect(()=>{
+    animate(totAssets,totLiabilites)
+  },[dims])
   useEffect(() => {
     getData()
   }, [])
@@ -87,7 +91,7 @@ export default function HomeScreen({ navigation }) {
             const { x, y, width, height } = event.nativeEvent.layout;
             setDims({ x, y, width, height });
           }} style={styles.barContainer}>
-            <Animated.View style={[styles.bar, { backgroundColor: 'rgb(21,238,108)', width: widthAnim }]}></Animated.View>
+            <Animated.View style={[styles.bar, { backgroundColor: theme.green, width: widthAnim }]}></Animated.View>
             <View style={[styles.bar]}></View>
           </View>
           <View style={styles.barLabel}>
@@ -142,7 +146,7 @@ const styles = StyleSheet.create({
     color: '#999'
   },
   barContainer: {
-    backgroundColor: 'rgb(255,42,82)',
+    backgroundColor: theme.red,
     marginVertical: 18,
     minHeight: 18,
     overflow: 'hidden',
