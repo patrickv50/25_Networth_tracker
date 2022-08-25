@@ -3,7 +3,7 @@ const express = require('express')
 const finnhub = require('finnhub');
 require('dotenv').config()
 const { searchListing } = require('./redis/redis.js')
-
+const axios = require('axios');
 const api_key = finnhub.ApiClient.instance.authentications['api_key']
 api_key.apiKey = process.env.FINNHUB_KEY
 
@@ -21,9 +21,9 @@ const connect = async () => {
 connect()
 
 app.get('/', (req, res) => res.send("Working"))
-app.get('/search/:q', async (req, res) => {
-    let q = req.params.q
-    res.json(await searchListing(String(q)))
+app.get('/search/:query', async (req, res) => {
+    let { query } = req.params
+    res.json(await searchListing(query))
 })
 app.get('/quote/:ticker', async (req, res) => {
     try {
@@ -64,11 +64,42 @@ app.get('/quote/:ticker', async (req, res) => {
         res.send("Error")
     }
 })
-app.get('/dcquote/:ticker', async (req, res) => {
-    const { ticker } = req.params
-    finnhubClient.quote(ticker.toUpperCase(), async (error, data, response) => {
-        res.json(data.c)
-    });
+// app.get('/dcquote/:ticker', async (req, res) => {
+//     const { ticker } = req.params
+//     finnhubClient.quote(ticker.toUpperCase(), async (error, data, response) => {
+//         res.json(data.c)
+//     });
+// })
+app.get('/profile/:symbol', async (req, res) => {
+    // NOT IN CACHE SO QUERY API =============
+    try {
+        await connect()
+        const { symbol } = req.params
+        const value = await redisClient.get('profile' + symbol)
+        // IN CACHE ===============
+        if (value) {
+            console.log('CACHE HIT')
+            // console.log(value)
+            res.json(value)
+        }
+        // NOT IN CHACHE ===============
+        else {
+            console.log('CACHE MISSED', symbol)
+            await axios.get(`https://financialmodelingprep.com/api/v3/profile/${symbol}/?apikey=${process.env.FMP_KEY}`)
+                .then((response) => {
+                    if (response.data) {
+                        // console.log(response.data[0])
+                        redisClient.set(`profile${symbol}`, JSON.stringify(response.data[0]))
+                        redisClient.expire(`profile${symbol}`, 14400)
+                        res.json(response.data)
+                    }
+                })
+        }
+
+
+    } catch (e) {
+        console.log(e)
+    }
 })
 
 app.listen(process.env.PORT || 5000, () => console.log("SERVER UP"))
