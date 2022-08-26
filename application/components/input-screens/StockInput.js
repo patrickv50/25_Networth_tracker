@@ -6,7 +6,6 @@ import axios from 'axios';
 import { useEffect } from 'react';
 
 const StockInput = ({ add, cancel }) => {
-    console.log('hello')
     const [query, setQuery] = useState("")
     const [recs, setRec] = useState([])
     const [stock, setStock] = useState({
@@ -54,7 +53,10 @@ const StockInput = ({ add, cancel }) => {
     }
     const handleSubmit = () => {
         add({
-            name: stock.symbol, value: total, category: 'Stocks'
+            name: stock.symbol, 
+            value: total, 
+            category: 'Stocks',
+            shares:99
         })
     }
     const handleShareChange = (x) => {
@@ -80,9 +82,9 @@ const StockInput = ({ add, cancel }) => {
                 </TouchableOpacity>
             </View>
             {/* BODY =========*/}
-            <View style={{ marginTop: 20 }}>
+            <View>
                 {!stock.price ?
-                    <>
+                    <View style={{marginTop:20}}>
                         <TextInput
                             // autoFocus={true}
                             placeholder="Enter company name or ticker symbol"
@@ -103,11 +105,11 @@ const StockInput = ({ add, cancel }) => {
                                 ))}
                             </View>}
 
-                    </>
+                    </View>
                     :
                     <View>
                         {/* SYMBOL AND COMPANY NAME */}
-                        <View style={{ marginBottom: 20 }}>
+                        <View style={{ marginTop: 30 }}>
                             <Text style={styles.symbol}>
                                 {stock.symbol}
                             </Text>
@@ -150,8 +152,8 @@ export default StockInput
 
 const styles = StyleSheet.create({
     form: {
-        // padding: 20,
         paddingHorizontal:20,
+        paddingTop:theme.statusBar,
         height: '100%',
         width: '100%',
         alignItems: 'stretch'

@@ -20,7 +20,8 @@ const InputSwitch = ({ category, add, goBack }) => {
         dispatch(add({
             name: newObj.name,
             value: val,
-            category: newObj.category
+            category: newObj.category,
+            shares:newObj.shares||null
         }))
         goBack()
     }

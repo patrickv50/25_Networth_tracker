@@ -7,6 +7,7 @@ const theme = {
     cardBg:'#080808',
     green:'rgb(21,238,108)',
     red:'rgb(255,42,82)',
+    statusBar:60
     
 }
 export default theme

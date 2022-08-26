@@ -72,7 +72,7 @@ const AssetTableScreen = ({ navigation, route }) => {
       {/* HEADER */}
       <View style={[styles.header, { borderColor: showDivider ? '#333' : theme.bg }]}>
         <TouchableWithoutFeedback onPress={handlePopNav}>
-          <View style={{ position: 'absolute', left: 10, top: -5, zIndex: 200 }}>
+          <View style={{ position: 'absolute', left: 10, top: theme.statusBar-5, zIndex: 200 }}>
             <Entypo name='chevron-left' size={32} color={color} style={{ width: 60 }} />
           </View>
         </TouchableWithoutFeedback>
@@ -82,7 +82,7 @@ const AssetTableScreen = ({ navigation, route }) => {
         </View>
       </View>
       {/* BODY */}
-      <View style={{ paddingHorizontal: 16, paddingTop: 15, flex: 1 }}>
+      <View style={{ paddingHorizontal: 16,flex: 1 }}>
         <FlatList
           initialNumToRender={15}
           onScroll={(x) => setShowDivider(x.nativeEvent.contentOffset.y < 3 ? false : true)}
@@ -179,8 +179,9 @@ const styles = StyleSheet.create({
   header: {
     flexGrow: 0,
     paddingHorizontal: 25,
-    paddingBottom: 10,
+    paddingBottom: 18,
     borderBottomWidth: .4,
+    paddingTop:theme.statusBar,
     flexDirection: 'row',
     position: 'relative',
     alignItems: 'center',

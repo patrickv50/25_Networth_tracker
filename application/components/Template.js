@@ -8,8 +8,8 @@ const Template = ({ children }) => {
             <View style={styles.body}>
                 <StatusBar hidden={false} barStyle='light-content' />
                 <View style={{
+                    zIndex:2,
                     flex: 1,
-                    paddingTop: 60,
                 }}>
                     {children}
                 </View>
@@ -45,7 +45,6 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     statusBar: {
-        backgroundColor: 'red',
         padding: 20
     }
 })

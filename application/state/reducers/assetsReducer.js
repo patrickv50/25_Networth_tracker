@@ -102,16 +102,13 @@ export const assetsSlice = createSlice({
       else {
         if (state[index].largest.value < action.payload.value) state[index].largest = action.payload
       }
-      // console.log(state)
       storeData(state)
     },
     remove: (state, action) => {
       const { category, value, id } = action.payload
-      console.log(id)
       let index = state.findIndex((elem) => elem.categoryName === category)
       // CHECK IF IN TOP 3 THEN REMOVE
       if (state[index].top3.find(elem => elem.id === id)) {
-        console.log("IN TOP#")
         state[index].top3 = state[index].top3.filter(x => x.id !== id)
         if (state[index].items.length > 0) {
           let max = { value: 0 }
