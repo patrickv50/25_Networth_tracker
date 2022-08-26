@@ -34,12 +34,12 @@ app.get('/quote/:ticker', async (req, res) => {
         if (value) {
             console.log('CACHE HIT')
             console.log(value)
+            console.log(typeof value)
             res.json(value)
         }
         // NOT IN CACHE SO QUERY API =============
         else {
-            console.error('CACHE MISS')
-            console.log(ticker)
+            console.error('CACHE MISS',ticker)
             finnhubClient.quote(ticker.toUpperCase(), async (error, data, response) => {
                 if (error) {
                     console.log(error)
@@ -79,8 +79,7 @@ app.get('/profile/:symbol', async (req, res) => {
         // IN CACHE ===============
         if (value) {
             console.log('CACHE HIT')
-            // console.log(value)
-            res.json(value)
+            res.send(JSON.parse(value))
         }
         // NOT IN CHACHE ===============
         else {
@@ -88,10 +87,9 @@ app.get('/profile/:symbol', async (req, res) => {
             await axios.get(`https://financialmodelingprep.com/api/v3/profile/${symbol}/?apikey=${process.env.FMP_KEY}`)
                 .then((response) => {
                     if (response.data) {
-                        // console.log(response.data[0])
                         redisClient.set(`profile${symbol}`, JSON.stringify(response.data[0]))
                         redisClient.expire(`profile${symbol}`, 14400)
-                        res.json(response.data)
+                        res.send(response.data[0])
                     }
                 })
         }
@@ -102,4 +100,4 @@ app.get('/profile/:symbol', async (req, res) => {
     }
 })
 
-app.listen(process.env.PORT || 5000, () => console.log("SERVER UP"))
+app.listen(process.env.PORT || 5002, () => console.log("SERVER UP"))
