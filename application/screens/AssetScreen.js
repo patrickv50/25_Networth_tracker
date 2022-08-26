@@ -141,9 +141,9 @@ const MainScreen = ({ route, navigation }) => {
             <Entypo name='plus' size={30} color={theme.text} style={{ width: 30, fontWeight: '600' }} />}
         </TouchableOpacity>
         {/* DEBUG ACTIONS ========== */}
-        {/* <TouchableOpacity style={styles.addButton} onPress={() => dispatch(addInit(null))}>
+        <TouchableOpacity style={styles.addButton} onPress={() => dispatch(addInit(null))}>
           <Text style={styles.addButtonText}>A</Text>
-        </TouchableOpacity> */}
+        </TouchableOpacity>
         {/* DEBUG ACTIONS ========== */}
         <LinearGradient
           colors={['rgba(0,0,0,.33)', 'transparent']}

@@ -74,6 +74,7 @@ export const assetsSlice = createSlice({
       // which detects changes to a "draft state" and produces a brand new
       // immutable state based off those changes
       action.payload.id = uuid()
+      console.log(action.payload)
       // Check if category exist
       let index = state.findIndex((elem) => elem.categoryName === action.payload.category)
       // If not then create a new one

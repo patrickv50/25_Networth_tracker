@@ -5,28 +5,36 @@ import { v4 as uuid } from 'uuid';
 
 let init = [{
   categoryName: "Credit Card",
+  icon: 'credit-card',
+  color: 'rgb(256,170,110)',
   total: 0,
   top3: [],
   items: [],
   largest: null
 }, {
   categoryName: "Student Loans",
+  icon: 'graduation-cap',
+  color: 'rgb(145,200,200)',
   total: 0,
   top3: [],
   items: [],
   largest: null
 }, {
   categoryName: "Car Loan",
+  icon: 'gauge',
+  color: 'rgb(211,70,80)',
   total: 0,
   top3: [],
   items: [],
   largest: null
 }, {
   categoryName: "Mortage",
-  total:0,
-  top3:[],
-  items:[],
-  largest:null
+  icon: 'home',
+  color: 'rgb(222,211,150)',
+  total: 0,
+  top3: [],
+  items: [],
+  largest: null
 }
 ]
 const storeData = async (value) => {
@@ -54,14 +62,7 @@ export const liabilities = createSlice({
       let index = state.findIndex((elem) => elem.categoryName === action.payload.category)
       // If not then create a new one
       if (index === -1) {
-        return [...state, { 
-          categoryName: action.payload.category, 
-          items: [],
-          top3:[action.payload],
-          total:action.payload.value,
-          largest:action.payload
-        },
-        ]
+        return [...state, { categoryName: action.payload.category, items: { name: action.payload.name, value: action.payload.value } }]
       }
       // Else push payload
       if (state[index].top3.length < 3) {
@@ -85,16 +86,13 @@ export const liabilities = createSlice({
       else {
         if (state[index].largest.value < action.payload.value) state[index].largest = action.payload
       }
-      // console.log(state)
       storeData(state)
     },
     remove: (state, action) => {
       const { category, value, id } = action.payload
-      console.log(id)
       let index = state.findIndex((elem) => elem.categoryName === category)
       // CHECK IF IN TOP 3 THEN REMOVE
       if (state[index].top3.find(elem => elem.id === id)) {
-        console.log("IN TOP#")
         state[index].top3 = state[index].top3.filter(x => x.id !== id)
         if (state[index].items.length > 0) {
           let max = { value: 0 }
@@ -129,6 +127,7 @@ export const liabilities = createSlice({
 export const { add, remove, addInit } = liabilities.actions
 
 export default liabilities.reducer
+
 
 
 

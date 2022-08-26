@@ -52,7 +52,7 @@ const InputSwitch = ({ category, add, goBack }) => {
             <TouchableOpacity style={styles.addButton} onPress={() => handleSubmit({
                 name: name,
                 value: value,
-                category: category.name
+                category: category.categoryName
             })}>
                 <Text style={styles.addButtonText}>Add</Text>
             </TouchableOpacity>
