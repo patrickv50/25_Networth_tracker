@@ -24,7 +24,10 @@ const Item = ({ inputEnabled, handleNavigate, category, index, setMenuOpen, setF
         }
     }
     const toggleInfo = (obj) => {
-        setFocusedAsset(obj)
+        setFocusedAsset({
+            category:category,
+            item:obj
+        })
         setMenuOpen(true)
     }
     const animateHeight = useCallback((x) => {

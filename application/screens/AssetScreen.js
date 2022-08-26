@@ -13,33 +13,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AssetContainer from '../components/AssetContainer'
 import TextComp from '../components/shared/TextComp'
+import DetailSwitch from '../components/DetailSwitch'
 const Stack = createNativeStackNavigator();
-
-const categories = [{
-  name: 'Cash',
-  icon: 'wallet',
-  color: 'rgb(252,199,92)'
-}, {
-  name: 'Stocks',
-  icon: 'bar-graph',
-  color: 'rgb(145,250,147)'
-}, {
-  name: 'Real Estate',
-  icon: 'home',
-  color: 'rgb(132,211,219)'
-}, {
-  name: 'Tangible',
-  icon: 'laptop',
-  color: 'rgb(207,140,120)'
-}, {
-  name: 'Intangible',
-  icon: 'book',
-  color: 'rgb(239,176,129)'
-}, {
-  name: 'Misc',
-  icon: 'box',
-  color: 'white'
-},]
 
 const AssetScreen = () => {
   return (
@@ -52,12 +27,13 @@ const AssetScreen = () => {
           <Stack.Screen name='Main' component={MainScreen} />
           <Stack.Screen name='AssetTable' component={AssetTableScreen} />
           <Stack.Screen name='Input' component={InputScreen} />
+          <Stack.Screen name='Details' component={DetailScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </Template>
   )
 }
-// INPUT SCREEN
+// INPUT SCREEN DIVIDER ==============================
 const InputScreen = ({ navigation, route }) => {
   const { category } = route.params
   const handlePopNav = () => {
@@ -65,7 +41,16 @@ const InputScreen = ({ navigation, route }) => {
   }
   return <InputSwitch category={category} add={add} goBack={handlePopNav} />
 }
-// ASSET TABLE SCREEN
+// DETAIL SCREEN DIVIDER ==============================
+const DetailScreen = ({ navigation, route }) => {
+  const { category,item } = route.params
+  const handlePopNav = () => {
+    navigation.popToTop()
+  }
+  return <DetailSwitch category={category} item={item} goBack={handlePopNav} />
+
+}
+// ASSET TABLE SCREEN DIVIDER ==============================
 const AssetTableScreen = ({ navigation, route }) => {
   const { categoryName, items, color, icon, top3, largest, total } = route.params
   const [showDivider, setShowDivider] = useState(false)
@@ -87,8 +72,8 @@ const AssetTableScreen = ({ navigation, route }) => {
       {/* HEADER */}
       <View style={[styles.header, { borderColor: showDivider ? '#333' : theme.bg }]}>
         <TouchableWithoutFeedback onPress={handlePopNav}>
-          <View style={{position:'absolute',left:10,top: -5,zIndex:200}}>
-            <Entypo name='chevron-left' size={32} color={color} style={{width:60}} />
+          <View style={{ position: 'absolute', left: 10, top: -5, zIndex: 200 }}>
+            <Entypo name='chevron-left' size={32} color={color} style={{ width: 60 }} />
           </View>
         </TouchableWithoutFeedback>
         <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
@@ -97,13 +82,13 @@ const AssetTableScreen = ({ navigation, route }) => {
         </View>
       </View>
       {/* BODY */}
-      <View style={{ paddingHorizontal: 16,paddingTop:15, flex: 1 }}>
+      <View style={{ paddingHorizontal: 16, paddingTop: 15, flex: 1 }}>
         <FlatList
           initialNumToRender={15}
           onScroll={(x) => setShowDivider(x.nativeEvent.contentOffset.y < 3 ? false : true)}
           showsVerticalScrollIndicator={false}
           data={arr}
-          renderItem={(item, index) => <AssetContainer item={item} accordionOpen={true} toggleInfo={() => { }} color={color} total={total} />}
+          renderItem={(item, index) => <AssetContainer item={item} accordionOpen={true} color={color} total={total} />}
           keyExtractor={(x) => x.id}
           ListHeaderComponent={<View style={{ marginBottom: 12 }}>
             <TextComp variant='h2' marginBottom weight='600'>Your stock portfolio is {Math.ceil(total * 100 / assetsTotal)}% of your total assets.</TextComp>
@@ -117,7 +102,7 @@ const AssetTableScreen = ({ navigation, route }) => {
     </>
   )
 }
-// MAIN SCREEN ============================================
+// MAIN SCREEN DIVIDER==============================================
 const MainScreen = ({ route, navigation }) => {
   const [menuOpen, setMenuOpen] = useState(false)
   const [inputEnabled, setInputEnabled] = useState(false)
@@ -132,14 +117,20 @@ const MainScreen = ({ route, navigation }) => {
   }
   const handleDelete = () => {
     setMenuOpen(false)
-    dispatch(remove(focusedAsset))
+    dispatch(remove(focusedAsset.item))
   }
-
+  const handleEdit = () =>{
+    return
+  }
   const handleNavigate = (destination, item) => {
     navigation.navigate(destination, item)
   }
+  const goToDetail = ()=>{
+    setMenuOpen(false)
+    navigation.navigate('Details',focusedAsset)
+  }
   return (
-    <>
+    <View style={{flex:1}}>
       {/* HEADER ======== */}
       < View style={styles.header
       }>
@@ -168,7 +159,7 @@ const MainScreen = ({ route, navigation }) => {
         />
       </View >
       {/* BODY ========*/}
-      < View style={{ flexGrow: 1, flex: 1, paddingHorizontal: 16 }}>
+      < View style={{ flex: 1, paddingHorizontal: 16 }}>
         <FlatList
           showsVerticalScrollIndicator={false}
           data={assets}
@@ -180,8 +171,8 @@ const MainScreen = ({ route, navigation }) => {
         </FlatList>
       </View >
       {/* MENU ========*/}
-      < Menu menuOpen={menuOpen} setMenuOpen={setMenuOpen} remove={handleDelete} />
-    </>
+      < Menu menuOpen={menuOpen} setMenuOpen={setMenuOpen} remove={handleDelete} edit={handleEdit} goToDetail={goToDetail} />
+    </View>
   )
 }
 const styles = StyleSheet.create({
