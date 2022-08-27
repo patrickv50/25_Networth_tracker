@@ -1,8 +1,8 @@
+require('dotenv').config()
 const { Client } = require('redis-om')
 const express = require('express')
 const finnhub = require('finnhub');
-require('dotenv').config()
-const { searchListing } = require('./redis/redis.js')
+const { searchListing, createProfile, getProfile, getQuote, createQuote } = require('./redis/redis.js')
 const axios = require('axios');
 const api_key = finnhub.ApiClient.instance.authentications['api_key']
 api_key.apiKey = process.env.FINNHUB_KEY
@@ -20,41 +20,47 @@ const connect = async () => {
 }
 connect()
 
-app.get('/', (req, res) => res.send("Working"))
+app.get('/', (req, res) => res.send("API WORKING"))
 app.get('/search/:query', async (req, res) => {
     let { query } = req.params
     res.json(await searchListing(query))
 })
-app.get('/quote/:ticker', async (req, res) => {
+app.get('/quote/:symbol', async (req, res) => {
     try {
         await connect()
-        const { ticker } = req.params
-        const value = await redisClient.get(ticker)
+        const { symbol } = req.params
+        const value = await getQuote(symbol)
         // IN CACHE =============
         if (value) {
             console.log('CACHE HIT')
             console.log(value)
-            console.log(typeof value)
-            res.json(value)
+            res.send(value)
         }
         // NOT IN CACHE SO QUERY API =============
         else {
-            console.error('CACHE MISS',ticker)
-            finnhubClient.quote(ticker.toUpperCase(), async (error, data, response) => {
+            console.error('CACHE MISS', symbol)
+            finnhubClient.quote(symbol.toUpperCase(), async (error, data, response) => {
                 if (error) {
                     console.log(error)
                     throw new Error()
                 }
                 if (data.c) {
                     console.log('DATA FETCHED', data.c)
-                    res.json(data.c)
-                    redisClient.set(ticker, data.c)
-                    redisClient.expire(ticker, 360)
+                    let obj = {
+                        symbol,
+                        current: data.c,
+                        change: data.d,
+                        percentChange: data.dp,
+                        high: data.h,
+                        low: data.l,
+                        createdAt: new Date()
+                    }
+                    await createQuote(obj)
+                    res.send(obj)
                 }
                 else {
                     console.log("INVALID SYMBOL")
                     res.sendStatus(404)
-                    // res.json(0)
                 }
             });
         }
@@ -64,22 +70,17 @@ app.get('/quote/:ticker', async (req, res) => {
         res.send("Error")
     }
 })
-// app.get('/dcquote/:ticker', async (req, res) => {
-//     const { ticker } = req.params
-//     finnhubClient.quote(ticker.toUpperCase(), async (error, data, response) => {
-//         res.json(data.c)
-//     });
-// })
+
 app.get('/profile/:symbol', async (req, res) => {
     // NOT IN CACHE SO QUERY API =============
     try {
         await connect()
         const { symbol } = req.params
-        const value = await redisClient.get('profile' + symbol)
+        const value = await getProfile(symbol)
         // IN CACHE ===============
         if (value) {
             console.log('CACHE HIT')
-            res.send(JSON.parse(value))
+            res.send(value)
         }
         // NOT IN CHACHE ===============
         else {
@@ -87,17 +88,29 @@ app.get('/profile/:symbol', async (req, res) => {
             await axios.get(`https://financialmodelingprep.com/api/v3/profile/${symbol}/?apikey=${process.env.FMP_KEY}`)
                 .then((response) => {
                     if (response.data) {
-                        redisClient.set(`profile${symbol}`, JSON.stringify(response.data[0]))
-                        redisClient.expire(`profile${symbol}`, 14400)
-                        res.send(response.data[0])
+                            let obj={
+                                symbol:response.data[0].symbol,
+                                volAvg:response.data[0].volAvg,
+                                mktCap:response.data[0].mktCap,
+                                changes:response.data[0].changes,
+                                companyName:response.data[0].companyName,
+                                description:response.data[0].description,
+                                ipoDate:response.data[0].ipoDate,
+                                ceo:response.data[0].ceo,
+                                city:response.data[0].city,
+                                state:response.data[0].state
+                            }
+                        createProfile(obj)
+                        res.send(obj)
                     }
                 })
         }
-
-
     } catch (e) {
         console.log(e)
     }
+})
+app.get('/pricehistory/:symbol', async (req, res) => {
+
 })
 
 app.listen(process.env.PORT || 5002, () => console.log("SERVER UP"))
