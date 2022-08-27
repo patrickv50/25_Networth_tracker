@@ -6,9 +6,11 @@ import theme from '../../theme'
 import TextComp from '../shared/TextComp'
 import { AreaChart, Grid, LineChart, XAxis } from 'react-native-svg-charts'
 import * as shape from 'd3-shape'
+import { Entypo, } from '@expo/vector-icons';
 
-const StockDetail = ({ item }) => {
+const StockDetail = ({ item, goBack }) => {
   const [profile, setProfile] = useState({})
+  const [price, setPrice] = useState({})
   const [aboutExpanded, setAboutExpanded] = useState(false)
   const [loading, setLoading] = useState(true)
   const [data, setData] = useState([])
@@ -22,48 +24,53 @@ const StockDetail = ({ item }) => {
   }
   const fetchPriceHistory = async () => {
     await axios.get(`https://financialmodelingprep.com/api/v3/historical-chart/5min/${item.name}?apikey=5e76645e9f1037cc199a52a4409bc05c`)
-      .then(({data})=>{
+      .then(({ data }) => {
         // console.log(data[0])
         // console.log(data.length)
         setData(data)
       })
   }
+  const fetchQuote = async () => {
+    await axios.get(`https://networthtrkr.herokuapp.com/quote/${item.name}`)
+      .then(({ data }) => {
+        setPrice(data)
+      })
+  }
   useEffect(() => {
     fecthProfile()
     fetchPriceHistory()
+    fetchQuote()
   }, [item])
 
   return (
     <View style={styles.main}>
-
+      <View style={styles.header}>
+        <TouchableOpacity onPress={goBack}>
+          <Entypo name='chevron-left' size={32} color={theme.green} style={{ width: 25, fontWeight: '600' }} />
+        </TouchableOpacity>
+        <TextComp variant='h1' textAlign='left' weight='bold'>{profile.symbol}</TextComp>
+        <TextComp variant='h1' textAlign='left' weight='bold'>{price.current?`$${price.current}`:''}</TextComp>
+        <View style={{ flexDirection: 'row', marginTop: 8 }}>
+          <TextComp variant='body1' textAlign='left' style={{ color: price.change > 0 ? theme.green : theme.red, marginRight: 4 }}>${nFormatter(price.change, 2)}</TextComp>
+          <TextComp variant='body1' textAlign='left' >Today</TextComp>
+        </View>
+      </View>
       {loading ?
-        <View>
-          <TextComp>SKELETON</TextComp>
-        </View> :
+        <Skeleton /> :
         <>
           {/* HEADER SECTION */}
-          <View style={styles.header}>
-            <TextComp variant='h1' textAlign='left' weight='bold'>{profile.symbol}</TextComp>
-            <TextComp variant='h1' textAlign='left' weight='bold'>${profile.price}</TextComp>
-            <View style={{ flexDirection: 'row', marginTop: 8 }}>
-              <TextComp variant='body1' textAlign='left' style={{ color: Number(profile.changes) > 0 ? theme.green : theme.red, marginRight: 4 }}>${nFormatter(Number(profile.changes), 2)}</TextComp>
-              <TextComp variant='body1' textAlign='left' >Today</TextComp>
-            </View>
-          </View>
+
           <ScrollView showsVerticalScrollIndicator={false} style={styles.body}>
             {/* CHART SECTION =========== */}
             <View>
               <LineChart
-                yAccessor={({ item }) => item.close}
+                showGrid={false}
+                yAccessor={({ item }) => (item.close)}
                 style={{ height: 200 }}
                 data={data}
-                contentInset={{ top: 30, bottom: 30, left: 10, right: 10 }}
-                // curve={shape.curveNatural}
+                contentInset={{ top: 0, bottom: 30, left: 10, right: 10 }}
                 svg={{ stroke: theme.green, strokeWidth: 1 }}
-                animate={true}
               >
-                <XAxis
-                  data={data} />
               </LineChart>
             </View>
             {/* SHARES SECTION ============ */}
@@ -75,7 +82,7 @@ const StockDetail = ({ item }) => {
               </View>
               <View style={styles.sharesCard}>
                 <TextComp variant='body1' textAlign='left' style={styles.sharesLabel}>Value</TextComp>
-                <TextComp variant='h2' textAlign='left' weight='bold'>${nFormatter(Number(item.value), 2) || 0}</TextComp>
+                <TextComp variant='h2' textAlign='left' weight='bold'>${price.current && nFormatter(item.shares * price.current, 2) || 0}</TextComp>
               </View>
             </View>
             {/* ABOUT SECTION ============ */}
@@ -124,6 +131,15 @@ const StockDetail = ({ item }) => {
   )
 }
 
+const Skeleton = () => {
+  return (
+    <View>
+
+    </View>
+
+  )
+}
+
 const styles = StyleSheet.create({
   main: {
     paddingTop: theme.statusBar,
@@ -135,6 +151,7 @@ const styles = StyleSheet.create({
     marginBottom: 12
   },
   body: {
+    // backgroundColor:'red',
     flex: 1,
   },
   sectionHeader: {
@@ -198,6 +215,7 @@ const styles = StyleSheet.create({
 })
 
 function nFormatter(num, digits) {
+  if(!num) return ''
   const lookup = [
     { value: 1, symbol: "" },
     { value: 1e3, symbol: "k" },

@@ -38,7 +38,7 @@ const StockInput = ({ add, cancel }) => {
             setStock({
                 symbol: symbol,
                 companyName: companyName,
-                price: res.data
+                price: res.data.current
             })
         }).catch(e => console.error(e))
     }
@@ -56,7 +56,7 @@ const StockInput = ({ add, cancel }) => {
             name: stock.symbol, 
             value: total, 
             category: 'Stocks',
-            shares:99
+            shares:Number(shares)
         })
     }
     const handleShareChange = (x) => {
@@ -125,7 +125,7 @@ const StockInput = ({ add, cancel }) => {
                         {/* PRICE ====================*/}
                         <View style={styles.row}>
                             <Text style={styles.label}>Market Price</Text>
-                            <Text style={styles.value}>${stock.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</Text>
+                            <Text style={styles.value}>${stock.price.toFixed(2)}</Text>
                         </View>
                         {/* TOTAL ====================*/}
                         <View style={styles.row}>

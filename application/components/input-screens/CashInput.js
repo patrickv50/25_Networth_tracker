@@ -5,36 +5,40 @@ import { useDispatch } from 'react-redux'
 import { Entypo, } from '@expo/vector-icons';
 import axios from 'axios';
 
-const CashInput = ({ add,cancel }) => {
-    const [query, setQuery] = useState("")
+const CashInput = ({ add, cancel }) => {
+    const [type, setType] = useState("")
+    const [bankName, setBankName] = useState("")
     const [recs, setRec] = useState([])
     const [stock, setStock] = useState({
         symbol: "",
         name: "",
         price: 0
     })
-    const [shares, setShares] = useState(0)
+    const [value, setValue] = useState(0)
     const nameRef = useRef()
     let controller = useRef(new AbortController())
-    const total = useMemo(() => {
-        return stock.price * shares
-    }, [stock, shares])
-    const dispatch = useDispatch()
+
 
     const handleSubmit = () => {
 
         add({
-            name: stock.symbol, value: total, category: 'Cash'
+            category: 'Cash',
+            type:type,
+            bankName:bankName,
+            name: stock.symbol, 
+            value: value, 
         })
     }
     const handleCancel = () => {
         cancel()
     }
     const handleShareChange = (x) => {
-        if (!Number(x)) return
+        if (!Number(x) || Number(x)>1e12) {
+            setValue(0)
+            return
+        }
         let num = Number(x.toString().replace(',', ''))
-        if (num > 2000000) return
-        else setShares(num)
+        setValue(num)
     }
 
     return (
@@ -42,23 +46,23 @@ const CashInput = ({ add,cancel }) => {
         // behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
             {/* HEADER =========*/}
-            <View style={{ flexDirection: 'row', justifyContent: 'left', alignItems: 'center', marginBottom: 8, paddingTop: 40 }}>
-                <Entypo name='bar-graph' size={20} color='rgb(145,250,147)' style={{ width: 25, marginBottom: 4, fontWeight: '600' }} />
+            <View style={{ flexDirection: 'row', justifyContent: 'left', alignItems: 'center', marginBottom: 8}}>
+                <Entypo name='wallet' size={20} color='rgb(252,199,92)' style={{ width: 25, marginBottom: 4, fontWeight: '600' }} />
                 <Text style={{ fontSize: 18, color: theme.text, flex: 1 }}>Adding Cash</Text>
                 <TouchableOpacity onPress={handleCancel}>
-                    <Text style={{color:theme.text}}>Cancel</Text>
+                    <Text style={{ color: theme.text }}>Cancel</Text>
                 </TouchableOpacity>
             </View>
             {/* BODY =========*/}
             <View style={{ marginTop: 20 }}>
-                {!stock.price ?
+                {!type ?
                     <>
-                        <Text style={{fontSize:26,color:theme.text,textAlign:'center',marginBottom:8}}>
+                        <Text style={{ fontSize: 26, color: theme.text, textAlign: 'center', marginBottom: 8 }}>
                             Select Category
                         </Text>
-                        {['Physical Cash','Checkings Acount','Savings Acount'].map((type,index)=>(
-                            <TouchableOpacity key={index} style={{backgroundColor:theme.cardBg,padding:8,marginBottom:6,borderRadius:6}}>
-                                <Text style={{fontSize:18,color:theme.text}}>{type}</Text>
+                        {['Physical Cash', 'Checkings Acount', 'Savings Acount'].map((type, index) => (
+                            <TouchableOpacity onPress={()=>setType(type)} key={index} style={{ backgroundColor: theme.cardBg, padding: 8, marginBottom: 6, borderRadius: 6 }}>
+                                <Text style={{ fontSize: 18, color: theme.text }}>{type}</Text>
                             </TouchableOpacity>
                         ))}
 
@@ -68,34 +72,36 @@ const CashInput = ({ add,cancel }) => {
                         {/* SYMBOL AND COMPANY NAME */}
                         <View style={{ marginBottom: 20 }}>
                             <Text style={styles.symbol}>
-                                {stock.symbol}
+                                {type}
                             </Text>
                             <Text numberOfLines={1} style={styles.companyName}>
-                                {stock.companyName}
+                                {/* {stock.companyName} */}
                             </Text>
                         </View>
                         {/* SHARE COUNT INPUT =======*/}
                         <View style={styles.row}>
-                            <Text style={styles.label}>Number of Shares</Text>
-                            <TextInput selectionColor={'rgb(145,250,147)'} autoFocus={true} value={shares === 0 ? '' : shares.toString()} keyboardType='number-pad' returnKeyType='done' style={[styles.value, { flex: 1, textAlign: 'right' }]} onChangeText={(x) => handleShareChange(x)} />
+                            <Text style={styles.label}>Total Value</Text>
+                            <TextInput selectionColor={'rgb(145,250,147)'} autoFocus={true} value={value === 0 ? '' : value.toString()} keyboardType='number-pad' returnKeyType='done' style={[styles.value, { flex: 1, textAlign: 'right' }]} onChangeText={(x) => handleShareChange(x)} />
                         </View>
-                        {/* PRICE ====================*/}
+                        {/* SHARE COUNT INPUT =======*/}
                         <View style={styles.row}>
+                            <Text style={styles.label}>Bank Name</Text>
+                            <TextInput selectionColor={'rgb(145,250,147)'} autoFocus={false} value={bankName} keyboardType='number-pad' returnKeyType='done' style={[styles.value, { flex: 1, textAlign: 'right' }]} onChangeText={(x) => setBankName(x)} />
+                        </View>
+                        {/* PRICE` ====================*/}
+                        {/* <View style={styles.row}>
                             <Text style={styles.label}>Market Price</Text>
                             <Text style={styles.value}>${stock.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</Text>
-                        </View>
+                        </View> */}
                         {/* TOTAL ====================*/}
-                        <View style={styles.row}>
+                        {/* <View style={styles.row}>
                             <Text style={styles.label}>Total</Text>
                             <Text style={styles.value}>${Math.floor(total).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</Text>
-                        </View>
+                        </View> */}
                         {/* BUTTONS ====================*/}
                         <View style={{ marginTop: 20 }}>
                             <TouchableOpacity style={styles.addButton} onPress={handleSubmit}>
                                 <Text numberOfLines={2} style={styles.addButtonText}>Add {stock.symbol}</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity style={[styles.addButton, { backgroundColor: 'transparent' }]} onPress={handleCancel}>
-                                <Text style={[styles.addButtonText, { fontSize: 15, color: theme.text }]}>Cancel</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -109,9 +115,10 @@ export default CashInput
 
 const styles = StyleSheet.create({
     form: {
+        paddingHorizontal: 20,
+        paddingTop: theme.statusBar,
         height: '100%',
         width: '100%',
-        padding: 60,
         alignItems: 'stretch'
     },
     input: {
