@@ -1,5 +1,4 @@
 require('dotenv').config()
-const { Client } = require('redis-om')
 const express = require('express')
 const finnhub = require('finnhub');
 const { searchListing, createProfile, getProfile, getQuote, createQuote } = require('./redis/redis.js')
@@ -11,16 +10,7 @@ const finnhubClient = new finnhub.DefaultApi()
 
 const app = express()
 
-const connect = async () => {
-    if (!redisClient.isOpen()) {
-        console.log("CONNECTING")
-        await redisClient.open(process.env.REDIS_URL)
-    }
-}
-connect()
 
-=======
->>>>>>> 702e44863ce7ef38e07d07f628e5e2bddce49266
 app.get('/', (req, res) => res.send("API WORKING"))
 app.get('/search/:query', async (req, res) => {
     let { query } = req.params
@@ -28,7 +18,6 @@ app.get('/search/:query', async (req, res) => {
 })
 app.get('/quote/:symbol', async (req, res) => {
     try {
-        await connect()
         const { symbol } = req.params
         const value = await getQuote(symbol)
         // IN CACHE =============
