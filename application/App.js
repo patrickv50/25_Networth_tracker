@@ -8,21 +8,22 @@ import { ThemeContext } from './ThemeContext';
 
 const theme = {
   dark: {
-    name:'dark',
+    name: 'dark',
     bg: '#111',
     text: '#eee',
-    textSecondary: '',
+    textSecondary: '#777',
     input: '#00020a',
     cardBg: '#080808',
     cardBgSecondary: '#212425',
     green: 'rgb(21,238,108)',
     red: 'rgb(255,42,82)',
     statusBar: 60,
-    gradientTo:'rgba(5,5,10,.95)', 
-    gradientFrom:'rgba(0,0,0,0)',
+    gradientTo: 'rgba(5,5,10,.95)',
+    gradientFrom: 'rgba(0,0,0,0)',
+    focusColor:'#ffffff'
   },
   light: {
-    name:'light',
+    name: 'light',
     bg: '#fefefe',
     text: '#050505',
     textSecondary: '#888',
@@ -32,8 +33,9 @@ const theme = {
     green: 'rgb(13,200,90)',
     red: 'rgb(255,42,82)',
     statusBar: 60,
-    gradientTo:'rgba(255,255,255,.95)', 
-    gradientFrom:'rgba(255,255,255,0)',
+    gradientTo: 'rgba(255,255,255,.95)',
+    gradientFrom: 'rgba(255,255,255,0)',
+    focusColor:'rgb(13,180,90)'
   }
 }
 export default function App() {

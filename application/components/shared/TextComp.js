@@ -1,8 +1,13 @@
+import { useContext } from 'react'
 import { useMemo } from 'react'
 import { Text } from 'react-native'
-import theme from '../../theme'
+import { ThemeContext } from '../../ThemeContext'
 
 const TextComp = ({numLines, style, children, variant, marginBottom, weight,textAlign }) => {
+    const curTheme = useContext(ThemeContext)
+    // const styles = useMemo(() => {
+    //   return getTheme(curTheme)
+    // }, [curTheme])
     const size = useMemo(() => {
         switch (variant) {
             case 'h1': return 28
@@ -17,7 +22,7 @@ const TextComp = ({numLines, style, children, variant, marginBottom, weight,text
     })
     const mBottom = marginBottom ? (size / 1.5) : 0
     return (
-        <Text numberOfLines={numLines?numLines:0} style={[{ color: theme.text, textAlign: textAlign?textAlign:'center', fontSize: size, marginBottom: mBottom, fontWeight: weight }, style]}>{children}</Text>
+        <Text numberOfLines={numLines?numLines:0} style={[{ color: curTheme.text, textAlign: textAlign?textAlign:'center', fontSize: size, marginBottom: mBottom, fontWeight: weight }, style]}>{children}</Text>
     )
 }
 

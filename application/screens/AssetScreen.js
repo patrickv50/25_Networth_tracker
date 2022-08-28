@@ -6,7 +6,6 @@ import InputSwitch from '../components/InputSwitch'
 import Item from '../components/Item'
 import Template from '../components/Template'
 import { add, addInit, remove } from '../state/reducers/assetsReducer'
-import theme from '../theme'
 import { Entypo, } from '@expo/vector-icons';
 import Menu from '../components/Menu'
 import { NavigationContainer } from '@react-navigation/native';
@@ -14,8 +13,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AssetContainer from '../components/AssetContainer'
 import TextComp from '../components/shared/TextComp'
 import DetailSwitch from '../components/DetailSwitch'
-const Stack = createNativeStackNavigator();
 import { ThemeContext } from '../ThemeContext'
+const Stack = createNativeStackNavigator();
 
 const AssetScreen = () => {
   const curTheme = useContext(ThemeContext)

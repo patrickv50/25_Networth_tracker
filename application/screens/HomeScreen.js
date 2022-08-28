@@ -5,7 +5,6 @@ import Header from '../components/Header';
 import Template from '../components/Template';
 import { addInit } from '../state/reducers/assetsReducer';
 import { addInit as addInitLia } from '../state/reducers/liabilitiesReducer';
-import theme from '../theme';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useFocusEffect } from '@react-navigation/native';
 import { Entypo } from '@expo/vector-icons';
