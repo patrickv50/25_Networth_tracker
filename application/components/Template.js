@@ -1,20 +1,25 @@
 import { LinearGradient } from 'expo-linear-gradient'
-import React from 'react'
+import React, { useContext, useMemo } from 'react'
 import { StatusBar, StyleSheet, View } from 'react-native'
-import theme from '../theme'
+import { ThemeContext } from '../ThemeContext'
 const Template = ({ children }) => {
+    const curTheme = useContext(ThemeContext)
+    const styles = useMemo(() => {
+        return getTheme(curTheme)
+    }, [curTheme])
+
     return (
         <View style={styles.app}>
             <View style={styles.body}>
                 <StatusBar hidden={false} barStyle='light-content' />
                 <View style={{
-                    zIndex:2,
+                    zIndex: 2,
                     flex: 1,
                 }}>
                     {children}
                 </View>
                 <LinearGradient
-                    colors={['rgba(5,5,10,.95)', 'rgba(0,0,0,0)']}
+                    colors={[curTheme.gradientTo, curTheme.gradientFrom]}
                     style={{
                         height: 150,
                         width: '100%',
@@ -32,19 +37,20 @@ const Template = ({ children }) => {
 }
 
 export default Template
-
-const styles = StyleSheet.create({
-    app: {
-        flex: 1,
-        backgroundColor: theme.bg,
-        alignItems: 'center'
-    },
-    body: {
-        width: '100%',
-        maxWidth: 900,
-        flex: 1,
-    },
-    statusBar: {
-        padding: 20
-    }
-})
+const getTheme = (theme) =>{
+    return  StyleSheet.create({
+        app: {
+            flex: 1,
+            backgroundColor: theme.bg,
+            alignItems: 'center'
+        },
+        body: {
+            width: '100%',
+            maxWidth: 900,
+            flex: 1,
+        },
+        statusBar: {
+            padding: 20
+        }
+    })
+}

@@ -1,5 +1,5 @@
 import { LinearGradient } from 'expo-linear-gradient'
-import React, { useMemo, useState } from 'react'
+import React, { useContext, useMemo, useState } from 'react'
 import { FlatList, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
 import InputSwitch from '../components/InputSwitch'
@@ -15,14 +15,16 @@ import AssetContainer from '../components/AssetContainer'
 import TextComp from '../components/shared/TextComp'
 import DetailSwitch from '../components/DetailSwitch'
 const Stack = createNativeStackNavigator();
+import { ThemeContext } from '../ThemeContext'
 
 const AssetScreen = () => {
+  const curTheme = useContext(ThemeContext)
   return (
     <Template>
       <NavigationContainer independent={true}>
         <Stack.Navigator screenOptions={{
           headerShown: false,
-          contentStyle: { backgroundColor: theme.bg, },
+          contentStyle: { backgroundColor: curTheme.bg, },
         }}>
           <Stack.Screen name='Main' component={MainScreen} />
           <Stack.Screen name='AssetTable' component={AssetTableScreen} />
@@ -52,6 +54,11 @@ const DetailScreen = ({ navigation, route }) => {
 }
 // ASSET TABLE SCREEN DIVIDER ==============================
 const AssetTableScreen = ({ navigation, route }) => {
+  const curTheme = useContext(ThemeContext)
+  const styles = useMemo(() => {
+      return getTheme(curTheme)
+  }, [curTheme])
+
   const { categoryName, items, color, icon, top3, largest, total } = route.params
   const [showDivider, setShowDivider] = useState(false)
   const assets = useSelector(state => state.assets)
@@ -70,9 +77,9 @@ const AssetTableScreen = ({ navigation, route }) => {
   return (
     <>
       {/* HEADER */}
-      <View style={[styles.header, { borderColor: showDivider ? '#333' : theme.bg }]}>
+      <View style={[styles.header, { borderColor: showDivider ? '#333' : curTheme.bg }]}>
         <TouchableWithoutFeedback onPress={handlePopNav}>
-          <View style={{ position: 'absolute', left: 10, top: theme.statusBar-5, zIndex: 200 }}>
+          <View style={{ position: 'absolute', left: 10, top: curTheme.statusBar-5, zIndex: 200 }}>
             <Entypo name='chevron-left' size={32} color={color} style={{ width: 60 }} />
           </View>
         </TouchableWithoutFeedback>
@@ -104,6 +111,11 @@ const AssetTableScreen = ({ navigation, route }) => {
 }
 // MAIN SCREEN DIVIDER==============================================
 const MainScreen = ({ route, navigation }) => {
+  const curTheme = useContext(ThemeContext)
+  const styles = useMemo(() => {
+      return getTheme(curTheme)
+  }, [curTheme])
+
   const [menuOpen, setMenuOpen] = useState(false)
   const [inputEnabled, setInputEnabled] = useState(false)
   const [focusedAsset, setFocusedAsset] = useState({})
@@ -137,8 +149,8 @@ const MainScreen = ({ route, navigation }) => {
         <Text style={styles.title}>Assets</Text>
         <TouchableOpacity style={styles.addButton} onPress={(x) => setInputEnabled(!inputEnabled)}>
           {inputEnabled ?
-            <Entypo name='cross' size={30} color={theme.red} style={{ width: 30, fontWeight: '600' }} /> :
-            <Entypo name='plus' size={30} color={theme.text} style={{ width: 30, fontWeight: '600' }} />}
+            <Entypo name='cross' size={30} color={curTheme.red} style={{ width: 30, fontWeight: '600' }} /> :
+            <Entypo name='plus' size={30} color={curTheme.text} style={{ width: 30, fontWeight: '600' }} />}
         </TouchableOpacity>
         {/* DEBUG ACTIONS ========== */}
         <TouchableOpacity style={styles.addButton} onPress={() => dispatch(addInit(null))}>
@@ -175,7 +187,7 @@ const MainScreen = ({ route, navigation }) => {
     </View>
   )
 }
-const styles = StyleSheet.create({
+const getTheme = (theme) => StyleSheet.create({
   header: {
     flexGrow: 0,
     paddingHorizontal: 25,

@@ -1,9 +1,5 @@
 require('dotenv').config()
-<<<<<<< HEAD
 const { Client } = require('redis-om')
-=======
-const userRoutes = require('./routes/userRoutes.js')
->>>>>>> 702e44863ce7ef38e07d07f628e5e2bddce49266
 const express = require('express')
 const finnhub = require('finnhub');
 const { searchListing, createProfile, getProfile, getQuote, createQuote } = require('./redis/redis.js')
@@ -14,9 +10,7 @@ api_key.apiKey = process.env.FINNHUB_KEY
 const finnhubClient = new finnhub.DefaultApi()
 
 const app = express()
-app.use(express.json())
 
-<<<<<<< HEAD
 const connect = async () => {
     if (!redisClient.isOpen()) {
         console.log("CONNECTING")
@@ -34,10 +28,7 @@ app.get('/search/:query', async (req, res) => {
 })
 app.get('/quote/:symbol', async (req, res) => {
     try {
-<<<<<<< HEAD
         await connect()
-=======
->>>>>>> 702e44863ce7ef38e07d07f628e5e2bddce49266
         const { symbol } = req.params
         const value = await getQuote(symbol)
         // IN CACHE =============
@@ -119,13 +110,7 @@ app.get('/profile/:symbol', async (req, res) => {
     }
 })
 app.get('/pricehistory/:symbol', async (req, res) => {
-<<<<<<< HEAD
 
 })
-=======
-})
-app.use('/users',userRoutes)
-
->>>>>>> 702e44863ce7ef38e07d07f628e5e2bddce49266
 
 app.listen(process.env.PORT || 5002, () => console.log("SERVER UP"))
