@@ -1,10 +1,15 @@
-import { useCallback, useEffect, useRef } from "react"
+import { useCallback, useContext, useEffect, useMemo, useRef } from "react"
 import { Animated, Easing, StyleSheet, Text, TouchableOpacity, View } from "react-native"
-import theme from "../theme"
 import { Feather } from '@expo/vector-icons';
+import { ThemeContext } from "../ThemeContext";
 const heightOfItem = 40
 
 const AssetContainer = ({ item, index,color, toggleInfo, total, accordionOpen }) => {
+    const curTheme = useContext(ThemeContext)
+    const styles = useMemo(() => {
+        return getTheme(curTheme)
+    }, [curTheme])
+
     const containerTop = useRef(new Animated.Value(heightOfItem)).current
     const animateHeight = useCallback((x, instant) => {
         Animated.timing(containerTop, {
@@ -38,7 +43,7 @@ const AssetContainer = ({ item, index,color, toggleInfo, total, accordionOpen })
         </View>
     )
 }
-const styles = StyleSheet.create({
+const getTheme = (theme)=> StyleSheet.create({
     assetContainer: {
         width: '100%',
         overflow: 'hidden',

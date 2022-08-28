@@ -12,7 +12,7 @@ const Tab = createBottomTabNavigator();
 // let focusedColor = '#da7'
 let focusedColor = '#eee'
 let unfocusedColor = '#494949'
-const BottomNav = () => {
+const BottomNav = ({changeTheme}) => {
 
     return (
         <Tab.Navigator
@@ -33,7 +33,7 @@ const BottomNav = () => {
             }}
             initialRouteName='Home'
         >
-            <Tab.Screen name="Home" component={HomeScreen} options={{
+            <Tab.Screen name="Home" component={HomeScreen} initialParams={{changeTheme:changeTheme}} options={{
                 tabBarIcon: (({ focused }) =>
                 (
                     <View style={{ alignItems: "center" }}>

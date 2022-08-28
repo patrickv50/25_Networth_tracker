@@ -1,5 +1,5 @@
 require('dotenv').config()
-const { Client } = require('redis-om')
+const userRoutes = require('./routes/userRoutes.js')
 const express = require('express')
 const finnhub = require('finnhub');
 const { searchListing, createProfile, getProfile, getQuote, createQuote } = require('./redis/redis.js')
@@ -7,18 +7,10 @@ const axios = require('axios');
 const api_key = finnhub.ApiClient.instance.authentications['api_key']
 api_key.apiKey = process.env.FINNHUB_KEY
 
-const redisClient = new Client()
 const finnhubClient = new finnhub.DefaultApi()
 
 const app = express()
-
-const connect = async () => {
-    if (!redisClient.isOpen()) {
-        console.log("CONNECTING")
-        await redisClient.open(process.env.REDIS_URL)
-    }
-}
-connect()
+app.use(express.json())
 
 app.get('/', (req, res) => res.send("API WORKING"))
 app.get('/search/:query', async (req, res) => {
@@ -27,7 +19,6 @@ app.get('/search/:query', async (req, res) => {
 })
 app.get('/quote/:symbol', async (req, res) => {
     try {
-        await connect()
         const { symbol } = req.params
         const value = await getQuote(symbol)
         // IN CACHE =============
@@ -74,7 +65,6 @@ app.get('/quote/:symbol', async (req, res) => {
 app.get('/profile/:symbol', async (req, res) => {
     // NOT IN CACHE SO QUERY API =============
     try {
-        await connect()
         const { symbol } = req.params
         const value = await getProfile(symbol)
         // IN CACHE ===============
@@ -110,7 +100,8 @@ app.get('/profile/:symbol', async (req, res) => {
     }
 })
 app.get('/pricehistory/:symbol', async (req, res) => {
-
 })
+app.use('/users',userRoutes)
+
 
 app.listen(process.env.PORT || 5002, () => console.log("SERVER UP"))

@@ -1,15 +1,19 @@
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react"
 import { Animated, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native"
-import theme from "../theme"
 import NumberSlides from "./NumberSlides"
 import { Entypo, } from '@expo/vector-icons';
 import AssetContainer from "./AssetContainer";
+import { ThemeContext } from "../ThemeContext";
 
 const heightOfItem = 40
 
 const Item = ({ inputEnabled, handleNavigate, category, index, setMenuOpen, setFocusedAsset }) => {
     const [accordionOpen, setAccordionOpen] = useState(false)
     const heightAnim = useRef(new Animated.Value(0)).current
+    const curTheme = useContext(ThemeContext)
+    const styles = useMemo(() => {
+        return getTheme(curTheme)
+    }, [curTheme])
 
     const toggleAccordion = () => {
         if (accordionOpen) {
@@ -25,8 +29,8 @@ const Item = ({ inputEnabled, handleNavigate, category, index, setMenuOpen, setF
     }
     const toggleInfo = (obj) => {
         setFocusedAsset({
-            category:category,
-            item:obj
+            category: category,
+            item: obj
         })
         setMenuOpen(true)
     }
@@ -76,14 +80,14 @@ const Item = ({ inputEnabled, handleNavigate, category, index, setMenuOpen, setF
                 />
                 {category.items.length > 0 &&
                     <TouchableOpacity onPress={() => handleNavigate('AssetTable', category)}>
-                        <Text style={{ color: theme.text, padding: 4, textAlign: 'center', textDecorationLine: 'underline' }}>View All {category.items.length + 3} </Text>
+                        <Text style={{ color: curTheme.text, padding: 2, textAlign: 'center', textDecorationLine: 'underline' }}>View All {category.items.length + 3} </Text>
                     </TouchableOpacity>}
             </Animated.View>
         </View>
     )
 }
 
-const styles = StyleSheet.create({
+const getTheme = (theme)=> StyleSheet.create({
     card: {
         flex: 1,
         backgroundColor: theme.cardBg,
@@ -112,7 +116,7 @@ const styles = StyleSheet.create({
         flex: 1,
         overflow: 'hidden',
         paddingHorizontal: 15,
-        backgroundColor: '#212425',
+        backgroundColor: theme.cardBgSecondary,
         minHeight: 0,
         height: 0,
         // maxHeight:2

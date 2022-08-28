@@ -1,13 +1,16 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { useEffect, useMemo, useRef, useState } from "react"
 import { Animated, Button, Easing, StyleSheet, Text, View } from "react-native"
-import theme from "../theme"
+import { ThemeContext } from '../ThemeContext'
 
 let firstChar = ' '
-// let charsAr = [firstChar, '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-', ',', '.', '$', 'M']
 
 let maxSlides = 10
 const NumberSlides = ({ value, size, delay, side,duration }) => {
+    const curTheme = useContext(ThemeContext)
+    const styles = useMemo(() => {
+        return getTheme(curTheme)
+    }, [curTheme])
     const [chars, setCharAr] = useState([])
     useEffect(() => {
         let stringVal = firstChar
@@ -43,14 +46,14 @@ const NumberSlides = ({ value, size, delay, side,duration }) => {
         <View style={[styles.numberCounter, { height: size }]} >
             {chars.map((val, index) => {
                 return (
-                    <Number key={index} value={val} index={index} size={size} delay={delay} duration={duration}/>
+                    <Number styles={styles} key={index} value={val} index={index} size={size} delay={delay} duration={duration}/>
                 )
             })}
         </View>
     )
 }
 // STATIC NUMBER COMPONENT
-const StaticNumber = ({ value, size, derivedStyle }) => {
+const StaticNumber = ({ styles,value, size, derivedStyle }) => {
     const width = useMemo(() => {
         return getWidth(value)*size
     }, [value])
@@ -61,7 +64,7 @@ const StaticNumber = ({ value, size, derivedStyle }) => {
     )
 }
 // DYNAMIC NUMBER COMPONENT
-const Number = ({ value, size, delay,duration }) => {
+const Number = ({ styles,value, size, delay,duration }) => {
     const [showStatic, setShowStatic] = useState(true)
     const derivedStyle = {
         height: size,
@@ -99,7 +102,7 @@ const Number = ({ value, size, delay,duration }) => {
     }, [position])
 
     // SHOW STATIC NUMBER IF DONT ANIMATING
-    if (showStatic) return <StaticNumber value={value} size={size} derivedStyle={derivedStyle}/>
+    if (showStatic) return <StaticNumber styles={styles} value={value} size={size} derivedStyle={derivedStyle}/>
     // ELSE SHOW ANIMATION
     else return (
         <Animated.View style={{ width: widthAnim }}>
@@ -127,7 +130,7 @@ const Number = ({ value, size, delay,duration }) => {
     )
 }
 
-const styles = StyleSheet.create({
+const getTheme = (theme) =>StyleSheet.create({
     numberCounter: {
         flexDirection: 'row',
         overflow: 'hidden',
