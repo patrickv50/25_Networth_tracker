@@ -1,5 +1,9 @@
 require('dotenv').config()
+<<<<<<< HEAD
 const { Client } = require('redis-om')
+=======
+const userRoutes = require('./routes/userRoutes.js')
+>>>>>>> 702e44863ce7ef38e07d07f628e5e2bddce49266
 const express = require('express')
 const finnhub = require('finnhub');
 const { searchListing, createProfile, getProfile, getQuote, createQuote } = require('./redis/redis.js')
@@ -7,11 +11,12 @@ const axios = require('axios');
 const api_key = finnhub.ApiClient.instance.authentications['api_key']
 api_key.apiKey = process.env.FINNHUB_KEY
 
-const redisClient = new Client()
 const finnhubClient = new finnhub.DefaultApi()
 
 const app = express()
+app.use(express.json())
 
+<<<<<<< HEAD
 const connect = async () => {
     if (!redisClient.isOpen()) {
         console.log("CONNECTING")
@@ -20,6 +25,8 @@ const connect = async () => {
 }
 connect()
 
+=======
+>>>>>>> 702e44863ce7ef38e07d07f628e5e2bddce49266
 app.get('/', (req, res) => res.send("API WORKING"))
 app.get('/search/:query', async (req, res) => {
     let { query } = req.params
@@ -27,7 +34,10 @@ app.get('/search/:query', async (req, res) => {
 })
 app.get('/quote/:symbol', async (req, res) => {
     try {
+<<<<<<< HEAD
         await connect()
+=======
+>>>>>>> 702e44863ce7ef38e07d07f628e5e2bddce49266
         const { symbol } = req.params
         const value = await getQuote(symbol)
         // IN CACHE =============
@@ -74,7 +84,6 @@ app.get('/quote/:symbol', async (req, res) => {
 app.get('/profile/:symbol', async (req, res) => {
     // NOT IN CACHE SO QUERY API =============
     try {
-        await connect()
         const { symbol } = req.params
         const value = await getProfile(symbol)
         // IN CACHE ===============
@@ -110,7 +119,13 @@ app.get('/profile/:symbol', async (req, res) => {
     }
 })
 app.get('/pricehistory/:symbol', async (req, res) => {
+<<<<<<< HEAD
 
 })
+=======
+})
+app.use('/users',userRoutes)
+
+>>>>>>> 702e44863ce7ef38e07d07f628e5e2bddce49266
 
 app.listen(process.env.PORT || 5002, () => console.log("SERVER UP"))
