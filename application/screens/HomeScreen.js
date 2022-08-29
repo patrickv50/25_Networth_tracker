@@ -7,7 +7,7 @@ import { addInit } from '../state/reducers/assetsReducer';
 import { addInit as addInitLia } from '../state/reducers/liabilitiesReducer';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useFocusEffect } from '@react-navigation/native';
-import { Entypo } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import TextComp from '../components/shared/TextComp';
@@ -173,9 +173,9 @@ const MainScreen = ({ navigation,changeTheme }) => {
     <Template>
       <View style={{ flex: 1, justifyContent: 'center' }}>
         {/* FIXED BUTTON GROUP */}
-        <View style={{ position: 'absolute', top: curTheme.statusBar, right: 12 }}>
+        <View style={{ position: 'absolute', top: curTheme.statusBar, right: 22 }}>
           <TouchableOpacity onPress={handleThemeChange}>
-            <Entypo name="light-bulb" size={30} color={curTheme.text} />
+            <Feather name={curTheme.name==='dark'?"sun":"moon" }size={30} color={curTheme.text} />
           </TouchableOpacity>
         </View>
         {/* HEADER ===================== */}
