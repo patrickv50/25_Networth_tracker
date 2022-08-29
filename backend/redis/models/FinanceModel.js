@@ -3,8 +3,12 @@ class Finance extends Entity { }
 let schema = new Schema(
     Finance,
     {
-        assets: { type: ''},
-        liabilities: { type: 'text'},
+        deviceId: {type:'string'},
+        month: {type:'string'},
+        assets: { type: 'string'},
+        liabilities: { type: 'string'},
+        expenses: { type: 'string'},
+        incomes: { type: 'string'},
         createdAt: { type: 'date' },
     },
     {

@@ -2,6 +2,7 @@ const Quote = require('./models/QuoteModel.js')
 const { Client, Entity, Repository, Schema } = require('redis-om')
 const Listing = require('./models/ListingsModel.js')
 const Profile = require('./models/ProfileModel.js')
+const Finance = require('./models/FinanceModel.js')
 require('dotenv').config()
 const client = new Client()
 
@@ -62,6 +63,10 @@ const getQuote = async (symbol) => {
     let json = quote.toJSON()
     if (json.current) return json
     else return null
-
 }
-module.exports = { createListing, searchListing, createProfile, getProfile, createQuote, getQuote }
+const createSummary = async (data) => {
+    await connect()
+    const repository = client.fetchRepository(Finance)
+    const summary = repository.createAndSave(data)
+}
+module.exports = { createListing, searchListing, createProfile, getProfile, createQuote, getQuote,createSummary }

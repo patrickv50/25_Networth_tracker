@@ -1,7 +1,7 @@
 require('dotenv').config()
 const express = require('express')
 const finnhub = require('finnhub');
-const { searchListing, createProfile, getProfile, getQuote, createQuote } = require('./redis/redis.js')
+const { searchListing, createProfile, getProfile, getQuote, createQuote, createSummary } = require('./redis/redis.js')
 const axios = require('axios');
 const api_key = finnhub.ApiClient.instance.authentications['api_key']
 api_key.apiKey = process.env.FINNHUB_KEY
@@ -9,6 +9,7 @@ api_key.apiKey = process.env.FINNHUB_KEY
 const finnhubClient = new finnhub.DefaultApi()
 
 const app = express()
+app.use(express.json())
 
 
 app.get('/', (req, res) => res.send("API WORKING"))
@@ -99,6 +100,13 @@ app.get('/profile/:symbol', async (req, res) => {
     }
 })
 app.get('/pricehistory/:symbol', async (req, res) => {
+
+})
+app.post('/summary',async(req,res)=>{
+   const body=req.body
+   console.log(typeof req.body)
+   await createSummary(req.body)
+   res.send("OK")
 
 })
 
