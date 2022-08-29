@@ -25,20 +25,19 @@ const CashInput = ({ add, cancel }) => {
 
 
     const handleSubmit = () => {
-
         add({
             category: 'Cash',
-            type:type,
-            bankName:bankName,
-            name: bankName, 
-            value: value, 
+            type: type,
+            bankName: bankName,
+            name: bankName,
+            value: value,
         })
     }
     const handleCancel = () => {
         cancel()
     }
     const handleShareChange = (x) => {
-        if (!Number(x) || Number(x)>1e12) {
+        if (!Number(x) || Number(x) > 1e12) {
             setValue(0)
             return
         }
@@ -51,7 +50,7 @@ const CashInput = ({ add, cancel }) => {
         // behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
             {/* HEADER =========*/}
-            <View style={{ flexDirection: 'row', justifyContent: 'left', alignItems: 'center', marginBottom: 8}}>
+            <View style={{ flexDirection: 'row', justifyContent: 'left', alignItems: 'center', marginBottom: 8 }}>
                 <Entypo name='wallet' size={20} color='rgb(252,199,92)' style={{ width: 25, marginBottom: 4, fontWeight: '600' }} />
                 <Text style={{ fontSize: 18, color: curTheme.text, flex: 1 }}>Adding Cash</Text>
                 <TouchableOpacity onPress={handleCancel}>
@@ -66,7 +65,7 @@ const CashInput = ({ add, cancel }) => {
                             Select Category
                         </Text>
                         {['Physical Cash', 'Checkings Acount', 'Savings Acount'].map((type, index) => (
-                            <TouchableOpacity onPress={()=>setType(type)} key={index} style={{ backgroundColor: curTheme.cardBg, padding: 8, marginBottom: 6, borderRadius: 6 }}>
+                            <TouchableOpacity onPress={() => setType(type)} key={index} style={{ backgroundColor: curTheme.cardBg, padding: 8, marginBottom: 6, borderRadius: 6 }}>
                                 <Text style={{ fontSize: 18, color: curTheme.text }}>{type}</Text>
                             </TouchableOpacity>
                         ))}
@@ -118,7 +117,7 @@ const CashInput = ({ add, cancel }) => {
 
 export default CashInput
 
-const getTheme = (theme)=>StyleSheet.create({
+const getTheme = (theme) => StyleSheet.create({
     form: {
         paddingHorizontal: 20,
         paddingTop: theme.statusBar,

@@ -11,6 +11,7 @@ const BaseInput = ({ handleSubmit, cancel, category }) => {
     const [name, setName] = useState("")
     const [value, setValue] = useState("")
     const [deprecRate, setRate] = useState("")
+    const [monthly, setMonthly] = useState("")
     const nameRef = useRef()
     const valueRef = useRef()
     const deprecRef = useRef()
@@ -33,19 +34,27 @@ const BaseInput = ({ handleSubmit, cancel, category }) => {
                 if (Number(x.replace(',', ''))) setValue(x)
             }
             } placeholder="Value" />
-            <TextInput placeholderTextColor="#999" returnKeyType="done" keyboardType="number-pad" ref={deprecRef} onSubmitEditing={handleSubmit} style={styles.input} value={deprecRate} onChangeText={x => {
-                if (!x.length) setRate("")
-                if (Number(x.replace(',', ''))) setRate(x)
-            }
-            } placeholder="Depreciate %" />
+            {!['Student Loans', 'Credit Card', 'Car Loan', 'Mortage'].includes(category.categoryName) ?
+                <TextInput placeholderTextColor="#999" returnKeyType="done" keyboardType="number-pad" ref={deprecRef} onSubmitEditing={handleSubmit} style={styles.input} value={deprecRate} onChangeText={x => {
+                    if (!x.length) setRate("")
+                    if (Number(x.replace(',', ''))) setRate(x)
+                }
+                } placeholder="Depreciate %" />
+                :
+                <TextInput placeholderTextColor="#999" returnKeyType="done" keyboardType="number-pad" onSubmitEditing={handleSubmit} style={styles.input} value={monthly} onChangeText={x => {
+                    if (!x.length) setMonthly("")
+                    if (Number(x.replace(',', ''))) setMonthly(x)
+                }
+                } placeholder="Monthly Payment" />}
             {/* <TouchableOpacity style={{ alignSelf: 'flex-start', marginBottom: 6 }} onPress={handleSubmit}>
                 <Text style={{ fontSize: 12, color: '#888', marginVertical: 4 }}>{"Advance Fields >"}</Text>
             </TouchableOpacity> */}
-            <TouchableOpacity style={[styles.addButton,{marginTop:12}]} onPress={() => handleSubmit({
+            <TouchableOpacity style={[styles.addButton, { marginTop: 12 }]} onPress={() => handleSubmit({
                 name: name,
                 value: value,
                 category: category.categoryName,
-                deprecRate: deprecRate
+                deprecRate: deprecRate,
+                monthly: Number(monthly)
             })}>
                 <Text style={styles.addButtonText}>Add</Text>
             </TouchableOpacity>

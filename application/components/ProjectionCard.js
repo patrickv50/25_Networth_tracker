@@ -20,6 +20,7 @@ const ProjectionCard = ({ entity, title, total, addEnabled }) => {
         return getTheme(curTheme)
     }, [curTheme])
     const [accordionOpen, setAccordionOpen] = useState(true)
+    const [selected, setSelected] = useState(false)
     const [modalOpen, setModalOpen] = useState(false)
     const [name, setName] = useState('')
     const [value, setValue] = useState('')
@@ -57,7 +58,7 @@ const ProjectionCard = ({ entity, title, total, addEnabled }) => {
     const handleSubmit = () => {
 
     }
-    const handleAddPress = () =>{
+    const handleAddPress = () => {
         setAddingTo(title)
         setModalOpen(x => !x)
     }
@@ -66,12 +67,12 @@ const ProjectionCard = ({ entity, title, total, addEnabled }) => {
             <TouchableOpacity style={styles.cardHeader} onPress={() => toggleAccordion()}>
                 <View style={{ flexDirection: 'row', flex: 1, justifyContent: 'right', alignItems: 'center' }}>
                     <TextComp style={styles.label} textAlign='left'>{title}</TextComp>
-                    {addEnabled&&<TouchableOpacity onPress={() =>handleAddPress(title)}>
+                    {addEnabled && <TouchableOpacity onPress={() => handleAddPress(title)}>
                         <Entypo name='plus' size={22} color={curTheme.green} style={{ textAlign: 'center', overflow: 'hidden', width: 30, backgroundColor: 'transparent' }} />
                     </TouchableOpacity>}
                 </View>
                 <Text style={[styles.value, { flex: 1, textAlign: 'right' }]}>
-                    ${nFormatter(total,2)}
+                    ${nFormatter(total, 2)}
                 </Text>
             </TouchableOpacity>
             <Animated.View style={[styles.cardBody, {
@@ -89,12 +90,12 @@ const ProjectionCard = ({ entity, title, total, addEnabled }) => {
             {/* DIVIDER MODAL =================== */}
             <Modal visible={modalOpen}>
                 <View style={styles.modalHeader}>
-                 
+
                     <TouchableOpacity onPress={() => setModalOpen(false)}>
                         <Entypo name='cross' size={30} color={curTheme.red} style={{ marginLeft: 12, textAlign: 'center', overflow: 'hidden', width: 30, backgroundColor: 'transparent' }} />
                     </TouchableOpacity>
                     <View>
-                        <TextComp>{addingTo}</TextComp>
+                        <TextComp variant='h1'>{addingTo}</TextComp>
                     </View>
                 </View>
                 <View style={styles.modalBody}>
@@ -107,10 +108,16 @@ const ProjectionCard = ({ entity, title, total, addEnabled }) => {
                         <Text style={styles.inputLabel}>Value</Text>
                         <TextInput selectionColor={'rgb(145,250,147)'} autoFocus={false} value={value} keyboardType='number-pad' returnKeyType='done' style={[styles.value, { flex: 1, textAlign: 'right' }]} onChangeText={(x) => setValue(x)} />
                     </View>
+                    <TouchableOpacity onPress={()=>setSelected(x=>!x)} style={{ flexDirection: 'row', marginVertical: 18, alignItems: 'center' }}>
+                        <View style={{ marginRight: 5, backgroundColor: selected?curTheme.green: curTheme.cardBg, borderWidth: .6, borderColor: curTheme.text, minWidth: 20, aspectRatio: 1 }}></View>
+                        <TextComp>Recurring Monthly</TextComp>
+                    </TouchableOpacity>
                     <TouchableOpacity style={styles.addButton} onPress={handleSubmit}>
                         <Text numberOfLines={2} style={styles.addButtonText}>Add</Text>
                     </TouchableOpacity>
                 </View>
+
+
             </Modal>
         </View>
     )
@@ -119,7 +126,7 @@ const ItemContainer = ({ item, styles }) => {
     return (
         <View style={styles.itemContainer}>
             <TextComp weight='200'>{item.categoryName}</TextComp>
-            <TextComp>{nFormatter(item.total,2)}</TextComp>
+            <TextComp>{nFormatter(item.total, 2)}</TextComp>
         </View>
     )
 }

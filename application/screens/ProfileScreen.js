@@ -17,12 +17,16 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { v4 as uuid } from 'uuid';
 const Stack = createNativeStackNavigator();
 const incomes = [{
-  categoryName: 'Income',
-  total: 5000
+  categoryName: 'Montly Salary',
+  total: 4000
 }]
 const expenses = [{
-  categoryName: 'Debt Payments',
-  total: 2000
+  categoryName: 'Credit card payments',
+  total: 400
+},
+{
+  categoryName: 'Student loan payments',
+  total: 100
 }]
 // SWITCH DIVIDER
 const ProjectionScreen = () => {
@@ -137,8 +141,8 @@ const SummaryScreen = ({ navigation, route }) => {
         liabilities: data.liabilities,
         incomes: data.incomes,
         expenses: data.expenses,
-        totAssets: data.totAssets * 1.1 + data.totIncome,
-        totLiabilites: data.totLiabilites * .9 - data.totExpense,
+        totAssets: data.totAssets * 1.05 + data.totIncome,
+        totLiabilites: data.totLiabilites * .97 - data.totExpense,
         totIncome: data.totIncome,
         totExpense: data.totExpense,
       },
@@ -199,8 +203,8 @@ const SummaryScreen = ({ navigation, route }) => {
       <View style={styles.main}>
         <ProjectionCard entity={data.assets} addEnabled={false} title='Assets' total={data.totAssets} />
         <ProjectionCard entity={data.liabilities} addEnabled={false} title='Liabilities' total={data.totLiabilites} />
-        <ProjectionCard entity={data.incomes} addEnabled title='Money in' total={data.totIncome} />
-        <ProjectionCard entity={data.expenses} addEnabled title='Money out' total={data.totExpense} />
+        <ProjectionCard entity={data.incomes} addEnabled title='Incomes' total={data.totIncome} />
+        <ProjectionCard entity={data.expenses} addEnabled title='Expenses' total={data.totExpense} />
       </View>
     </>
 
@@ -208,20 +212,38 @@ const SummaryScreen = ({ navigation, route }) => {
 }
 {/* LIST DIVIDER  */ }
 const ListScreen = ({ navigation, route }) => {
+  const curTheme = useContext(ThemeContext)
+  const styles = useMemo(() => {
+    return getTheme(curTheme)
+  }, [curTheme])
+
   const { deviceId } = route.params
   const [data, setData] = useState([])
-  const fetchData = async() => {
+  const fetchData = async () => {
     console.log("HELLO FETCHING SUMMARIES with", deviceId)
-    await axios.get('http://192.168.12.209:5002/summary/'+deviceId).then(({ data }) => {
+    await axios.get('http://192.168.12.209:5002/summary/' + deviceId).then(({ data }) => {
       console.log(data)
+      setData(data)
     })
   }
   useEffect(() => {
     fetchData()
   }, [])
+  const handleNavigate = (obj) => {
+    let param = {
+      date: new Date(obj.date),
+      data: JSON.parse(obj.data)
+    }
+    navigation.navigate('Summary', param)
+  }
   return (
-    <View style={{ paddingTop: 90 }}>
-      <TextComp>HELLO</TextComp>
+    <View style={{ paddingTop: 90, paddingHorizontal: 18 }}>
+      <TextComp variant='h1'>Finance Snapshots</TextComp>
+      {data.map((obj, index) => (
+        <TouchableOpacity onPress={() => handleNavigate(obj)} style={styles.card}>
+          <TextComp>{new Date(obj.date).toLocaleString('default', { month: 'long' })} {new Date(obj.date).getFullYear()}</TextComp>
+        </TouchableOpacity>
+      ))}
     </View>
   )
 }
@@ -265,5 +287,14 @@ const getTheme = (theme) => StyleSheet.create({
     fontWeight: 'bold',
     color: theme.text,
   },
+  // LIST DIVIDER
+  card: {
+    backgroundColor: theme.cardBg,
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    padding: 12,
+    marginVertical: 6,
+    borderRadius: 6
+  }
 })
 

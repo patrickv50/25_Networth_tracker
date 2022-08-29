@@ -44,7 +44,7 @@ const InputScreen = ({ navigation, route }) => {
 }
 // DETAIL SCREEN DIVIDER ==============================
 const DetailScreen = ({ navigation, route }) => {
-  const { category,item } = route.params
+  const { category, item } = route.params
   const handlePopNav = () => {
     navigation.popToTop()
   }
@@ -55,7 +55,7 @@ const DetailScreen = ({ navigation, route }) => {
 const AssetTableScreen = ({ navigation, route }) => {
   const curTheme = useContext(ThemeContext)
   const styles = useMemo(() => {
-      return getTheme(curTheme)
+    return getTheme(curTheme)
   }, [curTheme])
 
   const { categoryName, items, color, icon, top3, largest, total } = route.params
@@ -78,7 +78,7 @@ const AssetTableScreen = ({ navigation, route }) => {
       {/* HEADER */}
       <View style={[styles.header, { borderColor: showDivider ? '#333' : curTheme.bg }]}>
         <TouchableWithoutFeedback onPress={handlePopNav}>
-          <View style={{ position: 'absolute', left: 10, top: curTheme.statusBar-5, zIndex: 200 }}>
+          <View style={{ position: 'absolute', left: 10, top: curTheme.statusBar - 5, zIndex: 200 }}>
             <Entypo name='chevron-left' size={32} color={color} style={{ width: 60 }} />
           </View>
         </TouchableWithoutFeedback>
@@ -88,7 +88,7 @@ const AssetTableScreen = ({ navigation, route }) => {
         </View>
       </View>
       {/* BODY */}
-      <View style={{ paddingHorizontal: 16,flex: 1 }}>
+      <View style={{ paddingHorizontal: 16, flex: 1 }}>
         <FlatList
           initialNumToRender={15}
           onScroll={(x) => setShowDivider(x.nativeEvent.contentOffset.y < 3 ? false : true)}
@@ -112,7 +112,7 @@ const AssetTableScreen = ({ navigation, route }) => {
 const MainScreen = ({ route, navigation }) => {
   const curTheme = useContext(ThemeContext)
   const styles = useMemo(() => {
-      return getTheme(curTheme)
+    return getTheme(curTheme)
   }, [curTheme])
 
   const [menuOpen, setMenuOpen] = useState(false)
@@ -130,18 +130,18 @@ const MainScreen = ({ route, navigation }) => {
     setMenuOpen(false)
     dispatch(remove(focusedAsset.item))
   }
-  const handleEdit = () =>{
+  const handleEdit = () => {
     return
   }
   const handleNavigate = (destination, item) => {
     navigation.navigate(destination, item)
   }
-  const goToDetail = ()=>{
+  const goToDetail = () => {
     setMenuOpen(false)
-    navigation.navigate('Details',focusedAsset)
+    navigation.navigate('Details', focusedAsset)
   }
   return (
-    <View style={{flex:1}}>
+    <View style={{ flex: 1 }}>
       {/* HEADER ======== */}
       < View style={styles.header
       }>
@@ -152,9 +152,9 @@ const MainScreen = ({ route, navigation }) => {
             <Entypo name='plus' size={30} color={curTheme.text} style={{ width: 30, fontWeight: '600' }} />}
         </TouchableOpacity>
         {/* DEBUG ACTIONS ========== */}
-        {/* <TouchableOpacity style={styles.addButton} onPress={() => dispatch(addInit(null))}>
-          <Text style={styles.addButtonText}>A</Text>
-        </TouchableOpacity> */}
+        <TouchableOpacity style={styles.addButton} onPress={() => dispatch(addInit(null))}>
+          <TextComp style={{marginLeft:8}}>|</TextComp>
+        </TouchableOpacity>
         {/* DEBUG ACTIONS ========== */}
         <LinearGradient
           colors={['rgba(0,0,0,.33)', 'transparent']}
@@ -192,7 +192,7 @@ const getTheme = (theme) => StyleSheet.create({
     paddingHorizontal: 25,
     paddingBottom: 18,
     borderBottomWidth: .4,
-    paddingTop:theme.statusBar,
+    paddingTop: theme.statusBar,
     flexDirection: 'row',
     position: 'relative',
     alignItems: 'center',
