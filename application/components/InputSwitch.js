@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import theme from '../theme'
 import { useDispatch } from 'react-redux'
 import { Entypo, } from '@expo/vector-icons';
 import StockInput from './input-screens/StockInput';

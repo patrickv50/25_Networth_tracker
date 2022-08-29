@@ -1,12 +1,12 @@
 import axios from 'axios'
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect, useMemo } from 'react'
 import { useState } from 'react'
 import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
-import theme from '../../theme'
 import TextComp from '../shared/TextComp'
 import { AreaChart, Grid, LineChart, XAxis } from 'react-native-svg-charts'
 import * as shape from 'd3-shape'
 import { Entypo, } from '@expo/vector-icons';
+import { ThemeContext } from '../../ThemeContext'
 
 const StockDetail = ({ item, goBack }) => {
   const [profile, setProfile] = useState({})
@@ -14,6 +14,12 @@ const StockDetail = ({ item, goBack }) => {
   const [aboutExpanded, setAboutExpanded] = useState(false)
   const [loading, setLoading] = useState(true)
   const [data, setData] = useState([])
+
+  const curTheme = useContext(ThemeContext)
+  const styles = useMemo(() => {
+      return getTheme(curTheme)
+  }, [curTheme])
+
   const fecthProfile = async () => {
     await axios.get(`https://networthtrkr.herokuapp.com/profile/${item.name}`)
       .then((response) => {
@@ -46,12 +52,12 @@ const StockDetail = ({ item, goBack }) => {
     <View style={styles.main}>
       <View style={styles.header}>
         <TouchableOpacity onPress={goBack}>
-          <Entypo name='chevron-left' size={32} color={theme.green} style={{ width: 25, fontWeight: '600' }} />
+          <Entypo name='chevron-left' size={32} color={curTheme.green} style={{ width: 25, fontWeight: '600' }} />
         </TouchableOpacity>
         <TextComp variant='h1' textAlign='left' weight='bold'>{profile.symbol}</TextComp>
         <TextComp variant='h1' textAlign='left' weight='bold'>{price.current?`$${price.current}`:''}</TextComp>
         <View style={{ flexDirection: 'row', marginTop: 8 }}>
-          <TextComp variant='body1' textAlign='left' style={{ color: price.change > 0 ? theme.green : theme.red, marginRight: 4 }}>${nFormatter(price.change, 2)}</TextComp>
+          <TextComp variant='body1' textAlign='left' style={{ color: price.change > 0 ? curTheme.green : curTheme.red, marginRight: 4 }}>${nFormatter(price.change, 2)}</TextComp>
           <TextComp variant='body1' textAlign='left' >Today</TextComp>
         </View>
       </View>
@@ -69,7 +75,7 @@ const StockDetail = ({ item, goBack }) => {
                 style={{ height: 200 }}
                 data={data}
                 contentInset={{ top: 0, bottom: 30, left: 10, right: 10 }}
-                svg={{ stroke: theme.green, strokeWidth: 1 }}
+                svg={{ stroke: curTheme.green, strokeWidth: 1 }}
               >
               </LineChart>
             </View>
@@ -90,7 +96,7 @@ const StockDetail = ({ item, goBack }) => {
               <TextComp variant='h2' textAlign='left' weight='bold' style={styles.sectionHeader}>About {profile.symbol}</TextComp>
               <TextComp numLines={aboutExpanded ? 0 : 3} variant='body1' textAlign='left'>{profile.description}</TextComp>
               <TouchableOpacity onPress={() => setAboutExpanded(x => !x)}>
-                <TextComp variant='body1' style={{ textDecorationLine: 'underline', color: theme.green, marginVertical: 8 }} textAlign='left'>Show {aboutExpanded ? 'less' : 'more'}</TextComp>
+                <TextComp variant='body1' style={{ textDecorationLine: 'underline', color: curTheme.green, marginVertical: 8 }} textAlign='left'>Show {aboutExpanded ? 'less' : 'more'}</TextComp>
               </TouchableOpacity>
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 12 }}>
                 <View style={styles.aboutCard}>
@@ -140,7 +146,7 @@ const Skeleton = () => {
   )
 }
 
-const styles = StyleSheet.create({
+const getTheme = (theme) => StyleSheet.create({
   main: {
     paddingTop: theme.statusBar,
     flex: 1,

@@ -1,6 +1,5 @@
 import { LinearGradient } from "expo-linear-gradient"
 import { StyleSheet, Text, View } from "react-native"
-import theme from "../theme"
 import NumberSlides from "./NumberSlides"
 
 const Header = ({ netWorth }) => {

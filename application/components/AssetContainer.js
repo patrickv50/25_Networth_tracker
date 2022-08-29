@@ -2,6 +2,7 @@ import { useCallback, useContext, useEffect, useMemo, useRef } from "react"
 import { Animated, Easing, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import { Feather } from '@expo/vector-icons';
 import { ThemeContext } from "../ThemeContext";
+import { nFormatter } from "../utils/numberFormatter";
 const heightOfItem = 40
 
 const AssetContainer = ({ item, index,color, toggleInfo, total, accordionOpen }) => {
@@ -35,7 +36,7 @@ const AssetContainer = ({ item, index,color, toggleInfo, total, accordionOpen })
                 <View style={styles.cardBarContainer}>
                     <View style={[styles.cardBar, { backgroundColor:color, width: `${(item.item.value / total) * 100}%` }]}></View>
                 </View>
-                <Text style={styles.assetValue}>${(item.item.value).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</Text>
+                <Text style={styles.assetValue}>${nFormatter(item.item.value)}</Text>
                 <TouchableOpacity onPress={() => toggleInfo(item.item)}>
                     <Feather name="info" size={17} color='rgb(200, 170, 0)' style={{ marginLeft: 4 }} />
                 </TouchableOpacity>
@@ -61,7 +62,7 @@ const getTheme = (theme)=> StyleSheet.create({
     assetValue: {
         flex: 2,
         fontSize: 17,
-        fontWeight: '600',
+        fontWeight: '400',
         color: theme.text,
         textAlign: 'right'
     },

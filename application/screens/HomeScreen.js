@@ -18,15 +18,16 @@ export default function HomeScreen({ navigation, route }) {
   const curTheme = useContext(ThemeContext)
   const { changeTheme } = route.params
   return (
-    <NavigationContainer independent={true}>
-      <Stack.Navigator screenOptions={{
-        headerShown: false,
-        contentStyle: { backgroundColor: curTheme.bg, },
-      }}>
-        <Stack.Screen name='Main' component={MainScreen} />
-        <Stack.Screen name='Setting' component={SettingScreen} initialParams={{ changeTheme: changeTheme }} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <MainScreen changeTheme={changeTheme}/>
+    // <NavigationContainer independent={true}>
+    //   <Stack.Navigator screenOptions={{
+    //     headerShown: false,
+    //     contentStyle: { backgroundColor: curTheme.bg, },
+    //   }}>
+    //     <Stack.Screen name='Main' component={MainScreen} />
+    //     <Stack.Screen name='Setting' component={SettingScreen} initialParams={{ changeTheme: changeTheme }} />
+    //   </Stack.Navigator>
+    // </NavigationContainer>
   )
 
 }
@@ -87,13 +88,14 @@ const SettingScreen = ({ navigation, route }) => {
 }
 
 // MAIN SCREEN DIVIDER ======================
-const MainScreen = ({ navigation }) => {
+const MainScreen = ({ navigation,changeTheme }) => {
   const assets = useSelector((state) => state.assets)
   const liabilities = useSelector((state) => state.liabilities)
   const [dims, setDims] = useState({});
   const [netWorth, setNetWorth] = useState()
   const dispatch = useDispatch()
   const curTheme = useContext(ThemeContext)
+  const [isLight, setIsLight] = useState(false)
 
   const styles = useMemo(() => {
     return getTheme(curTheme)
@@ -113,6 +115,14 @@ const MainScreen = ({ navigation }) => {
       return a + (b.items.reduce((a, b) => a + b.value, 0) + b.top3.reduce((a, b) => a + b.value, 0))
     }, 0) || 0
   }, [liabilities])
+
+  const handleThemeChange = () => {
+    setIsLight(state=>{
+      if (state) changeTheme('dark')
+      else changeTheme('light')
+      return !state
+    })
+  }
 
   const animate = useCallback((num, num2) => {
     if (dims.width) Animated.timing(widthAnim, {
@@ -164,8 +174,8 @@ const MainScreen = ({ navigation }) => {
       <View style={{ flex: 1, justifyContent: 'center' }}>
         {/* FIXED BUTTON GROUP */}
         <View style={{ position: 'absolute', top: curTheme.statusBar, right: 12 }}>
-          <TouchableOpacity onPress={() => navigation.navigate('Setting')}>
-            <Entypo name="cog" size={30} color={curTheme.text} />
+          <TouchableOpacity onPress={handleThemeChange}>
+            <Entypo name="light-bulb" size={30} color={curTheme.text} />
           </TouchableOpacity>
         </View>
         {/* HEADER ===================== */}

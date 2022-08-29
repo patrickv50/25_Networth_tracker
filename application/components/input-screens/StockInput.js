@@ -1,11 +1,16 @@
-import React, { useMemo, useRef, useState } from 'react'
+import React, { useContext, useMemo, useRef, useState } from 'react'
 import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import theme from '../../theme'
 import { Entypo, } from '@expo/vector-icons';
 import axios from 'axios';
 import { useEffect } from 'react';
+import { ThemeContext } from '../../ThemeContext';
 
 const StockInput = ({ add, cancel }) => {
+    const curTheme = useContext(ThemeContext)
+    const styles = useMemo(() => {
+        return getTheme(curTheme)
+    }, [curTheme])
+
     const [query, setQuery] = useState("")
     const [recs, setRec] = useState([])
     const [stock, setStock] = useState({
@@ -27,10 +32,10 @@ const StockInput = ({ add, cancel }) => {
             await axios.get('https://networthtrkr.herokuapp.com/search/' + query, {
                 signal: controller.current.signal
             })
-            .then(res => {
-                setRec(res.data.slice(0, 4))
-            })
-        } catch (e) {}
+                .then(res => {
+                    setRec(res.data.slice(0, 4))
+                })
+        } catch (e) { }
     }
     const fetchPrice = async ({ symbol, companyName }) => {
         setRec([])
@@ -53,10 +58,10 @@ const StockInput = ({ add, cancel }) => {
     }
     const handleSubmit = () => {
         add({
-            name: stock.symbol, 
-            value: total, 
+            name: stock.symbol,
+            value: total,
             category: 'Stocks',
-            shares:Number(shares)
+            shares: Number(shares)
         })
     }
     const handleShareChange = (x) => {
@@ -65,26 +70,26 @@ const StockInput = ({ add, cancel }) => {
         if (num > 2000000) return
         else setShares(num)
     }
-    useEffect(()=>{
+    useEffect(() => {
         nameRef.current.focus()
-    },[])
+    }, [])
 
     return (
         <KeyboardAvoidingView style={styles.form}
         // behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
             {/* HEADER =========*/}
-            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
-                <Entypo name='bar-graph' size={20} color='rgb(145,250,147)' style={{ width: 25,fontWeight: '600' }} />
-                <Text style={{ fontSize: 22, color: theme.text, flex: 1 }}>Adding Stocks</Text>
+            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                <Entypo name='bar-graph' size={20} color='rgb(145,250,147)' style={{ width: 25, fontWeight: '600' }} />
+                <Text style={{ fontSize: 22, color: curTheme.text, flex: 1 }}>Adding Stocks</Text>
                 <TouchableOpacity onPress={cancel}>
-                    <Text style={{ color: theme.text }}>Cancel</Text>
+                    <Text style={{ color: curTheme.text }}>Cancel</Text>
                 </TouchableOpacity>
             </View>
             {/* BODY =========*/}
             <View>
                 {!stock.price ?
-                    <View style={{marginTop:20}}>
+                    <View style={{ marginTop: 20 }}>
                         <TextInput
                             // autoFocus={true}
                             placeholder="Enter company name or ticker symbol"
@@ -96,10 +101,10 @@ const StockInput = ({ add, cancel }) => {
                         />
                         {/* AUTOMCOMPLETE RECOMMEDATIONS */}
                         {recs.length > 0 &&
-                            <View style={{ position: 'absolute', top: '100%', width: '100%', backgroundColor: theme.cardBg, paddingHorizontal: 10 }}>
+                            <View style={{ position: 'absolute', top: '100%', width: '100%', backgroundColor: curTheme.cardBg, paddingHorizontal: 10 }}>
                                 {recs.map((rec, index) => (
                                     <TouchableOpacity onPress={() => fetchPrice(rec)} key={index} style={{ borderBottomColor: '#1b1b1b', paddingVertical: 10, borderBottomWidth: .5, marginVertical: 5 }}>
-                                        <Text style={{ color: theme.text, fontSize: 16, fontWeight: 'bold' }}>{rec.symbol}</Text>
+                                        <Text style={{ color: curTheme.text, fontSize: 16, fontWeight: 'bold' }}>{rec.symbol}</Text>
                                         <Text numberOfLines={1} style={{ color: '#666', fontSize: 14 }}>{rec.companyName}</Text>
                                     </TouchableOpacity>
                                 ))}
@@ -138,7 +143,7 @@ const StockInput = ({ add, cancel }) => {
                                 <Text numberOfLines={2} style={styles.addButtonText}>Add {stock.symbol}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={[styles.addButton, { backgroundColor: 'transparent' }]} onPress={cancel}>
-                                <Text style={[styles.addButtonText, { fontSize: 15, color: theme.text }]}>Cancel</Text>
+                                <Text style={[styles.addButtonText, { fontSize: 15, color: curTheme.text }]}>Cancel</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -150,10 +155,10 @@ const StockInput = ({ add, cancel }) => {
 
 export default StockInput
 
-const styles = StyleSheet.create({
+const getTheme = (theme) => StyleSheet.create({
     form: {
-        paddingHorizontal:20,
-        paddingTop:theme.statusBar,
+        paddingHorizontal: 20,
+        paddingTop: theme.statusBar,
         height: '100%',
         width: '100%',
         alignItems: 'stretch'
@@ -163,18 +168,18 @@ const styles = StyleSheet.create({
         fontSize: 18,
         padding: 16,
         backgroundColor: theme.input,
-        color: '#ccc',
+        color: theme.text,
         marginVertical: 4,
         borderRadius: 6
     },
     row: {
         flexDirection: 'row',
         paddingVertical: 18,
-        borderBottomWidth: 1,
+        borderBottomWidth: .7,
         borderColor: '#444'
     },
     label: {
-        fontWeight: '200',
+        fontWeight: '300',
         flex: 1,
         color: theme.text,
         fontSize: 16

@@ -9,7 +9,7 @@ import { ThemeContext } from './ThemeContext';
 const theme = {
   dark: {
     name: 'dark',
-    bg: '#111',
+    bg: '#111111',
     text: '#eee',
     textSecondary: '#777',
     input: '#00020a',
@@ -20,7 +20,7 @@ const theme = {
     statusBar: 60,
     gradientTo: 'rgba(5,5,10,.95)',
     gradientFrom: 'rgba(0,0,0,0)',
-    focusColor:'#ffffff'
+    focusColor: 'rgb(21,238,108)',
   },
   light: {
     name: 'light',
@@ -35,7 +35,7 @@ const theme = {
     statusBar: 60,
     gradientTo: 'rgba(255,255,255,.95)',
     gradientFrom: 'rgba(255,255,255,0)',
-    focusColor:'rgb(13,180,90)'
+    focusColor: 'rgb(30,180,90)',
   }
 }
 export default function App() {

@@ -11,7 +11,7 @@ const Template = ({ children }) => {
     return (
         <View style={styles.app}>
             <View style={styles.body}>
-                <StatusBar hidden={false} barStyle='light-content' />
+                <StatusBar hidden={false} barStyle={curTheme.name==='dark'?'light-content':'dark-content'} />
                 <View style={{
                     zIndex: 2,
                     flex: 1,
