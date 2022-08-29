@@ -70,7 +70,7 @@ const getTheme = (theme) => StyleSheet.create({
         fontSize: 18,
         padding: 12,
         backgroundColor: theme.input,
-        color: '#ccc',
+        color: theme.text,
         marginVertical: 5,
         borderRadius: 6
     },

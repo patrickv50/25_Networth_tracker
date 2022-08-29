@@ -4,6 +4,7 @@ import NumberSlides from "./NumberSlides"
 import { Entypo, } from '@expo/vector-icons';
 import AssetContainer from "./AssetContainer";
 import { ThemeContext } from "../ThemeContext";
+import Icon from "./Icon";
 
 const heightOfItem = 40
 
@@ -57,12 +58,13 @@ const Item = ({ inputEnabled, handleNavigate, category, index, setMenuOpen, setF
             {/* CARD HEADER */}
             <TouchableOpacity onPress={toggleAccordion}>
                 <View style={styles.cardHeader}>
-                    <Entypo name={category.icon} size={20} color={category.color} style={{ width: 30 }} />
+                    <Icon name={category.icon} size={20} color={category.color} />
+                    {/* <Entypo name={category.icon} size={20} color={curTheme.name==='light'?curTheme.cardBg: category.color} style={{ textAlign:'center',borderRadius:6,overflow:'hidden',aspectRatio:1, width: 30,backgroundColor:category.color }} /> */}
                     <Text style={styles.nameContainer}>{category.categoryName || "No Name"}</Text>
                     {/* <Text style={styles.totalContainer}>${(total).toLocaleString("en-US")}</Text> */}
                     {inputEnabled ?
-                        <TouchableOpacity onPress={() => handleNavigate('Input', { category: category })} style={{ width: 30, borderWidth: 1, borderColor: category.color, alignItems: 'center', aspectRatio: 1, borderRadius: 4, justifyContent: 'center' }}>
-                            <Entypo name="plus" size={20} color={category.color} style={{}} />
+                        <TouchableOpacity onPress={() => handleNavigate('Input', { category: category })} style={{ justifyContent: 'center' }}>
+                            <Icon name='plus' size={25} color={category.color} />
                         </TouchableOpacity> :
                         <NumberSlides value={category.total} size={30} fontWeight='normal' delay={index * 240} side='right' duration={700} />}
                 </View>
@@ -87,7 +89,7 @@ const Item = ({ inputEnabled, handleNavigate, category, index, setMenuOpen, setF
     )
 }
 
-const getTheme = (theme)=> StyleSheet.create({
+const getTheme = (theme) => StyleSheet.create({
     card: {
         flex: 1,
         backgroundColor: theme.cardBg,

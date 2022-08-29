@@ -6,7 +6,8 @@ import { v4 as uuid } from 'uuid';
 let init = [{
   categoryName: "Cash",
   icon: 'wallet',
-  color: 'rgb(252,199,92)',
+  color: '#f2c61e',
+  darkColor:'#111',
   total: 0,
   top3: [],
   items: [],
@@ -14,7 +15,8 @@ let init = [{
 }, {
   categoryName: "Stocks",
   icon: 'bar-graph',
-  color: 'rgb(145,250,147)',
+  color: '#31e834',
+  darkColor:'#111',
   total: 0,
   top3: [],
   items: [],
@@ -22,7 +24,8 @@ let init = [{
 }, {
   categoryName: "Real Estate",
   icon: 'home',
-  color: 'rgb(132,211,219)',
+  color: '#5adce3',
+  darkColor:'#111',
   total: 0,
   top3: [],
   items: [],
@@ -30,7 +33,8 @@ let init = [{
 }, {
   categoryName: "Tangible",
   icon: 'laptop',
-  color: 'rgb(207,140,120)',
+  color: '#f5663b',
+  darkColor:'#111',
   total: 0,
   top3: [],
   items: [],
@@ -38,7 +42,8 @@ let init = [{
 }, {
   categoryName: "Intangible",
   icon: 'book',
-  color: 'rgb(239,176,129)',
+  color: '#f08b3e',
+  darkColor:'#111',
   total: 0,
   top3: [],
   items: [],
@@ -46,7 +51,8 @@ let init = [{
 }, {
   categoryName: "Misc",
   icon: 'box',
-  color: 'white',
+  color: '#e03462',
+  darkColor:'#111',
   total: 0,
   top3: [],
   items: [],
@@ -74,7 +80,7 @@ export const assetsSlice = createSlice({
       // which detects changes to a "draft state" and produces a brand new
       // immutable state based off those changes
       action.payload.id = uuid()
-      console.log(action.payload)
+      // console.log(action.payload)
       // Check if category exist
       let index = state.findIndex((elem) => elem.categoryName === action.payload.category)
       // If not then create a new one

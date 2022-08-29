@@ -74,7 +74,6 @@ const SummaryScreen = ({ navigation, route }) => {
   }, [curTheme])
 
   const { initData } = route.params
-  console.log(styles)
   const { month, data } = initData
   const nextData = useMemo(() => {
     let obj = {

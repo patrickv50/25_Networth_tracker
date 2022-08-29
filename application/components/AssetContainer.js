@@ -15,7 +15,7 @@ const AssetContainer = ({ item, index,color, toggleInfo, total, accordionOpen })
     const animateHeight = useCallback((x, instant) => {
         Animated.timing(containerTop, {
             toValue: x,
-            duration: instant ? 0 : 750,
+            duration: instant ? 0 : 620,
             useNativeDriver: false,
             delay: (instant ? 200 : (item.index * item.index*.6) * 15),
             easing: Easing.bezier(0.61, 1, 0.88, 1)

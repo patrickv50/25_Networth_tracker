@@ -1,9 +1,10 @@
-import React, { useMemo, useRef, useState } from 'react'
+import React, { useContext, useMemo, useRef, useState } from 'react'
 import { Button, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import theme from '../../theme'
 import { useDispatch } from 'react-redux'
 import { Entypo, } from '@expo/vector-icons';
 import axios from 'axios';
+import { ThemeContext } from '../../ThemeContext';
 
 const CashInput = ({ add, cancel }) => {
     const [type, setType] = useState("")
@@ -14,6 +15,10 @@ const CashInput = ({ add, cancel }) => {
         name: "",
         price: 0
     })
+    const curTheme = useContext(ThemeContext)
+    const styles = useMemo(() => {
+        return getTheme(curTheme)
+    }, [curTheme])
     const [value, setValue] = useState(0)
     const nameRef = useRef()
     let controller = useRef(new AbortController())
@@ -48,21 +53,21 @@ const CashInput = ({ add, cancel }) => {
             {/* HEADER =========*/}
             <View style={{ flexDirection: 'row', justifyContent: 'left', alignItems: 'center', marginBottom: 8}}>
                 <Entypo name='wallet' size={20} color='rgb(252,199,92)' style={{ width: 25, marginBottom: 4, fontWeight: '600' }} />
-                <Text style={{ fontSize: 18, color: theme.text, flex: 1 }}>Adding Cash</Text>
+                <Text style={{ fontSize: 18, color: curTheme.text, flex: 1 }}>Adding Cash</Text>
                 <TouchableOpacity onPress={handleCancel}>
-                    <Text style={{ color: theme.text }}>Cancel</Text>
+                    <Text style={{ color: curTheme.text }}>Cancel</Text>
                 </TouchableOpacity>
             </View>
             {/* BODY =========*/}
             <View style={{ marginTop: 20 }}>
                 {!type ?
                     <>
-                        <Text style={{ fontSize: 26, color: theme.text, textAlign: 'center', marginBottom: 8 }}>
+                        <Text style={{ fontSize: 26, color: curTheme.text, textAlign: 'center', marginBottom: 8 }}>
                             Select Category
                         </Text>
                         {['Physical Cash', 'Checkings Acount', 'Savings Acount'].map((type, index) => (
-                            <TouchableOpacity onPress={()=>setType(type)} key={index} style={{ backgroundColor: theme.cardBg, padding: 8, marginBottom: 6, borderRadius: 6 }}>
-                                <Text style={{ fontSize: 18, color: theme.text }}>{type}</Text>
+                            <TouchableOpacity onPress={()=>setType(type)} key={index} style={{ backgroundColor: curTheme.cardBg, padding: 8, marginBottom: 6, borderRadius: 6 }}>
+                                <Text style={{ fontSize: 18, color: curTheme.text }}>{type}</Text>
                             </TouchableOpacity>
                         ))}
 
@@ -86,7 +91,7 @@ const CashInput = ({ add, cancel }) => {
                         {/* SHARE COUNT INPUT =======*/}
                         <View style={styles.row}>
                             <Text style={styles.label}>Bank Name</Text>
-                            <TextInput selectionColor={'rgb(145,250,147)'} autoFocus={false} value={bankName} keyboardType='number-pad' returnKeyType='done' style={[styles.value, { flex: 1, textAlign: 'right' }]} onChangeText={(x) => setBankName(x)} />
+                            <TextInput selectionColor={'rgb(145,250,147)'} autoFocus={false} value={bankName} returnKeyType='done' style={[styles.value, { flex: 1, textAlign: 'right' }]} onChangeText={(x) => setBankName(x)} />
                         </View>
                         {/* PRICE` ====================*/}
                         {/* <View style={styles.row}>
@@ -101,7 +106,7 @@ const CashInput = ({ add, cancel }) => {
                         {/* BUTTONS ====================*/}
                         <View style={{ marginTop: 20 }}>
                             <TouchableOpacity style={styles.addButton} onPress={handleSubmit}>
-                                <Text numberOfLines={2} style={styles.addButtonText}>Add {stock.symbol}</Text>
+                                <Text numberOfLines={2} style={styles.addButtonText}>Add</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -113,7 +118,7 @@ const CashInput = ({ add, cancel }) => {
 
 export default CashInput
 
-const styles = StyleSheet.create({
+const getTheme = (theme)=>StyleSheet.create({
     form: {
         paddingHorizontal: 20,
         paddingTop: theme.statusBar,
@@ -133,11 +138,11 @@ const styles = StyleSheet.create({
     row: {
         flexDirection: 'row',
         paddingVertical: 18,
-        borderBottomWidth: 1,
+        borderBottomWidth: .8,
         borderColor: '#444'
     },
     label: {
-        fontWeight: '200',
+        fontWeight: '300',
         flex: 1,
         color: theme.text,
         fontSize: 16
@@ -178,7 +183,7 @@ const styles = StyleSheet.create({
     },
     addButton: {
         textAlign: 'center',
-        backgroundColor: 'rgb(145,250,147)',
+        backgroundColor: theme.green,
         marginVertical: 4,
         borderRadius: 4,
         padding: 5,
@@ -186,7 +191,7 @@ const styles = StyleSheet.create({
         // backgroundColor:'blue'
     },
     addButtonText: {
-        color: '#333',
+        color: theme.text,
         fontWeight: 'bold',
         fontSize: 18,
         padding: 3,

@@ -6,7 +6,7 @@ import { v4 as uuid } from 'uuid';
 let init = [{
   categoryName: "Credit Card",
   icon: 'credit-card',
-  color: 'rgb(256,170,110)',
+  color: '#f2893f',
   total: 0,
   top3: [],
   items: [],
@@ -14,7 +14,7 @@ let init = [{
 }, {
   categoryName: "Student Loans",
   icon: 'graduation-cap',
-  color: 'rgb(145,200,200)',
+  color: '#36c9c9',
   total: 0,
   top3: [],
   items: [],
@@ -22,7 +22,7 @@ let init = [{
 }, {
   categoryName: "Car Loan",
   icon: 'gauge',
-  color: 'rgb(211,70,80)',
+  color: '#db2531',
   total: 0,
   top3: [],
   items: [],
@@ -30,7 +30,7 @@ let init = [{
 }, {
   categoryName: "Mortage",
   icon: 'home',
-  color: 'rgb(222,211,150)',
+  color: '#80c926',
   total: 0,
   top3: [],
   items: [],
