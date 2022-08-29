@@ -19,15 +19,6 @@ export default function HomeScreen({ navigation, route }) {
   const { changeTheme } = route.params
   return (
     <MainScreen changeTheme={changeTheme}/>
-    // <NavigationContainer independent={true}>
-    //   <Stack.Navigator screenOptions={{
-    //     headerShown: false,
-    //     contentStyle: { backgroundColor: curTheme.bg, },
-    //   }}>
-    //     <Stack.Screen name='Main' component={MainScreen} />
-    //     <Stack.Screen name='Setting' component={SettingScreen} initialParams={{ changeTheme: changeTheme }} />
-    //   </Stack.Navigator>
-    // </NavigationContainer>
   )
 
 }

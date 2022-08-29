@@ -30,7 +30,7 @@ const CashInput = ({ add, cancel }) => {
             category: 'Cash',
             type:type,
             bankName:bankName,
-            name: stock.symbol, 
+            name: bankName, 
             value: value, 
         })
     }

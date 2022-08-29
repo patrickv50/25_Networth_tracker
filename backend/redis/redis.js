@@ -26,7 +26,7 @@ const searchListing = async (q) => {
     const listings = await repository.search()
         .where('symbol').match(q + '*')
         .or('companyName').match(q + '*')
-        .returnPage(0,4);
+        .returnPage(0, 4);
     return ((listings))
 }
 
@@ -34,7 +34,7 @@ const createProfile = async (data) => {
     await connect()
     const repository = client.fetchRepository(Profile)
     const profile = repository.createEntity(data)
-    profile.entityId=data.symbol
+    profile.entityId = data.symbol
     const id = await repository.save(profile)
     await repository.expire(id, 360)
 }
@@ -51,8 +51,9 @@ const getProfile = async (symbol) => {
 const createQuote = async (data) => {
     await connect()
     const repository = client.fetchRepository(Quote)
+    // await repository.createIndex();
     const quote = repository.createEntity(data)
-    quote.entityId=data.symbol
+    quote.entityId = data.symbol
     const id = await repository.save(quote)
     await repository.expire(id, 360)
 }
@@ -64,9 +65,27 @@ const getQuote = async (symbol) => {
     if (json.current) return json
     else return null
 }
-const createSummary = async (data) => {
+const createSummary = async (obj) => {
+    await connect()
+    const { date, data, deviceId } = obj
+    let formattedData = {
+        deviceId: deviceId,
+        date: date,
+        data: JSON.stringify(data),
+        createdAt: new Date(),
+        test:'test',
+    }
+    const repository = client.fetchRepository(Finance)
+    const summary = repository.createAndSave(formattedData)
+}
+
+const getSummaries = async (id) => {
     await connect()
     const repository = client.fetchRepository(Finance)
-    const summary = repository.createAndSave(data)
+    const summaries = await repository.search()
+        .where('test').match('test')
+        .return.all();
+    console.log(summaries.length)
+    return ((summaries))
 }
-module.exports = { createListing, searchListing, createProfile, getProfile, createQuote, getQuote,createSummary }
+module.exports = { createListing, searchListing, createProfile, getProfile, createQuote, getQuote, createSummary, getSummaries }

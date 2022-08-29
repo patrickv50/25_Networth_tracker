@@ -1,5 +1,6 @@
 const { Client, Entity, Repository, Schema } = require('redis-om')
 const Listing = require('./redis/models/ListingsModel.js')
+const Finance = require('./redis/models/FinanceModel.js')
 require('dotenv').config()
 const client = new Client()
 
@@ -12,7 +13,7 @@ const connect = async () => {
 
 const createIndex = async () => {
     await connect()
-    const repository = client.fetchRepository(Listing)
+    const repository = client.fetchRepository(Finance)
     await repository.createIndex()
     // await client.close()
 }
