@@ -2,7 +2,7 @@
 
 This project is a mobile app that let users track their networth, assets and liabilites. It was developed with React Native, NodeJS/Exress and Redis. This serves as my submission for the 2022 [Redis Hackathon on DEV.to](https://dev.to/devteam/announcing-the-redis-hackathon-on-dev-3248) under the MERN/MEVN category!
 
-# Overview video 
+## Overview video 
 
 Here's a short video that explains the project:
 
@@ -15,29 +15,63 @@ Here's a short video that explains the project:
 - Redis
 
 ## Features
-- Store user's assets & liabilities.
+- Store user's assets & liabilities info locally by default.
 - Stock and company profile lookup.
 - Autocomplete feature when searching for a company name.
 - Net worth projection for a certain month.
-- Take a snapshot of a month's finance summary.
+- Take a snapshot of a month's finance summary and store to database.
 
 ## How it works
 
 ### How the data is stored:
+All data model share the same process when storing to the redis db.
+The express server connects to the redis database with redis-om as the primary driver.
+Each data has its own schema definition.
+* Schemas / Data Model:
+    * Finance
+    * Listing
+    * Profile
+    * Quote
 
-[Refer to [this example](https://github.com/redis-developer/basic-analytics-dashboard-redis-bitmaps-nodejs#how-the-data-is-stored) for a more detailed example of what you need for this section.]
+* Schema Overview:    
+    * Finance:{
+        date:  date,
+        data: string(JSON),
+        deviceID: string
+    }
+    * Listing:{
+        symbol: string,
+        companyName: string
+    }
+    * Profile:{
+        symbol: string,
+        companyName: string,
+        price: number
+    }
+    * Quote:{
+        current: number,
+        change: number,
+        percentChange: number,
+        high: number,
+        low: number
+    }
 
 ### How the data is accessed:
 
-[Refer to [this example](https://github.com/redis-developer/basic-analytics-dashboard-redis-bitmaps-nodejs#how-the-data-is-accessed) for a more detailed example of what you need for this section.]
+Express server connects to the redis server with the use of redis-om.
+* Querying for the autocomplete feature:
+    * The Listing repository is indexed to allow fast searching.
+    * The input parameter from the user is used to select matching entities using redis search.
 
 ### Performance Benchmarks
-
-[If you migrated an existing app to use Redis, please put performance benchmarks here to show the performance improvements.]
+Based of the test I did, querying data from my redis db is 3x faster than the Stocks API that I use. Stock data is maintained on the redis db with a time to live (TTL) of 5 min.
 
 ## How to run it locally?
 
-[Make sure you test this with a fresh clone of your repo, these instructions will be used to judge your app.]
+Link to the appstore will be added once published.
+* To run locally:
+    * navigate to the applications folder and run npm install
+    * run npm start 
 
 ## More Information about Redis Stack
 
