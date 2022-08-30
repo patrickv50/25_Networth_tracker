@@ -6,7 +6,7 @@ This project is a mobile app that let users track their networth, assets and lia
 
 Here's a short video that explains the project:
 
-[![YoutTube Link]()](https://www.youtube.com/watch?v=vyxdC1qK4NE)
+[![YoutTube Link](https://github.com/patva0715/25_Networth_tracker/blob/main/demo/vidsc.png)](https://www.youtube.com/watch?v=vyxdC1qK4NE)
 
 ## Technologies used
 - JavaScript
@@ -24,6 +24,15 @@ Here's a short video that explains the project:
 ## How it works
 
 ### How the data is stored:
+```javascript
+const { Client } = require('redis-om')
+const client = new Client()
+const connect = async () => {
+    if (!client.isOpen()) {
+        await client.open(process.env.REDIS_URL)
+    }
+}
+```
 All data model share the same process when storing to the redis db.
 The express server connects to the redis database with redis-om as the primary driver.
 Each data has its own schema definition.
@@ -32,7 +41,15 @@ Each data has its own schema definition.
     * Listing
     * Profile
     * Quote
-
+```javascript
+// CREATE A LISTING 
+const createListing = async (data) => {
+    await connect() //CONNECT TO REDIS DB
+    const repository = client.fetchRepository(Listing)
+    const listing = await repository.createAndSave(data)
+    return listing.entityId
+}
+```
 * Schema Overview:    
     * Finance:{
         date:  date,
@@ -62,7 +79,18 @@ Express server connects to the redis server with the use of redis-om.
 * Querying for the autocomplete feature:
     * The Listing repository is indexed to allow fast searching.
     * The input parameter from the user is used to select matching entities using redis search.
-
+```javascript
+// SEARCH LISTINGS THAT CLOSELY MATCH USER QUERY
+const searchListing = async (query) => {
+    await connect()
+    const repository = client.fetchRepository(Listing)
+    const listings = await repository.search()
+        .where('symbol').match(query + '*')
+        .or('companyName').match(q + '*')
+        .returnPage(0, 4);
+    return ((listings))
+}
+```
 ### Performance Benchmarks
 Based of the test I did, querying data from my redis db is 3x faster than the Stocks API that I use. Stock data is maintained on the redis db with a time to live (TTL) of 5 min.
 
@@ -70,8 +98,14 @@ Based of the test I did, querying data from my redis db is 3x faster than the St
 
 Link to the appstore will be added once published.
 * To run locally:
-    * navigate to the applications folder and run npm install
-    * run npm start 
+   * Requirements
+      - Node
+      - Expo cli
+```javascript 
+cd application
+npm install
+expo start
+```
 
 ## More Information about Redis Stack
 
