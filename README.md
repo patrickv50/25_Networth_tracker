@@ -6,7 +6,7 @@ This project is a mobile app that let users track their networth, assets and lia
 
 Here's a short video that explains the project:
 
-[![YoutTube Link](https://github.com/patva0715/25_Networth_tracker/blob/main/demo/vidsc.png)](https://www.youtube.com/watch?v=vyxdC1qK4NE)
+[![YoutTube Link](https://github.com/patva0715/25_Networth_tracker/blob/main/demo/vidsc.png)](https://youtu.be/uJS3t7F8bNw)
 
 ## Technologies used
 - JavaScript
