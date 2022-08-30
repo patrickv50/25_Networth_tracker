@@ -21,6 +21,23 @@ Here's a short video that explains the project:
 - Net worth projection for a certain month.
 - Take a snapshot of a month's finance summary.
 
+## How it works
+
+### How the data is stored:
+
+[Refer to [this example](https://github.com/redis-developer/basic-analytics-dashboard-redis-bitmaps-nodejs#how-the-data-is-stored) for a more detailed example of what you need for this section.]
+
+### How the data is accessed:
+
+[Refer to [this example](https://github.com/redis-developer/basic-analytics-dashboard-redis-bitmaps-nodejs#how-the-data-is-accessed) for a more detailed example of what you need for this section.]
+
+### Performance Benchmarks
+
+[If you migrated an existing app to use Redis, please put performance benchmarks here to show the performance improvements.]
+
+## How to run it locally?
+
+[Make sure you test this with a fresh clone of your repo, these instructions will be used to judge your app.]
 
 ## More Information about Redis Stack
 
